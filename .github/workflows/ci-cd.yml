@@ -1,0 +1,208 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      SECRET_KEY: dummy-secret-key
+      DEBUG: 'False'
+      ALLOWED_HOSTS: localhost,127.0.0.1
+      DB_ENGINE: django.db.backends.sqlite3
+      DB_NAME: ':memory:'
+      DB_USER: sqlite
+      DB_PASSWORD: sqlite
+      DB_HOST: localhost
+      DB_PORT: '5432'
+      REDIS_URL: redis://localhost:6379/0
+      REDIS_PASSWORD: redis
+      EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
+      DJANGO_SETTINGS_MODULE: config.settings.base
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Django checks
+        run: python manage.py check
+
+      - name: Ensure migrations are committed
+        run: python manage.py makemigrations --check --dry-run
+
+  frontend:
+    name: Frontend checks
+    runs-on: ubuntu-latest
+    needs: backend
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Build frontend
+        run: npm run build
+
+  publish:
+    name: Build and publish images
+    runs-on: ubuntu-latest
+    needs:
+      - backend
+      - frontend
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Prepare runtime environment file
+        run: |
+          cat <<EOF > .env
+          SECRET_KEY=${SECRET_KEY}
+          DEBUG=${DEBUG}
+          ALLOWED_HOSTS=${ALLOWED_HOSTS}
+          DB_ENGINE=${DB_ENGINE}
+          DB_NAME=${DB_NAME}
+          DB_USER=${DB_USER}
+          DB_PASSWORD=${DB_PASSWORD}
+          DB_HOST=${DB_HOST}
+          DB_PORT=${DB_PORT}
+          REDIS_URL=${REDIS_URL}
+          REDIS_PASSWORD=${REDIS_PASSWORD}
+          DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+          LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+          NEXT_HOST=${NEXT_HOST}
+          EMAIL_BACKEND=${EMAIL_BACKEND}
+          JWT_SECRET_KEY=${JWT_SECRET_KEY}
+          CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+          EOF
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DEBUG: ${{ secrets.DEBUG }}
+          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+          DB_ENGINE: ${{ secrets.DB_ENGINE }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
+          LETSENCRYPT_EMAIL: ${{ secrets.LETSENCRYPT_EMAIL }}
+          NEXT_HOST: ${{ secrets.NEXT_HOST }}
+          EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build images
+        run: docker compose build web worker beat frontend
+
+      - name: Push images
+        run: docker compose push web worker beat frontend
+
+  deploy:
+    name: Deploy to production
+    runs-on: self-hosted
+    needs: publish
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Prepare runtime environment file
+        run: |
+          cat <<EOF > .env
+          SECRET_KEY=${SECRET_KEY}
+          DEBUG=${DEBUG}
+          ALLOWED_HOSTS=${ALLOWED_HOSTS}
+          DB_ENGINE=${DB_ENGINE}
+          DB_NAME=${DB_NAME}
+          DB_USER=${DB_USER}
+          DB_PASSWORD=${DB_PASSWORD}
+          DB_HOST=${DB_HOST}
+          DB_PORT=${DB_PORT}
+          REDIS_URL=${REDIS_URL}
+          REDIS_PASSWORD=${REDIS_PASSWORD}
+          DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+          LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+          NEXT_HOST=${NEXT_HOST}
+          EMAIL_BACKEND=${EMAIL_BACKEND}
+          JWT_SECRET_KEY=${JWT_SECRET_KEY}
+          CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+          EOF
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DEBUG: ${{ secrets.DEBUG }}
+          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+          DB_ENGINE: ${{ secrets.DB_ENGINE }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          DJANGO_SETTINGS_MODULE: ${{ secrets.DJANGO_SETTINGS_MODULE }}
+          LETSENCRYPT_EMAIL: ${{ secrets.LETSENCRYPT_EMAIL }}
+          NEXT_HOST: ${{ secrets.NEXT_HOST }}
+          EMAIL_BACKEND: ${{ secrets.EMAIL_BACKEND }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
+
+      - name: Log in to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Pull images
+        run: docker compose pull web worker beat frontend
+
+      - name: Deploy services
+        run: docker compose up -d --remove-orphans
