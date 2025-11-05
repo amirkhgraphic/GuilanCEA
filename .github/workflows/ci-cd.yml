@@ -1,0 +1,217 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.12"
+  NODE_VERSION: "20"
+  REDIS_PASSWORD: "redis-password"
+  DJANGO_SECRET_KEY: "github-ci-secret-key"
+
+jobs:
+  test:
+    name: Backend & Frontend Checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: app
+          POSTGRES_PASSWORD: password
+          POSTGRES_USER: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d app"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli -a redis-password ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        command: >
+          redis-server
+          --appendonly no
+          --requirepass redis-password
+    env:
+      SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
+      DEBUG: "False"
+      DJANGO_SETTINGS_MODULE: config.settings.development
+      ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+      DJANGO_HOST: http://localhost:8000
+      NEXT_HOST: localhost
+      LETSENCRYPT_EMAIL: ci@example.com
+      GUNICORN_WORKERS: "2"
+      GUNICORN_THREADS: "2"
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: app
+      DB_USER: app
+      DB_PASSWORD: password
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      REDIS_PASSWORD: ${{ env.REDIS_PASSWORD }}
+      REDIS_URL: redis://:${{ env.REDIS_PASSWORD }}@localhost:6379/0
+      CELERY_BROKER_URL: redis://:${{ env.REDIS_PASSWORD }}@localhost:6379/0
+      CELERY_RESULT_BACKEND: redis://:${{ env.REDIS_PASSWORD }}@localhost:6379/1
+      EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
+      EMAIL_HOST: localhost
+      EMAIL_PORT: "1025"
+      EMAIL_USE_TLS: "False"
+      EMAIL_HOST_USER: ""
+      EMAIL_HOST_PASSWORD: ""
+      DEFAULT_FROM_EMAIL: noreply@example.com
+      CORS_ALLOWED_ORIGINS: http://localhost:3000
+      FRONTEND_ROOT: http://localhost:3000
+      FRONTEND_PASSWORD_RESET_PAGE: http://localhost:3000/reset-password
+      FRONTEND_CALLBACK_URL: http://localhost:3000/payments/result
+      JWT_SECRET_KEY: test-jwt-key
+      JWT_ALGORITHM: HS256
+      JWT_ACCESS_TOKEN_LIFETIME: "3600"
+      JWT_REFRESH_TOKEN_LIFETIME: "86400"
+      ZARINPAL_MERCHANT_ID: sandbox-merchant
+      ZARINPAL_USE_SANDBOX: "True"
+      ZARINPAL_CALLBACK_URL: http://localhost:8000/payments/zarinpal/callback
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Prepare .env from template
+        run: |
+          cp .env.example .env
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          env_path = Path(".env")
+          overrides = {
+              "SECRET_KEY": os.environ["SECRET_KEY"],
+              "DJANGO_SETTINGS_MODULE": os.environ["DJANGO_SETTINGS_MODULE"],
+              "ALLOWED_HOSTS": os.environ["ALLOWED_HOSTS"],
+              "DJANGO_HOST": os.environ["DJANGO_HOST"],
+              "NEXT_HOST": os.environ["NEXT_HOST"],
+              "LETSENCRYPT_EMAIL": os.environ["LETSENCRYPT_EMAIL"],
+              "GUNICORN_WORKERS": os.environ["GUNICORN_WORKERS"],
+              "GUNICORN_THREADS": os.environ["GUNICORN_THREADS"],
+              "DB_ENGINE": os.environ["DB_ENGINE"],
+              "DB_NAME": os.environ["DB_NAME"],
+              "DB_USER": os.environ["DB_USER"],
+              "DB_PASSWORD": os.environ["DB_PASSWORD"],
+              "DB_HOST": os.environ["DB_HOST"],
+              "DB_PORT": os.environ["DB_PORT"],
+              "REDIS_PASSWORD": os.environ["REDIS_PASSWORD"],
+              "REDIS_URL": os.environ["REDIS_URL"],
+              "CELERY_BROKER_URL": os.environ["CELERY_BROKER_URL"],
+              "CELERY_RESULT_BACKEND": os.environ["CELERY_RESULT_BACKEND"],
+              "EMAIL_BACKEND": os.environ["EMAIL_BACKEND"],
+              "EMAIL_HOST": os.environ["EMAIL_HOST"],
+              "EMAIL_PORT": os.environ["EMAIL_PORT"],
+              "EMAIL_USE_TLS": os.environ["EMAIL_USE_TLS"],
+              "EMAIL_HOST_USER": os.environ["EMAIL_HOST_USER"],
+              "EMAIL_HOST_PASSWORD": os.environ["EMAIL_HOST_PASSWORD"],
+              "DEFAULT_FROM_EMAIL": os.environ["DEFAULT_FROM_EMAIL"],
+              "CORS_ALLOWED_ORIGINS": os.environ["CORS_ALLOWED_ORIGINS"],
+              "FRONTEND_ROOT": os.environ["FRONTEND_ROOT"],
+              "FRONTEND_PASSWORD_RESET_PAGE": os.environ["FRONTEND_PASSWORD_RESET_PAGE"],
+              "FRONTEND_CALLBACK_URL": os.environ["FRONTEND_CALLBACK_URL"],
+              "JWT_SECRET_KEY": os.environ["JWT_SECRET_KEY"],
+              "JWT_ALGORITHM": os.environ["JWT_ALGORITHM"],
+              "JWT_ACCESS_TOKEN_LIFETIME": os.environ["JWT_ACCESS_TOKEN_LIFETIME"],
+              "JWT_REFRESH_TOKEN_LIFETIME": os.environ["JWT_REFRESH_TOKEN_LIFETIME"],
+              "ZARINPAL_MERCHANT_ID": os.environ["ZARINPAL_MERCHANT_ID"],
+              "ZARINPAL_USE_SANDBOX": os.environ["ZARINPAL_USE_SANDBOX"],
+              "ZARINPAL_CALLBACK_URL": os.environ["ZARINPAL_CALLBACK_URL"],
+          }
+
+          lines = []
+          for raw in env_path.read_text().splitlines():
+              if not raw or raw.lstrip().startswith("#"):
+                  lines.append(raw)
+                  continue
+              key, _, current = raw.partition("=")
+              value = overrides.get(key, current)
+              lines.append(f"{key}={value}")
+
+          env_path.write_text("\n".join(lines) + "\n")
+          PY
+
+      - name: Run database migrations
+        working-directory: backend
+        env:
+          DJANGO_SETTINGS_MODULE: ${{ env.DJANGO_SETTINGS_MODULE }}
+        run: python manage.py migrate --noinput
+
+      - name: Run Django tests
+        working-directory: backend
+        env:
+          DJANGO_SETTINGS_MODULE: ${{ env.DJANGO_SETTINGS_MODULE }}
+        run: python manage.py test --verbosity 2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        env:
+          CI: "true"
+        run: npm run build
+
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          script: |
+            set -e
+            cd "${{ secrets.DEPLOY_PATH }}"
+            git fetch --prune
+            git reset --hard origin/main
+            docker compose pull
+            docker compose up -d --build --remove-orphans
+            docker image prune -f
