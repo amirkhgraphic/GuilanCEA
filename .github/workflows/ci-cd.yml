@@ -9,12 +9,6 @@ on:
 permissions:
   contents: read
 
-env:
-  PYTHON_VERSION: "3.12"
-  NODE_VERSION: "20"
-  REDIS_PASSWORD: "redis-password"
-  DJANGO_SECRET_KEY: "github-ci-secret-key"
-
 jobs:
   test:
     name: Backend & Frontend Checks
@@ -35,7 +29,9 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       redis:
-        image: redis:7-alpine
+        image: bitnami/redis:7.2
+        env:
+          REDIS_PASSWORD: redis-password
         ports:
           - 6379:6379
         options: >-
@@ -43,12 +39,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        command: >
-          redis-server
-          --appendonly no
-          --requirepass redis-password
     env:
-      SECRET_KEY: ${{ env.DJANGO_SECRET_KEY }}
+      SECRET_KEY: github-ci-secret-key
       DEBUG: "False"
       DJANGO_SETTINGS_MODULE: config.settings.development
       ALLOWED_HOSTS: localhost,127.0.0.1,testserver
@@ -63,10 +55,10 @@ jobs:
       DB_PASSWORD: password
       DB_HOST: localhost
       DB_PORT: "5432"
-      REDIS_PASSWORD: ${{ env.REDIS_PASSWORD }}
-      REDIS_URL: redis://:${{ env.REDIS_PASSWORD }}@localhost:6379/0
-      CELERY_BROKER_URL: redis://:${{ env.REDIS_PASSWORD }}@localhost:6379/0
-      CELERY_RESULT_BACKEND: redis://:${{ env.REDIS_PASSWORD }}@localhost:6379/1
+      REDIS_PASSWORD: redis-password
+      REDIS_URL: redis://:redis-password@localhost:6379/0
+      CELERY_BROKER_URL: redis://:redis-password@localhost:6379/0
+      CELERY_RESULT_BACKEND: redis://:redis-password@localhost:6379/1
       EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
       EMAIL_HOST: localhost
       EMAIL_PORT: "1025"
@@ -85,6 +77,8 @@ jobs:
       ZARINPAL_MERCHANT_ID: sandbox-merchant
       ZARINPAL_USE_SANDBOX: "True"
       ZARINPAL_CALLBACK_URL: http://localhost:8000/payments/zarinpal/callback
+      PYTHON_VERSION: "3.12"
+      NODE_VERSION: "20"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
