@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ announcement.title }}</title>
+    <style>
+        body {
+            font-family: 'Tahoma', 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            direction: rtl;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #168085;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #168085;
+            margin-bottom: 10px;
+        }
+        .priority-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .priority-urgent { background-color: #dc3545; color: white; }
+        .priority-high { background-color: #fd7e14; color: white; }
+        .priority-normal { background-color: #28a745; color: white; }
+        .priority-low { background-color: #6c757d; color: white; }
+        .announcement-type {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .content {
+            margin: 20px 0;
+            line-height: 1.8;
+            text-align: justify;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        .social-links {
+            margin: 20px 0;
+        }
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #168085;
+            text-decoration: none;
+        }
+        .unsubscribe {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+        .unsubscribe a {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">انجمن علوم کامپیوتر</div>
+            <p>خبرنامه انجمن علوم کامپیوتر</p>
+        </div>
+
+        <div class="priority-badge priority-{{ announcement.priority }}">
+            {% if announcement.priority == 'urgent' %}فوری
+            {% elif announcement.priority == 'high' %}مهم
+            {% elif announcement.priority == 'normal' %}عادی
+            {% else %}کم اهمیت{% endif %}
+        </div>
+
+        <div class="announcement-type">
+            📢 اطلاعیه 
+            {% if announcement.announcement_type == 'general' %}عمومی
+            {% elif announcement.announcement_type == 'event' %}رویداد
+            {% elif announcement.announcement_type == 'academic' %}آکادمیک
+            {% elif announcement.announcement_type == 'urgent' %}فوری
+            {% else %}خبرنامه{% endif %}
+        </div>
+
+        <h1>{{ announcement.title }}</h1>
+
+        <div class="content">
+            {{ announcement.content_html|safe }}
+        </div>
+
+        <div class="footer">
+            <p><strong>انجمن علمی مهندسی کامپیوتر دانشکده فنی و مهندسی شرق گیلان</strong></p>
+            <p>با ما در ارتباط باشید:</p>
+            <div class="social-links">
+                <a href="https://www.instagram.com/your_association_instagram">📷 اینستاگرام</a>
+                <a href="https://t.me/your_association_telegram">📱 تلگرام</a>
+            </div>
+            
+            <div class="unsubscribe">
+                <p>این ایمیل را به دلیل عضویت در خبرنامه ما دریافت کرده‌اید.</p>
+                <p><a href="{{ unsubscribe_url }}">لغو اشتراک</a> | <a href="{{ manage_subscription_url }}">مدیریت تنظیمات</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>تأیید ایمیل با موفقیت انجام شد</title>
+  <style>
+    body {
+      font-family: 'Vazir', 'Tahoma', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      direction: rtl;
+      text-align: right;
+      background: #ffffff;
+    }
+    .header {
+      background-color: #059669; /* سبز (موفقیت) */
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px 8px 0 0;
+    }
+    .content {
+      background-color: #f9fafb;
+      padding: 30px;
+      border-radius: 0 0 8px 8px;
+    }
+    a.button, .button {
+      display: inline-block;
+      background-color: #059669;
+      color: white !important;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 6px;
+      margin: 20px 0;
+    }
+    .footer {
+      width: 100%;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+    .ltr { direction: ltr; text-align: left; }
+    @font-face {
+      font-family: 'Vazir';
+      src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Vazir';
+      src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.woff2') format('woff2');
+      font-weight: bold;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
+</head>
+<body dir="rtl">
+  <div class="header">
+    <h1>ایمیل شما با موفقیت تأیید شد</h1>
+    <p>به جمع ما خوش آمدید!</p>
+  </div>
+
+  <div class="content">
+    <h2>سلام {{ user.get_full_name|default:'کاربر' }} عزیز،</h2>
+    <p>
+      آدرس ایمیل شما با موفقیت تأیید شد و حساب کاربری‌تان فعال است.
+      از این پس می‌توانید بدون محدودیت از امکانات سامانه استفاده کنید.
+    </p>
+
+    <div style="text-align:center;">
+      <a href="{{ home_url }}" class="button">ورود به سایت</a>
+    </div>
+
+    <p style="margin-top: 12px;">
+      اگر شما این اقدام را انجام نداده‌اید، لطفاً این ایمیل را نادیده بگیرید.
+    </p>
+
+    <p>با احترام<br/>انجمن علمی مهندسی کامپیوتر دانشکده فنی و مهندسی شرق گیلان</p>
+  </div>
+
+  <div class="footer">
+      <p>&copy; {% now 'Y' %} انجمن علمی مهندسی کامپیوتر شرق گیلان. تمامی حقوق محفوظ است.</p>
+
+      <!-- ایموجی + لینک بدون تصویر -->
+      <div style="text-align:center; margin-top:12px; direction:ltr;">
+          <a href="https://instagram.com/guilance.ir" target="_blank"
+          style="text-decoration:none; color:#6b7280; margin:0 8px; font-size:14px;">
+          📷 Instagram
+          </a>
+          <a href="https://t.me/guilance" target="_blank"
+          style="text-decoration:none; color:#6b7280; margin:0 8px; font-size:14px;">
+          ✈️ Telegram
+          </a>
+      </div>
+
+      <p style="margin-top:10px;">این ایمیل به صورت خودکار ارسال شده است. لطفاً به این پیام پاسخ ندهید.</p>
+  </div>
+</body>
+</html>

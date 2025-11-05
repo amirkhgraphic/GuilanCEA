@@ -1,0 +1,215 @@
+/* Custom styles for Django Unfold admin */
+:root {
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+}
+
+.unfold-admin .button-primary {
+  background-color: var(--primary-color);
+}
+
+.unfold-admin .button-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Persian/RTL Support */
+html[lang="fa"],
+html[dir="rtl"] {
+  direction: rtl;
+}
+
+html[lang="fa"] body,
+html[dir="rtl"] body {
+  font-family: "Vazir", "Tahoma", "Arial", sans-serif;
+  direction: rtl;
+  text-align: right;
+}
+
+/* RTL adjustments for admin interface */
+html[lang="fa"] .unfold-admin,
+html[dir="rtl"] .unfold-admin {
+  direction: rtl;
+}
+
+html[lang="fa"] .unfold-admin .sidebar,
+html[dir="rtl"] .unfold-admin .sidebar {
+  right: 0;
+  left: auto;
+}
+
+html[lang="fa"] .unfold-admin .main-content,
+html[dir="rtl"] .unfold-admin .main-content {
+  margin-right: 250px;
+  margin-left: 0;
+}
+
+/* Persian number support */
+html[lang="fa"] .persian-numbers {
+  font-family: "Vazir", monospace;
+}
+
+/* Custom styles for image previews */
+.image-preview {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Persian font loading */
+@font-face {
+  font-family: "Vazir";
+  src: url("https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Vazir";
+  src: url("https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.woff2") format("woff2");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/* --- MarkdownX / SimpleMDE Preview Overrides --- */
+/* Target the preview pane itself */
+.editor-preview-side, .editor-preview {
+  background-color: #ffffff; /* Ensure white background */
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  overflow-x: auto; /* For wide content like code blocks */
+  line-height: 1.6; /* Standard line height */
+  color: #333; /* Default text color */
+}
+
+/* Reset common text elements */
+.editor-preview-side h1, .editor-preview h1,
+.editor-preview-side h2, .editor-preview h2,
+.editor-preview-side h3, .editor-preview h3,
+.editor-preview-side h4, .editor-preview h4,
+.editor-preview-side h5, .editor-preview h5,
+.editor-preview-side h6, .editor-preview h6 {
+  font-family: inherit; /* Use default font */
+  color: inherit; /* Use default color */
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  line-height: 1.2;
+  font-weight: bold;
+}
+
+.editor-preview-side h1, .editor-preview h1 {
+  font-size: 2em;
+}
+.editor-preview-side h2, .editor-preview h2 {
+  font-size: 1.5em;
+}
+.editor-preview-side h3, .editor-preview h3 {
+  font-size: 1.17em;
+}
+.editor-preview-side h4, .editor-preview h4 {
+  font-size: 1em;
+}
+.editor-preview-side h5, .editor-preview h5 {
+  font-size: 0.83em;
+}
+.editor-preview-side h6, .editor-preview h6 {
+  font-size: 0.67em;
+}
+
+.editor-preview-side p, .editor-preview p {
+  margin-bottom: 1em;
+}
+
+.editor-preview-side ul, .editor-preview ul,
+.editor-preview-side ol, .editor-preview ol {
+  margin-left: 20px;
+  margin-bottom: 1em;
+}
+
+.editor-preview-side li, .editor-preview li {
+  list-style: disc;
+}
+
+.editor-preview-side > ol > li, .editor-preview > ol > li {
+  list-style: decimal;
+}
+
+/* Code blocks */
+.editor-preview-side pre, .editor-preview pre {
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  overflow-x: auto;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 0.9em;
+  line-height: 1.4;
+}
+
+.editor-preview-side code, .editor-preview code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  background-color: rgba(27, 31, 35, 0.05);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
+pre code {
+    background: none !important;
+}
+
+/* Tables */
+.editor-preview-side table, .editor-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+}
+
+.editor-preview-side th, .editor-preview th,
+.editor-preview-side td, .editor-preview td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.editor-preview-side th, .editor-preview th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+/* Blockquotes */
+.editor-preview-side blockquote, .editor-preview blockquote {
+  border-left: 4px solid #ccc;
+  padding-left: 15px;
+  color: #666;
+  margin: 1em 0;
+}
+
+/* Images */
+.editor-preview-side img, .editor-preview img {
+  max-width: 100%;
+  height: auto;
+  display: block; /* Prevent extra space below image */
+  margin: 1em 0;
+}
+
+/* Links */
+.editor-preview-side a, .editor-preview a {
+  color: #0366d6; /* Standard link color */
+  text-decoration: underline;
+}
+
+.editor-preview-side a:hover, .editor-preview a:hover {
+  text-decoration: none;
+}
+
+/* Horizontal Rule */
+.editor-preview-side hr, .editor-preview hr {
+  border: 0;
+  height: 1px;
+  background: #eee;
+  margin: 1em 0;
+}

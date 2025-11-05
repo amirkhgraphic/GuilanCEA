@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <body style="margin:0;padding:0;background:#ffffff;">
+    <table role="presentation" width="100%" style="border-collapse:collapse;">
+      <tr>
+        <td align="center" style="padding:20px;">
+          <table role="presentation" width="600" style="width:100%;max-width:600px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+            <tr>
+              <td align="center" style="background:#4f46e5;color:#fff;padding:20px;">
+                <h1 style="margin:0 0 6px 0;font-family:Tahoma,Arial,sans-serif;font-size:20px;line-height:1.4;">انجمن علمی مهندسی کامپیوتر</h1>
+                <p style="margin:0;font-family:Tahoma,Arial,sans-serif;font-size:14px;opacity:.95;">به جامعه ما خوش آمدید!</p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="background:#f9fafb;padding:24px 30px;text-align:right;">
+                <h2 style="margin:0 0 10px 0;font-family:Tahoma,Arial,sans-serif;font-size:18px;color:#111827;">سلام {{ user.get_full_name|default:'دانشجوی' }} گرامی،</h2>
+                <p style="margin:0 0 16px 0;font-family:Tahoma,Arial,sans-serif;font-size:14px;color:#374151;line-height:1.8;">
+                  از ثبت‌نام شما متشکریم. برای تکمیل ثبت‌نام و فعال‌سازی حساب کاربری، لطفاً روی دکمه زیر کلیک کنید:
+                </p>
+
+                <div style="text-align:center;margin:18px 0;">
+                  <a href="{{ verification_url }}"
+                     style="display:inline-block;background:#4f46e5;color:#fff;text-decoration:none;padding:12px 24px;border-radius:6px;font-family:Tahoma,Arial,sans-serif;font-size:14px;">
+                    تأیید آدرس ایمیل
+                  </a>
+                </div>
+
+                <p style="margin:0 0 6px 0;font-family:Tahoma,Arial,sans-serif;font-size:13px;color:#6b7280;">
+                  اگر دکمه کار نمی‌کند، این لینک را در مرورگر خود باز کنید:
+                </p>
+                <p style="direction:ltr;text-align:left;word-break:break-all;background:#e5e7eb;padding:10px;border-radius:4px;margin:0;font-family:Tahoma,Arial,sans-serif;font-size:12px;color:#111827;">
+                  {{ verification_url }}
+                </p>
+
+                <p style="margin:14px 0 0 0;font-family:Tahoma,Arial,sans-serif;font-size:12px;color:#6b7280;">
+                  این لینک تا ۲۴ ساعت معتبر است.
+                </p>
+
+                <p style="margin:14px 0 0 0;font-family:Tahoma,Arial,sans-serif;font-size:13px;color:#374151;">
+                  با احترام<br/>انجمن علمی مهندسی کامپیوتر دانشکده فنی و مهندسی شرق گیلان
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td align="center" style="padding:16px 20px;color:#6b7280;font-family:Tahoma,Arial,sans-serif;font-size:12px;">
+                <div style="margin-bottom:10px;">&copy; {% now 'Y' %} انجمن علمی مهندسی کامپیوتر شرق گیلان</div>
+                <div style="direction:ltr;margin-top:4px;">
+                  <a href="https://instagram.com/guilance.ir" target="_blank" style="text-decoration:none;color:#6b7280;margin:0 8px;font-size:13px;">📷 Instagram</a>
+                  <a href="https://t.me/guilance" target="_blank" style="text-decoration:none;color:#6b7280;margin:0 8px;font-size:13px;">✈️ Telegram</a>
+                </div>
+                <div style="margin-top:10px;">این ایمیل به‌صورت خودکار ارسال شده است؛ لطفاً پاسخ ندهید.</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

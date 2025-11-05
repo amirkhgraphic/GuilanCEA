@@ -1,0 +1,244 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "username": "admin",
+      "email": "admin@cs-association.ac.ir",
+      "first_name": "علی",
+      "last_name": "احمدی",
+      "student_id": "9812345001",
+      "year_of_study": 4,
+      "major": "مهندسی کامپیوتر",
+      "bio": "رئیس انجمن علمی مهندسی کامپیوتر دانشگاه",
+      "is_email_verified": true,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440001",
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "username": "sara_mohammadi",
+      "email": "sara.mohammadi@student.ac.ir",
+      "first_name": "سارا",
+      "last_name": "محمدی",
+      "student_id": "9912345002",
+      "year_of_study": 3,
+      "major": "مهندسی کامپیوتر",
+      "bio": "نایب رئیس انجمن و مسئول رویدادها",
+      "is_email_verified": true,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440002",
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-02T10:00:00Z",
+      "updated_at": "2024-01-02T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+      "username": "reza_karimi",
+      "email": "reza.karimi@student.ac.ir",
+      "first_name": "رضا",
+      "last_name": "کریمی",
+      "student_id": "9912345003",
+      "year_of_study": 2,
+      "major": "مهندسی کامپیوتر",
+      "bio": "علاقه‌مند به هوش مصنوعی و یادگیری ماشین",
+      "is_email_verified": true,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440003",
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-03T10:00:00Z",
+      "updated_at": "2024-01-03T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+      "username": "maryam_hosseini",
+      "email": "maryam.hosseini@student.ac.ir",
+      "first_name": "مریم",
+      "last_name": "حسینی",
+      "student_id": "0012345004",
+      "year_of_study": 1,
+      "major": "مهندسی کامپیوتر",
+      "bio": "دانشجوی سال اول و علاقه‌مند به برنامه‌نویسی وب",
+      "is_email_verified": true,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440004",
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-04T10:00:00Z",
+      "updated_at": "2024-01-04T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 5,
+    "fields": {
+      "username": "hassan_zare",
+      "email": "hassan.zare@student.ac.ir",
+      "first_name": "حسن",
+      "last_name": "زارع",
+      "student_id": "9812345005",
+      "year_of_study": 4,
+      "major": "مهندسی کامپیوتر",
+      "bio": "مسئول روابط عمومی انجمن",
+      "is_email_verified": true,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440005",
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-05T10:00:00Z",
+      "updated_at": "2024-01-05T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 6,
+    "fields": {
+      "username": "zahra_safari",
+      "email": "zahra.safari@student.ac.ir",
+      "first_name": "زهرا",
+      "last_name": "صفری",
+      "student_id": "9912345006",
+      "year_of_study": 3,
+      "major": "مهندسی کامپیوتر",
+      "bio": "علاقه‌مند به امنیت سایبری و شبکه",
+      "is_email_verified": true,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440006",
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-06T10:00:00Z",
+      "updated_at": "2024-01-06T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 7,
+    "fields": {
+      "username": "mohammad_rahmani",
+      "email": "mohammad.rahmani@student.ac.ir",
+      "first_name": "محمد",
+      "last_name": "رحمانی",
+      "student_id": "0012345007",
+      "year_of_study": 1,
+      "major": "مهندسی کامپیوتر",
+      "bio": "دانشجوی جدید الورود",
+      "is_email_verified": false,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440007",
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-07T10:00:00Z",
+      "updated_at": "2024-01-07T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 8,
+    "fields": {
+      "username": "fateme_moradi",
+      "email": "fateme.moradi@student.ac.ir",
+      "first_name": "فاطمه",
+      "last_name": "مرادی",
+      "student_id": "9912345008",
+      "year_of_study": 2,
+      "major": "مهندسی کامپیوتر",
+      "bio": "علاقه‌مند به توسعه اپلیکیشن موبایل",
+      "is_email_verified": true,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440008",
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-08T10:00:00Z",
+      "updated_at": "2024-01-08T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 9,
+    "fields": {
+      "username": "amir_ghorbani",
+      "email": "amir.ghorbani@student.ac.ir",
+      "first_name": "امیر",
+      "last_name": "قربانی",
+      "student_id": "9812345009",
+      "year_of_study": 4,
+      "major": "مهندسی کامپیوتر",
+      "bio": "مسئول فنی انجمن و توسعه‌دهنده وب‌سایت",
+      "is_email_verified": true,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440009",
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-09T10:00:00Z",
+      "updated_at": "2024-01-09T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 10,
+    "fields": {
+      "username": "nasrin_jafari",
+      "email": "nasrin.jafari@student.ac.ir",
+      "first_name": "نسرین",
+      "last_name": "جعفری",
+      "student_id": "9912345010",
+      "year_of_study": 3,
+      "major": "مهندسی کامپیوتر",
+      "bio": "علاقه‌مند به علم داده و تحلیل داده",
+      "is_email_verified": true,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440010",
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-10T10:00:00Z",
+      "updated_at": "2024-01-10T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 11,
+    "fields": {
+      "username": "mehdi_bagheri",
+      "email": "mehdi.bagheri@student.ac.ir",
+      "first_name": "مهدی",
+      "last_name": "باقری",
+      "student_id": "0012345011",
+      "year_of_study": 1,
+      "major": "مهندسی کامپیوتر",
+      "bio": "دانشجوی سال اول و علاقه‌مند به بازی‌سازی",
+      "is_email_verified": true,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440011",
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-11T10:00:00Z",
+      "updated_at": "2024-01-11T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 12,
+    "fields": {
+      "username": "leila_mousavi",
+      "email": "leila.mousavi@student.ac.ir",
+      "first_name": "لیلا",
+      "last_name": "موسوی",
+      "student_id": "9912345012",
+      "year_of_study": 2,
+      "major": "مهندسی کامپیوتر",
+      "bio": "علاقه‌مند به طراحی UI/UX",
+      "is_email_verified": true,
+      "email_verification_token": "550e8400-e29b-41d4-a716-446655440012",
+      "password": "pbkdf2_sha256$600000$test$test",
+      "created_at": "2024-01-12T10:00:00Z",
+      "updated_at": "2024-01-12T10:00:00Z",
+      "is_deleted": false
+    }
+  }
+]

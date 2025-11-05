@@ -1,0 +1,26 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls unfold %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script src="{% url 'admin:jsi18n' %}"></script>
+    {{ form.media }}
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="aligned border border-base-200 mb-8 rounded-default pt-3 px-3 shadow-sm dark:border-base-800">
+            {% for field in form %}
+                {% include "unfold/helpers/field.html" with field=field %}
+            {% endfor %}
+        </div>
+
+        <div class="flex justify-end gap-2">
+            {% component "unfold/components/button.html" with submit=1 %}
+                {% trans "Submit form" %}
+            {% endcomponent %}
+        </div>
+    </form>
+{% endblock %}

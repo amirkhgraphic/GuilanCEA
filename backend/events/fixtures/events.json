@@ -1,0 +1,379 @@
+[
+  {
+    "model": "events.event",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-02-28T10:00:00Z",
+      "updated_at": "2024-02-28T10:00:00Z",
+      "is_deleted": false,
+      "title": "کارگاه یادگیری ماشین پیشرفته",
+      "slug": "advanced-machine-learning-workshop",
+      "description": "# کارگاه یادگیری ماشین پیشرفته\n\nدر این کارگاه با تکنیک‌های پیشرفته یادگیری ماشین آشنا خواهید شد.\n\n## سرفصل‌ها:\n- Deep Learning\n- Neural Networks\n- TensorFlow و Keras\n- پروژه عملی\n\n## پیش‌نیازها:\n- آشنایی با پایتون\n- دانش پایه ریاضی\n- تجربه کار با NumPy",
+      "start_time": "2024-03-15T14:00:00Z",
+      "end_time": "2024-03-15T18:00:00Z",
+      "event_type": "on_site",
+      "address": "سالن کنفرانس دانشکده مهندسی کامپیوتر",
+      "location": "35.7219,51.3890",
+      "status": "published",
+      "capacity": 50,
+      "price": "150000.00",
+      "registration_start_date": "2024-03-01T00:00:00Z",
+      "registration_end_date": "2024-03-14T23:59:59Z"
+    }
+  },
+  {
+    "model": "events.event",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-03-02T09:00:00Z",
+      "updated_at": "2024-03-02T09:00:00Z",
+      "is_deleted": false,
+      "title": "مسابقه برنامه‌نویسی بهاری",
+      "slug": "spring-programming-contest",
+      "description": "# مسابقه برنامه‌نویسی بهاری\n\nمسابقه‌ای هیجان‌انگیز برای تمامی علاقه‌مندان به برنامه‌نویسی\n\n## جوایز:\n- نفر اول: ۵ میلیون تومان\n- نفر دوم: ۳ میلیون تومان  \n- نفر سوم: ۲ میلیون تومان\n\n## قوانین:\n- مسابقه انفرادی\n- مدت زمان: ۳ ساعت\n- ۸ مسئله الگوریتمی\n- زبان‌های مجاز: C++, Java, Python",
+      "start_time": "2024-03-22T09:00:00Z",
+      "end_time": "2024-03-22T12:00:00Z",
+      "event_type": "on_site",
+      "address": "آزمایشگاه کامپیوتر شماره ۱",
+      "location": "35.7225,51.3885",
+      "status": "published",
+      "capacity": 80,
+      "price": null,
+      "registration_start_date": "2024-03-05T00:00:00Z",
+      "registration_end_date": "2024-03-20T23:59:59Z"
+    }
+  },
+  {
+    "model": "events.event",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-03-08T11:00:00Z",
+      "updated_at": "2024-03-08T11:00:00Z",
+      "is_deleted": false,
+      "title": "وبینار امنیت سایبری",
+      "slug": "cybersecurity-webinar",
+      "description": "# وبینار امنیت سایبری\n\nآشنایی با آخرین تهدیدات سایبری و روش‌های مقابله\n\n## موضوعات:\n- تهدیدات جدید سایبری\n- روش‌های حفاظت\n- ابزارهای امنیتی\n- مطالعه موردی حملات\n\n## مدرس:\nدکتر محمد رضایی - متخصص امنیت سایبری",
+      "start_time": "2024-03-28T19:00:00Z",
+      "end_time": "2024-03-28T21:00:00Z",
+      "event_type": "online",
+      "online_link": "https://meet.google.com/abc-defg-hij",
+      "status": "published",
+      "capacity": 200,
+      "price": null,
+      "registration_start_date": "2024-03-10T00:00:00Z",
+      "registration_end_date": "2024-03-27T23:59:59Z"
+    }
+  },
+  {
+    "model": "events.event",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-03-18T14:00:00Z",
+      "updated_at": "2024-03-18T14:00:00Z",
+      "is_deleted": false,
+      "title": "کارگاه React.js و Next.js",
+      "slug": "reactjs-nextjs-workshop",
+      "description": "# کارگاه React.js و Next.js\n\nآموزش کامل توسعه وب مدرن با React و Next.js\n\n## محتوای کارگاه:\n- مبانی React.js\n- Hooks و State Management\n- Next.js و SSR\n- پروژه عملی\n\n## مدرس:\nمهندس امیر قربانی - توسعه‌دهنده فول‌استک",
+      "start_time": "2024-04-05T13:00:00Z",
+      "end_time": "2024-04-05T17:00:00Z",
+      "event_type": "hybrid",
+      "address": "کلاس ۲۰۵ ساختمان مهندسی کامپیوتر",
+      "location": "35.7230,51.3880",
+      "online_link": "https://zoom.us/j/123456789",
+      "status": "published",
+      "capacity": 40,
+      "price": "200000.00",
+      "registration_start_date": "2024-03-20T00:00:00Z",
+      "registration_end_date": "2024-04-04T23:59:59Z"
+    }
+  },
+  {
+    "model": "events.event",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-03-22T16:00:00Z",
+      "updated_at": "2024-03-22T16:00:00Z",
+      "is_deleted": false,
+      "title": "بازدید از شرکت دیجی‌کالا",
+      "slug": "digikala-company-visit",
+      "description": "# بازدید از شرکت دیجی‌کالا\n\nبازدید علمی از یکی از بزرگ‌ترین شرکت‌های فناوری کشور\n\n## برنامه بازدید:\n- آشنایی با ساختار شرکت\n- بازدید از بخش‌های مختلف\n- گفتگو با مهندسان\n- معرفی فرصت‌های شغلی\n\n## نکات مهم:\n- حمل و نقل رایگان\n- ناهار در محل\n- اهدای هدایای تبلیغاتی",
+      "start_time": "2024-04-12T08:00:00Z",
+      "end_time": "2024-04-12T16:00:00Z",
+      "event_type": "on_site",
+      "address": "شرکت دیجی‌کالا، تهران",
+      "location": "35.7580,51.4100",
+      "status": "published",
+      "capacity": 30,
+      "price": null,
+      "registration_start_date": "2024-03-25T00:00:00Z",
+      "registration_end_date": "2024-04-10T23:59:59Z"
+    }
+  },
+  {
+    "model": "events.event",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-03-30T12:00:00Z",
+      "updated_at": "2024-03-30T12:00:00Z",
+      "is_deleted": false,
+      "title": "هکاتون هوش مصنوعی",
+      "slug": "ai-hackathon",
+      "description": "# هکاتون هوش مصنوعی\n\nرقابت ۴۸ ساعته برای ساخت پروژه‌های هوش مصنوعی\n\n## موضوعات:\n- پردازش زبان طبیعی\n- بینایی کامپیوتر\n- یادگیری تقویتی\n- هوش مصنوعی در پزشکی\n\n## جوایز:\n- تیم اول: ۱۰ میلیون تومان\n- تیم دوم: ۶ میلیون تومان\n- تیم سوم: ۴ میلیون تومان\n\n## امکانات:\n- غذا و نوشیدنی رایگان\n- فضای کار ۲۴ ساعته\n- منتورینگ توسط اساتید",
+      "start_time": "2024-04-19T18:00:00Z",
+      "end_time": "2024-04-21T18:00:00Z",
+      "event_type": "on_site",
+      "address": "مرکز نوآوری دانشگاه",
+      "location": "35.7200,51.3900",
+      "status": "published",
+      "capacity": 60,
+      "price": "100000.00",
+      "registration_start_date": "2024-04-01T00:00:00Z",
+      "registration_end_date": "2024-04-17T23:59:59Z"
+    }
+  },
+  {
+    "model": "events.event",
+    "pk": 7,
+    "fields": {
+      "created_at": "2024-04-08T15:00:00Z",
+      "updated_at": "2024-04-08T15:00:00Z",
+      "is_deleted": false,
+      "title": "سمینار کارآفرینی فناوری",
+      "slug": "tech-entrepreneurship-seminar",
+      "description": "# سمینار کارآفرینی فناوری\n\nآشنایی با دنیای کارآفرینی و استارتاپ‌های فناوری\n\n## سخنرانان:\n- دکتر علی احمدی - موسس استارتاپ تپسی\n- خانم سارا محمدی - مدیرعامل کافه‌بازار\n- مهندس رضا کریمی - سرمایه‌گذار فرشته\n\n## موضوعات:\n- ایده‌یابی و اعتبارسنجی\n- تیم‌سازی\n- جذب سرمایه\n- بازاریابی دیجیتال",
+      "start_time": "2024-04-26T14:00:00Z",
+      "end_time": "2024-04-26T18:00:00Z",
+      "event_type": "hybrid",
+      "address": "آمفی‌تئاتر مرکزی دانشگاه",
+      "location": "35.7210,51.3895",
+      "online_link": "https://meet.google.com/xyz-uvw-rst",
+      "status": "published",
+      "capacity": 150,
+      "price": null,
+      "registration_start_date": "2024-04-10T00:00:00Z",
+      "registration_end_date": "2024-04-25T23:59:59Z"
+    }
+  },
+  {
+    "model": "events.event",
+    "pk": 8,
+    "fields": {
+      "created_at": "2024-04-12T13:00:00Z",
+      "updated_at": "2024-04-12T13:00:00Z",
+      "is_deleted": false,
+      "title": "کارگاه DevOps و Docker",
+      "slug": "devops-docker-workshop",
+      "description": "# کارگاه DevOps و Docker\n\nآموزش عملی ابزارهای DevOps و کانتینریزیشن\n\n## سرفصل‌ها:\n- مقدمه‌ای بر DevOps\n- Docker و Containerization\n- Docker Compose\n- CI/CD Pipeline\n- Kubernetes مقدماتی\n\n## پیش‌نیازها:\n- آشنایی با Linux\n- تجربه کار با Terminal\n- دانش پایه شبکه",
+      "start_time": "2024-05-03T09:00:00Z",
+      "end_time": "2024-05-03T17:00:00Z",
+      "event_type": "on_site",
+      "address": "آزمایشگاه شبکه دانشکده",
+      "location": "35.7215,51.3888",
+      "status": "published",
+      "capacity": 25,
+      "price": "300000.00",
+      "registration_start_date": "2024-04-15T00:00:00Z",
+      "registration_end_date": "2024-05-01T23:59:59Z"
+    }
+  },
+  {
+    "model": "events.event",
+    "pk": 9,
+    "fields": {
+      "created_at": "2024-04-18T10:00:00Z",
+      "updated_at": "2024-04-18T10:00:00Z",
+      "is_deleted": false,
+      "title": "مسابقه طراحی UI/UX",
+      "slug": "ui-ux-design-contest",
+      "description": "# مسابقه طراحی UI/UX\n\nرقابت خلاقانه برای طراحی بهترین رابط کاربری\n\n## موضوع مسابقه:\nطراحی اپلیکیشن موبایل برای مدیریت تسک‌های دانشجویی\n\n## معیارهای داوری:\n- خلاقیت و نوآوری\n- قابلیت استفاده\n- زیبایی بصری\n- تجربه کاربری\n\n## جوایز:\n- نفر اول: تبلت iPad\n- نفر دوم: هدفون بی‌سیم\n- نفر سوم: پاوربانک",
+      "start_time": "2024-05-10T10:00:00Z",
+      "end_time": "2024-05-10T18:00:00Z",
+      "event_type": "on_site",
+      "address": "استودیو طراحی دانشکده هنر",
+      "location": "35.7240,51.3870",
+      "status": "published",
+      "capacity": 40,
+      "price": "50000.00",
+      "registration_start_date": "2024-04-20T00:00:00Z",
+      "registration_end_date": "2024-05-08T23:59:59Z"
+    }
+  },
+  {
+    "model": "events.event",
+    "pk": 10,
+    "fields": {
+      "created_at": "2024-04-28T17:00:00Z",
+      "updated_at": "2024-04-28T17:00:00Z",
+      "is_deleted": false,
+      "title": "نشست فارغ‌التحصیلان",
+      "slug": "alumni-meetup",
+      "description": "# نشست فارغ‌التحصیلان\n\nدیدار با فارغ‌التحصیلان موفق رشته مهندسی کامپیوتر\n\n## برنامه:\n- معرفی فارغ‌التحصیلان\n- تجربیات شغلی\n- مشاوره تحصیلی\n- شبکه‌سازی\n- ضیافت شام\n\n## مهمانان ویژه:\n- دکتر حسن زارع - مدیر فنی گوگل\n- مهندس مریم حسینی - بنیان‌گذار استارتاپ\n- دکتر امیر قربانی - استاد MIT",
+      "start_time": "2024-05-17T17:00:00Z",
+      "end_time": "2024-05-17T22:00:00Z",
+      "event_type": "on_site",
+      "address": "سالن همایش‌های دانشگاه",
+      "location": "35.7205,51.3892",
+      "status": "published",
+      "capacity": 100,
+      "price": null,
+      "registration_start_date": "2024-05-01T00:00:00Z",
+      "registration_end_date": "2024-05-15T23:59:59Z"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-03-02T10:30:00Z",
+      "updated_at": "2024-03-02T10:30:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-03-02T10:30:00Z",
+      "event": 1,
+      "user": 3,
+      "status": "confirmed"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-03-03T14:15:00Z",
+      "updated_at": "2024-03-03T14:15:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-03-03T14:15:00Z",
+      "event": 1,
+      "user": 4,
+      "status": "confirmed"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-03-06T09:20:00Z",
+      "updated_at": "2024-03-06T09:20:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-03-06T09:20:00Z",
+      "event": 2,
+      "user": 5,
+      "status": "confirmed"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-03-07T16:45:00Z",
+      "updated_at": "2024-03-07T16:45:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-03-07T16:45:00Z",
+      "event": 2,
+      "user": 6,
+      "status": "confirmed"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-03-12T11:30:00Z",
+      "updated_at": "2024-03-12T11:30:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-03-12T11:30:00Z",
+      "event": 3,
+      "user": 7,
+      "status": "confirmed"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-03-13T13:25:00Z",
+      "updated_at": "2024-03-13T13:25:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-03-13T13:25:00Z",
+      "event": 3,
+      "user": 8,
+      "status": "confirmed"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 7,
+    "fields": {
+      "created_at": "2024-03-22T15:10:00Z",
+      "updated_at": "2024-03-22T15:10:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-03-22T15:10:00Z",
+      "event": 4,
+      "user": 9,
+      "status": "pending"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 8,
+    "fields": {
+      "created_at": "2024-03-23T12:40:00Z",
+      "updated_at": "2024-03-23T12:40:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-03-23T12:40:00Z",
+      "event": 4,
+      "user": 10,
+      "status": "confirmed"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 9,
+    "fields": {
+      "created_at": "2024-03-27T08:55:00Z",
+      "updated_at": "2024-03-27T08:55:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-03-27T08:55:00Z",
+      "event": 5,
+      "user": 11,
+      "status": "confirmed"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 10,
+    "fields": {
+      "created_at": "2024-04-02T14:20:00Z",
+      "updated_at": "2024-04-02T14:20:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-04-02T14:20:00Z",
+      "event": 6,
+      "user": 12,
+      "status": "confirmed"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 11,
+    "fields": {
+      "created_at": "2024-04-12T10:15:00Z",
+      "updated_at": "2024-04-12T10:15:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-04-12T10:15:00Z",
+      "event": 7,
+      "user": 2,
+      "status": "confirmed"
+    }
+  },
+  {
+    "model": "events.registration",
+    "pk": 12,
+    "fields": {
+      "created_at": "2024-04-16T16:30:00Z",
+      "updated_at": "2024-04-16T16:30:00Z",
+      "is_deleted": false,
+      "registered_at": "2024-04-16T16:30:00Z",
+      "event": 8,
+      "user": 1,
+      "status": "confirmed"
+    }
+  }
+]

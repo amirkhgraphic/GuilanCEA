@@ -1,0 +1,102 @@
+import { useLocation, useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
+import PaymentResult from "@/components/PaymentResult";
+import { formatJalali } from "@/lib/utils";
+import Markdown from '@/components/Markdown';
+
+export default function EventFreeSuccessPage() {
+  const { slug } = useParams();
+  const search = new URLSearchParams(useLocation().search);
+  const registrationId = search.get("registration_id") || "";
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["registration-verify", registrationId],
+    queryFn: () =>
+      registrationId ? api.verifyMyRegistration(registrationId) : Promise.resolve(null),
+    enabled: Boolean(registrationId),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="container py-10" dir="rtl">
+        در حال بارگذاری...
+      </div>
+    );
+  }
+
+  // اگر بک‌اند چیزی برنگرداند یا خطا داد
+  if (!data || isError) {
+    return (
+      <div className="container py-10" dir="rtl">
+        <PaymentResult
+          title="اطلاعات ثبت‌نام در دسترس نیست"
+          subtitle="امکان دریافت جزئیات ثبت‌نام فراهم نشد. اگر مبلغی پرداخت نشده، ثبت‌نام شما برای رویداد رایگان انجام شده است."
+          details={[
+            { label: "کد ثبت‌نام", value: registrationId || "—" },
+            { label: "رویداد", value: slug || "—" },
+            { label: "مبلغ", value: "رایگان" },
+          ]}
+        />
+        <div className="mx-auto mt-6 flex max-w-xl items-center justify-end gap-2">
+          <Link to={`/events/${slug || ""}`}>
+            <Button variant="outline">بازگشت به رویداد</Button>
+          </Link>
+          <Link to="/events">
+            <Button>مشاهده سایر رویدادها</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const details = [
+    { label: "عنوان رویداد", value: data.event_title || (slug || "—") },
+    { label: "شیوه برگزاری", value: data.event_type || "—" },
+    { label: "کد ثبت‌نام",
+      value: <code dir="ltr" className="font-mono bg-muted px-2 py-0.5 rounded">{data.ticket_id}</code>
+    },
+    { label: "وضعیت", value: faStatus(data.status) },
+    ...(data.registered_at ? [{ label: "تاریخ ثبت‌نام", value: formatJalali(data.registered_at) }] : []),
+    { label: "مبلغ", value: "رایگان" },
+  ];
+
+  return (
+    <div className="container py-10" dir="rtl">
+      <PaymentResult
+        title="ثبت‌نام با موفقیت انجام شد 🎉"
+        subtitle={`شما با موفقیت برای «${data.event_title || "رویداد"}» ثبت‌نام کرده‌اید.`}
+        details={details}
+      />
+
+      <div className="mx-auto mt-6 flex max-w-xl items-center justify-end gap-2">
+        <Markdown content={data.success_markdown} justify size="base" />
+      </div>
+
+      <div className="mx-auto mt-6 flex max-w-xl items-center justify-end gap-2">
+        <Link to={`/events/${slug || ""}`}>
+          <Button variant="outline">بازگشت به رویداد</Button>
+        </Link>
+        <Link to="/events">
+          <Button>مشاهده سایر رویدادها</Button>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function faStatus(status?: string) {
+  switch ((status || "").toUpperCase()) {
+    case "CONFIRMED":
+    case "APPROVED":
+      return "تأیید شده";
+    case "PENDING":
+      return "در انتظار";
+    case "CANCELLED":
+    case "CANCELED":
+      return "لغو شده";
+    default:
+      return status || "—";
+  }
+}

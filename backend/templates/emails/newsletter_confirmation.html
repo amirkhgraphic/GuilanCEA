@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأیید اشتراک خبرنامه</title>
+    <style>
+        body {
+            font-family: 'Tahoma', 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            direction: rtl;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #168085;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #168085;
+            margin-bottom: 10px;
+        }
+        .confirm-button {
+            display: inline-block;
+            background-color: #168085;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .confirm-button:hover {
+            background-color: #0f5d61;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        .social-links {
+            margin: 20px 0;
+        }
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #168085;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">انجمن علوم کامپیوتر</div>
+            <p>انجمن علوم کامپیوتر</p>
+        </div>
+
+        <h1>به خبرنامه ما خوش آمدید!</h1>
+
+        <p>سلام،</p>
+
+        <p>از اشتراک شما در خبرنامه انجمن علوم کامپیوتر متشکریم. برای تکمیل فرآیند اشتراک، لطفاً آدرس ایمیل خود را با کلیک روی دکمه زیر تأیید کنید:</p>
+
+        <div style="text-align: center;">
+            <a href="{{ confirmation_url }}" class="confirm-button">تأیید اشتراک</a>
+        </div>
+
+        <p>اگر دکمه کار نمی‌کند، می‌توانید این لینک را کپی کرده و در مرورگر خود باز کنید:</p>
+        <p style="word-break: break-all; color: #168085;">{{ confirmation_url }}</p>
+
+        <p>پس از تأیید، شما دریافت خواهید کرد:</p>
+        <ul>
+            <li>📢 اطلاعیه‌های مهم</li>
+            <li>🎓 اخبار آکادمیک</li>
+            <li>🎉 اطلاع‌رسانی رویدادها</li>
+            <li>💡 بینش‌های فناوری و فرصت‌ها</li>
+        </ul>
+
+        <p><strong>توجه:</strong> این لینک تأیید به دلایل امنیتی ظرف ۲۴ ساعت منقضی خواهد شد.</p>
+
+        <div class="footer">
+            <p><strong>انجمن علوم کامپیوتر</strong></p>
+            <div class="social-links">
+                <a href="https://www.instagram.com/your_association_instagram">📷 اینستاگرام</a>
+                <a href="https://t.me/your_association_telegram">📱 تلگرام</a>
+            </div>
+            <p>اگر شما در این خبرنامه ثبت‌نام نکرده‌اید، لطفاً این ایمیل را نادیده بگیرید.</p>
+        </div>
+    </div>
+</body>
+</html>

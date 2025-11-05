@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لغو ثبت‌نام - انجمن علمی مهندسی کامپیوتر گیلان</title>
+    <style>
+        body { font-family: 'Vazir','Tahoma',Arial,sans-serif; line-height:1.6; color:#333; max-width:600px; margin:0 auto; padding:20px; direction:rtl; text-align:right; }
+        .header { background-color:#4f46e5; color:#fff; padding:20px; text-align:center; border-radius:8px 8px 0 0; }
+        .content { background-color:#f9fafb; padding:30px; border-radius:0 0 8px 8px; }
+        a.button,.button { display:inline-block; background-color:#4f46e5; color:white; padding:12px 24px; text-decoration:none; border-radius:6px; margin:20px 0; }
+        .footer { width:100%; text-align:center; margin-top:20px; font-size:14px; color:#6b7280; }
+        @font-face { font-family:'Vazir'; src:url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Regular.woff2') format('woff2'); font-weight:normal; font-style:normal; font-display:swap; }
+        @font-face { font-family:'Vazir'; src:url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/Vazir-Bold.woff2') format('woff2'); font-weight:bold; font-style:normal; font-display:swap; }
+        .social-links { width:100%; display:flex; justify-content:center; gap:1rem; margin-top:15px; direction:ltr; }
+        .social-links a { text-decoration:none; color:#6b7280; display:flex; align-items:center; gap:5px; flex-direction:row-reverse; }
+        .social-links img { width:24px; height:24px; vertical-align:middle; }
+        .muted { color:#6b7280; font-size:14px; }
+        .card { background:white; border:1px solid #e5e7eb; border-radius:8px; padding:16px; margin-top:10px; }
+    </style>
+</head>
+<body dir="rtl">
+    <div class="header">
+        <h1>انجمن علمی مهندسی کامپیوتر</h1>
+        <p>لغو ثبت‌نام</p>
+    </div>
+
+    <div class="content">
+        <h2>سلام {{ user.get_full_name|default:'دانشجوی' }} گرامی،</h2>
+        <p>ثبت‌نام شما در <strong>{{ event.title }}</strong> لغو شد.</p>
+
+        {% if event.start_time %}
+        <div class="card">
+            <p><strong>زمان رویداد:</strong> {{ event.start_time|date:"Y-m-d H:i" }}</p>
+        </div>
+        {% endif %}
+
+        <p class="muted">اگر این تغییر را شما انجام نداده‌اید، لطفاً با پشتیبانی تماس بگیرید.</p>
+    </div>
+
+    <div class="footer">
+        <p>&copy; {% now 'Y' %} انجمن علمی مهندسی کامپیوتر شرق گیلان. تمامی حقوق محفوظ است.</p>
+
+        <!-- ایموجی + لینک بدون تصویر -->
+        <div style="text-align:center; margin-top:12px; direction:ltr;">
+            <a href="https://instagram.com/guilance.ir" target="_blank"
+            style="text-decoration:none; color:#6b7280; margin:0 8px; font-size:14px;">
+            📷 Instagram
+            </a>
+            <a href="https://t.me/guilance" target="_blank"
+            style="text-decoration:none; color:#6b7280; margin:0 8px; font-size:14px;">
+            ✈️ Telegram
+            </a>
+        </div>
+
+        <p style="margin-top:10px;">این ایمیل به صورت خودکار ارسال شده است. لطفاً به این پیام پاسخ ندهید.</p>
+    </div>
+</body>
+</html>

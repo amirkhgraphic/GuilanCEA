@@ -1,0 +1,25 @@
+{% load jalali %}
+<!DOCTYPE html><html lang="fa" dir="rtl"><body style="margin:0;padding:0;background:#ffffff;">
+  <table role="presentation" width="100%" style="border-collapse:collapse;">
+    <tr><td align="center" style="padding:20px;">
+      <table role="presentation" width="600" style="width:100%;max-width:600px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+        <tr><td align="center" style="background:#111827;color:#fff;padding:18px;font-family:Tahoma,Arial,sans-serif;font-size:16px;">یادآوری رویداد</td></tr>
+        <tr>
+          <td style="background:#f9fafb;padding:22px 30px;text-align:right;font-family:Tahoma,Arial,sans-serif;font-size:14px;color:#374151;">
+            <p style="margin:0 0 10px 0;">{{ user.get_full_name|default:'کاربر' }} عزیز، این یک یادآوری برای رویداد <strong style="color:#111827;">{{ event.title }}</strong> است.</p>
+            <table role="presentation" style="width:100%;border-collapse:collapse;margin:6px 0;">
+              <tr><td style="padding:6px 0;color:#6b7280;">تاریخ</td>
+                  <td style="padding:6px 0;color:#111827;">{{ event.start_time|jdate:"%Y/%m/%d %H:%M"|fa_digits }}</td></tr>
+              <tr><td style="padding:6px 0;color:#6b7280;">محل برگزاری</td>
+                  <td style="padding:6px 0;color:#111827;">{{ event.get_event_type_display }}{% if event.address %} | {{ event.address }}{% endif %}</td></tr>
+            </table>
+            <div style="text-align:center;margin:16px 0;">
+              <a href="{{ event_url }}" style="display:inline-block;background:#111827;color:#fff;text-decoration:none;padding:10px 22px;border-radius:6px;">مشاهده رویداد</a>
+            </div>
+          </td>
+        </tr>
+        <tr><td align="center" style="padding:14px 20px;color:#6b7280;font-family:Tahoma,Arial,sans-serif;font-size:12px;">&copy; {% now 'Y' %} انجمن علمی</td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>

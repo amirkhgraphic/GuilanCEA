@@ -1,0 +1,34 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Prometheus self-metrics (so you can see if Prom is up)
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['prometheus:9090']
+
+  # Host metrics from node_exporter (you run it in host network mode)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node_exporter:9100']
+
+  # (Optional) enable AFTER you expose metrics on Traefik (port 8082)
+  - job_name: 'traefik'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['traefik:8082']
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres_exporter:9187']
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:9121']
+
+  # (Optional) enable ONLY if your Django exposes /metrics (django-prometheus)
+  - job_name: 'django'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['web:8000']

@@ -1,0 +1,536 @@
+[
+  {
+    "model": "communications.announcement",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-03-01T10:00:00Z",
+      "updated_at": "2024-03-01T10:00:00Z",
+      "is_deleted": false,
+      "title": "شروع ثبت‌نام کارگاه یادگیری ماشین",
+      "content": "# شروع ثبت‌نام کارگاه یادگیری ماشین\n\nبا سلام و احترام\n\nثبت‌نام کارگاه یادگیری ماشین پیشرفته از امروز آغاز شد.\n\n## جزئیات:\n- تاریخ: ۱۵ اسفند ۱۴۰۲\n- مدت: ۴ ساعت\n- هزینه: ۱۵۰ هزار تومان\n- ظرفیت: ۵۰ نفر\n\nبرای ثبت‌نام به وب‌سایت انجمن مراجعه کنید.",
+      "announcement_type": "event",
+      "priority": "high",
+      "author": 1,
+      "is_published": true,
+      "publish_date": "2024-03-01T10:00:00Z",
+      "send_email": true,
+      "send_push": true,
+      "email_sent": true,
+      "push_sent": true,
+      "target_audience": "all"
+    }
+  },
+  {
+    "model": "communications.announcement",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-03-10T14:30:00Z",
+      "updated_at": "2024-03-10T14:30:00Z",
+      "is_deleted": false,
+      "title": "تغییر زمان مسابقه برنامه‌نویسی",
+      "content": "# تغییر زمان مسابقه برنامه‌نویسی\n\nبه اطلاع شرکت‌کنندگان محترم می‌رساند که زمان مسابقه برنامه‌نویسی بهاری به دلیل تعطیلات از ۲۲ اسفند به ۲۹ اسفند تغییر یافت.\n\nعذرخواهی بابت این تغییر و لطفاً برنامه‌ریزی خود را بر این اساس انجام دهید.",
+      "announcement_type": "urgent",
+      "priority": "urgent",
+      "author": 2,
+      "is_published": true,
+      "publish_date": "2024-03-10T14:30:00Z",
+      "send_email": true,
+      "send_push": true,
+      "email_sent": true,
+      "push_sent": true,
+      "target_audience": "all"
+    }
+  },
+  {
+    "model": "communications.announcement",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-03-15T09:00:00Z",
+      "updated_at": "2024-03-15T09:00:00Z",
+      "is_deleted": false,
+      "title": "وبینار امنیت سایبری - رایگان",
+      "content": "# وبینار امنیت سایبری\n\nانجمن علمی مهندسی کامپیوتر برگزار می‌کند:\n\n**وبینار امنیت سایبری**\n\n- تاریخ: ۷ فروردین ۱۴۰۳\n- ساعت: ۱۹:۰۰ الی ۲۱:۰۰\n- مدرس: دکتر محمد رضایی\n- شرکت: رایگان\n\nلینک ورود یک ساعت قبل از شروع ارسال خواهد شد.",
+      "announcement_type": "event",
+      "priority": "normal",
+      "author": 5,
+      "is_published": true,
+      "publish_date": "2024-03-15T09:00:00Z",
+      "send_email": true,
+      "send_push": false,
+      "email_sent": true,
+      "push_sent": false,
+      "target_audience": "members"
+    }
+  },
+  {
+    "model": "communications.announcement",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-03-20T11:15:00Z",
+      "updated_at": "2024-03-20T11:15:00Z",
+      "is_deleted": false,
+      "title": "فراخوان مقاله برای نشریه انجمن",
+      "content": "# فراخوان مقاله برای نشریه انجمن\n\nدانشجویان و اساتید محترم می‌توانند مقالات خود را در زمینه‌های زیر برای چاپ در نشریه انجمن ارسال کنند:\n\n## موضوعات:\n- هوش مصنوعی\n- امنیت سایبری\n- مهندسی نرم‌افزار\n- شبکه‌های کامپیوتری\n- علم داده\n\n## مهلت ارسال:\n۳۰ فروردین ۱۴۰۳\n\nایمیل ارسال: journal@cs-association.ac.ir",
+      "announcement_type": "academic",
+      "priority": "normal",
+      "author": 1,
+      "is_published": true,
+      "publish_date": "2024-03-20T11:15:00Z",
+      "send_email": true,
+      "send_push": false,
+      "email_sent": true,
+      "push_sent": false,
+      "target_audience": "all"
+    }
+  },
+  {
+    "model": "communications.announcement",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-04-01T08:00:00Z",
+      "updated_at": "2024-04-01T08:00:00Z",
+      "is_deleted": false,
+      "title": "هکاتون هوش مصنوعی - ثبت‌نام آغاز شد",
+      "content": "# هکاتون هوش مصنوعی\n\nبزرگ‌ترین رویداد سال انجمن!\n\n## جزئیات:\n- تاریخ: ۳۰ فروردین تا ۲ اردیبهشت\n- مدت: ۴۸ ساعت\n- جایزه کل: ۲۰ میلیون تومان\n- ظرفیت: ۶۰ نفر (۲۰ تیم)\n\n## امکانات:\n- غذا و نوشیدنی رایگان\n- منتورینگ اساتید\n- فضای کار ۲۴ ساعته\n\nثبت‌نام تیمی (۳ نفره) الزامی است.",
+      "announcement_type": "event",
+      "priority": "high",
+      "author": 9,
+      "is_published": true,
+      "publish_date": "2024-04-01T08:00:00Z",
+      "send_email": true,
+      "send_push": true,
+      "email_sent": true,
+      "push_sent": true,
+      "target_audience": "all"
+    }
+  },
+  {
+    "model": "communications.announcement",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-04-05T16:00:00Z",
+      "updated_at": "2024-04-05T16:00:00Z",
+      "is_deleted": false,
+      "title": "جلسه کمیته اجرایی انجمن",
+      "content": "# جلسه کمیته اجرایی انجمن\n\nاعضای محترم کمیته اجرایی\n\nجلسه ماهانه کمیته اجرایی:\n\n- تاریخ: ۱۰ اردیبهشت ۱۴۰۳\n- ساعت: ۱۴:۰۰\n- مکان: دفتر انجمن\n\n## دستور جلسه:\n1. بررسی گزارش مالی\n2. برنامه‌ریزی رویدادهای آتی\n3. بررسی درخواست‌های عضویت\n4. سایر موارد\n\nحضور همه اعضا الزامی است.",
+      "announcement_type": "general",
+      "priority": "normal",
+      "author": 1,
+      "is_published": true,
+      "publish_date": "2024-04-05T16:00:00Z",
+      "send_email": true,
+      "send_push": false,
+      "email_sent": true,
+      "push_sent": false,
+      "target_audience": "committee"
+    }
+  },
+  {
+    "model": "communications.announcement",
+    "pk": 7,
+    "fields": {
+      "created_at": "2024-04-15T12:30:00Z",
+      "updated_at": "2024-04-15T12:30:00Z",
+      "is_deleted": false,
+      "title": "سمینار کارآفرینی فناوری",
+      "content": "# سمینار کارآفرینی فناوری\n\nبا حضور کارآفرینان موفق صنعت فناوری\n\n## سخنرانان:\n- دکتر علی احمدی (موسس تپسی)\n- خانم سارا محمدی (مدیرعامل کافه‌بازار)\n- مهندس رضا کریمی (سرمایه‌گذار)\n\n## موضوعات:\n- از ایده تا محصول\n- جذب سرمایه\n- چالش‌های استارتاپی\n- آینده فناوری در ایران\n\nشرکت رایگان - ظرفیت محدود",
+      "announcement_type": "event",
+      "priority": "high",
+      "author": 2,
+      "is_published": true,
+      "publish_date": "2024-04-15T12:30:00Z",
+      "send_email": true,
+      "send_push": true,
+      "email_sent": true,
+      "push_sent": true,
+      "target_audience": "all"
+    }
+  },
+  {
+    "model": "communications.announcement",
+    "pk": 8,
+    "fields": {
+      "created_at": "2024-04-20T10:45:00Z",
+      "updated_at": "2024-04-20T10:45:00Z",
+      "is_deleted": false,
+      "title": "کارگاه DevOps - ثبت‌نام محدود",
+      "content": "# کارگاه DevOps و Docker\n\nآموزش عملی ابزارهای DevOps\n\n## محتوا:\n- Docker و Containerization\n- CI/CD Pipeline\n- Kubernetes مقدماتی\n- پروژه عملی\n\n## جزئیات:\n- تاریخ: ۱۴ اردیبهشت\n- مدت: ۸ ساعت\n- هزینه: ۳۰۰ هزار تومان\n- ظرفیت: ۲۵ نفر\n\n⚠️ ظرفیت بسیار محدود - عجله کنید!",
+      "announcement_type": "event",
+      "priority": "high",
+      "author": 8,
+      "is_published": true,
+      "publish_date": "2024-04-20T10:45:00Z",
+      "send_email": true,
+      "send_push": true,
+      "email_sent": true,
+      "push_sent": true,
+      "target_audience": "members"
+    }
+  },
+  {
+    "model": "communications.announcement",
+    "pk": 9,
+    "fields": {
+      "created_at": "2024-04-25T13:20:00Z",
+      "updated_at": "2024-04-25T13:20:00Z",
+      "is_deleted": false,
+      "title": "مسابقه طراحی UI/UX - جوایز جذاب",
+      "content": "# مسابقه طراحی UI/UX\n\nفرصتی برای نمایش خلاقیت شما!\n\n## موضوع:\nطراحی اپلیکیشن مدیریت تسک دانشجویی\n\n## جوایز:\n- نفر اول: iPad Air\n- نفر دوم: AirPods Pro\n- نفر سوم: پاوربانک ۲۰۰۰۰ میلی‌آمپر\n\n## مهلت ارسال:\n۲۰ اردیبهشت ۱۴۰۳\n\nفایل‌های Figma یا Adobe XD قابل قبول هستند.",
+      "announcement_type": "event",
+      "priority": "normal",
+      "author": 12,
+      "is_published": true,
+      "publish_date": "2024-04-25T13:20:00Z",
+      "send_email": true,
+      "send_push": false,
+      "email_sent": true,
+      "push_sent": false,
+      "target_audience": "all"
+    }
+  },
+  {
+    "model": "communications.announcement",
+    "pk": 10,
+    "fields": {
+      "created_at": "2024-05-01T15:00:00Z",
+      "updated_at": "2024-05-01T15:00:00Z",
+      "is_deleted": false,
+      "title": "نشست فارغ‌التحصیلان - دعوت ویژه",
+      "content": "# نشست فارغ‌التحصیلان\n\nدیدار با فارغ‌التحصیلان موفق\n\n## مهمانان ویژه:\n- دکتر حسن زارع (مدیر فنی گوگل)\n- مهندس مریم حسینی (بنیان‌گذار استارتاپ)\n- دکتر امیر قربانی (استاد MIT)\n\n## برنامه:\n- ۱۷:۰۰ - پذیرایی\n- ۱۸:۰۰ - سخنرانی‌ها\n- ۱۹:۳۰ - پرسش و پاسخ\n- ۲۰:۳۰ - ضیافت شام\n\nشرکت رایگان - ثبت‌نام الزامی",
+      "announcement_type": "event",
+      "priority": "normal",
+      "author": 5,
+      "is_published": true,
+      "publish_date": "2024-05-01T15:00:00Z",
+      "send_email": true,
+      "send_push": false,
+      "email_sent": true,
+      "push_sent": false,
+      "target_audience": "all"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-01-15T10:30:00Z",
+      "updated_at": "2024-01-15T10:30:00Z",
+      "is_deleted": false,
+      "email": "sara.mohammadi@student.ac.ir",
+      "user": 2,
+      "is_active": true,
+      "subscribed_categories": ["event", "academic", "general"],
+      "confirmed_at": "2024-01-15T10:30:00Z"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-01-20T14:15:00Z",
+      "updated_at": "2024-01-20T14:15:00Z",
+      "is_deleted": false,
+      "email": "reza.karimi@student.ac.ir",
+      "user": 3,
+      "is_active": true,
+      "subscribed_categories": ["event", "urgent"],
+      "confirmed_at": "2024-01-20T14:15:00Z"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-02-01T09:45:00Z",
+      "updated_at": "2024-02-01T09:45:00Z",
+      "is_deleted": false,
+      "email": "maryam.hosseini@student.ac.ir",
+      "user": 4,
+      "is_active": true,
+      "subscribed_categories": ["event", "academic"],
+      "confirmed_at": "2024-02-01T09:45:00Z"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-02-05T16:20:00Z",
+      "updated_at": "2024-02-05T16:20:00Z",
+      "is_deleted": false,
+      "email": "hassan.zare@student.ac.ir",
+      "user": 5,
+      "is_active": true,
+      "subscribed_categories": ["general", "event", "academic", "urgent"],
+      "confirmed_at": "2024-02-05T16:20:00Z"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-02-10T11:30:00Z",
+      "updated_at": "2024-02-10T11:30:00Z",
+      "is_deleted": false,
+      "email": "zahra.safari@student.ac.ir",
+      "user": 6,
+      "is_active": true,
+      "subscribed_categories": ["event", "academic"],
+      "confirmed_at": "2024-02-10T11:30:00Z"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-02-15T13:45:00Z",
+      "updated_at": "2024-02-15T13:45:00Z",
+      "is_deleted": false,
+      "email": "fateme.moradi@student.ac.ir",
+      "user": 8,
+      "is_active": true,
+      "subscribed_categories": ["event"],
+      "confirmed_at": "2024-02-15T13:45:00Z"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 7,
+    "fields": {
+      "created_at": "2024-02-20T08:15:00Z",
+      "updated_at": "2024-02-20T08:15:00Z",
+      "is_deleted": false,
+      "email": "amir.ghorbani@student.ac.ir",
+      "user": 9,
+      "is_active": true,
+      "subscribed_categories": ["general", "event", "academic"],
+      "confirmed_at": "2024-02-20T08:15:00Z"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 8,
+    "fields": {
+      "created_at": "2024-02-25T15:30:00Z",
+      "updated_at": "2024-02-25T15:30:00Z",
+      "is_deleted": false,
+      "email": "nasrin.jafari@student.ac.ir",
+      "user": 10,
+      "is_active": true,
+      "subscribed_categories": ["academic", "event"],
+      "confirmed_at": "2024-02-25T15:30:00Z"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 9,
+    "fields": {
+      "created_at": "2024-03-01T12:00:00Z",
+      "updated_at": "2024-03-01T12:00:00Z",
+      "is_deleted": false,
+      "email": "mehdi.bagheri@student.ac.ir",
+      "user": 11,
+      "is_active": true,
+      "subscribed_categories": ["event"],
+      "confirmed_at": "2024-03-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 10,
+    "fields": {
+      "created_at": "2024-03-05T14:45:00Z",
+      "updated_at": "2024-03-05T14:45:00Z",
+      "is_deleted": false,
+      "email": "leila.mousavi@student.ac.ir",
+      "user": 12,
+      "is_active": true,
+      "subscribed_categories": ["event", "academic"],
+      "confirmed_at": "2024-03-05T14:45:00Z"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 11,
+    "fields": {
+      "created_at": "2024-03-10T10:20:00Z",
+      "updated_at": "2024-03-10T10:20:00Z",
+      "is_deleted": false,
+      "email": "external.user1@gmail.com",
+      "user": null,
+      "is_active": true,
+      "subscribed_categories": ["event"],
+      "confirmed_at": "2024-03-10T10:20:00Z"
+    }
+  },
+  {
+    "model": "communications.newslettersubscription",
+    "pk": 12,
+    "fields": {
+      "created_at": "2024-03-15T16:30:00Z",
+      "updated_at": "2024-03-15T16:30:00Z",
+      "is_deleted": false,
+      "email": "external.user2@yahoo.com",
+      "user": null,
+      "is_active": false,
+      "subscribed_categories": ["general"],
+      "confirmed_at": null
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-01-10T08:00:00Z",
+      "updated_at": "2024-01-10T08:00:00Z",
+      "is_deleted": false,
+      "user": 1,
+      "device_token": "web_push_token_admin_chrome",
+      "device_type": "web",
+      "is_active": true
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-01-15T12:30:00Z",
+      "updated_at": "2024-01-15T12:30:00Z",
+      "is_deleted": false,
+      "user": 2,
+      "device_token": "web_push_token_sara_firefox",
+      "device_type": "web",
+      "is_active": true
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-01-20T16:45:00Z",
+      "updated_at": "2024-01-20T16:45:00Z",
+      "is_deleted": false,
+      "user": 3,
+      "device_token": "web_push_token_reza_chrome",
+      "device_type": "web",
+      "is_active": true
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-02-01T11:20:00Z",
+      "updated_at": "2024-02-01T11:20:00Z",
+      "is_deleted": false,
+      "user": 4,
+      "device_token": "android_token_maryam_phone",
+      "device_type": "android",
+      "is_active": true
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-02-05T18:10:00Z",
+      "updated_at": "2024-02-05T18:10:00Z",
+      "is_deleted": false,
+      "user": 5,
+      "device_token": "web_push_token_hassan_edge",
+      "device_type": "web",
+      "is_active": true
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-02-10T13:25:00Z",
+      "updated_at": "2024-02-10T13:25:00Z",
+      "is_deleted": false,
+      "user": 6,
+      "device_token": "ios_token_zahra_iphone",
+      "device_type": "ios",
+      "is_active": true
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 7,
+    "fields": {
+      "created_at": "2024-02-15T15:40:00Z",
+      "updated_at": "2024-02-15T15:40:00Z",
+      "is_deleted": false,
+      "user": 8,
+      "device_token": "web_push_token_fateme_chrome",
+      "device_type": "web",
+      "is_active": true
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 8,
+    "fields": {
+      "created_at": "2024-02-20T10:15:00Z",
+      "updated_at": "2024-02-20T10:15:00Z",
+      "is_deleted": false,
+      "user": 9,
+      "device_token": "web_push_token_amir_firefox",
+      "device_type": "web",
+      "is_active": true
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 9,
+    "fields": {
+      "created_at": "2024-02-25T17:30:00Z",
+      "updated_at": "2024-02-25T17:30:00Z",
+      "is_deleted": false,
+      "user": 10,
+      "device_token": "android_token_nasrin_phone",
+      "device_type": "android",
+      "is_active": true
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 10,
+    "fields": {
+      "created_at": "2024-03-01T14:00:00Z",
+      "updated_at": "2024-03-01T14:00:00Z",
+      "is_deleted": false,
+      "user": 11,
+      "device_token": "web_push_token_mehdi_chrome",
+      "device_type": "web",
+      "is_active": true
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 11,
+    "fields": {
+      "created_at": "2024-03-05T16:50:00Z",
+      "updated_at": "2024-03-05T16:50:00Z",
+      "is_deleted": false,
+      "user": 12,
+      "device_token": "ios_token_leila_iphone",
+      "device_type": "ios",
+      "is_active": true
+    }
+  },
+  {
+    "model": "communications.pushnotificationdevice",
+    "pk": 12,
+    "fields": {
+      "created_at": "2024-01-10T08:00:00Z",
+      "updated_at": "2024-03-10T12:00:00Z",
+      "is_deleted": false,
+      "user": 1,
+      "device_token": "android_token_admin_phone",
+      "device_type": "android",
+      "is_active": false
+    }
+  }
+]

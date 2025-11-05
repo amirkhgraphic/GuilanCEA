@@ -1,0 +1,672 @@
+[
+  {
+    "model": "blog.category",
+    "pk": 1,
+    "fields": {
+      "name": "هوش مصنوعی",
+      "slug": "artificial-intelligence",
+      "description": "مقالات مربوط به هوش مصنوعی و یادگیری ماشین",
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.category",
+    "pk": 2,
+    "fields": {
+      "name": "برنامه‌نویسی وب",
+      "slug": "web-programming",
+      "description": "آموزش‌ها و مقالات مربوط به توسعه وب",
+      "created_at": "2024-01-02T10:00:00Z",
+      "updated_at": "2024-01-02T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.category",
+    "pk": 3,
+    "fields": {
+      "name": "امنیت سایبری",
+      "slug": "cybersecurity",
+      "description": "مطالب مربوط به امنیت اطلاعات و سایبری",
+      "created_at": "2024-01-03T10:00:00Z",
+      "updated_at": "2024-01-03T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.category",
+    "pk": 4,
+    "fields": {
+      "name": "علم داده",
+      "slug": "data-science",
+      "description": "مقالات مربوط به تحلیل داده و علم داده",
+      "created_at": "2024-01-04T10:00:00Z",
+      "updated_at": "2024-01-04T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.category",
+    "pk": 5,
+    "fields": {
+      "name": "اپلیکیشن موبایل",
+      "slug": "mobile-app",
+      "description": "توسعه اپلیکیشن‌های موبایل",
+      "created_at": "2024-01-05T10:00:00Z",
+      "updated_at": "2024-01-05T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.category",
+    "pk": 6,
+    "fields": {
+      "name": "شبکه کامپیوتری",
+      "slug": "computer-networks",
+      "description": "مطالب مربوط به شبکه‌های کامپیوتری",
+      "created_at": "2024-01-06T10:00:00Z",
+      "updated_at": "2024-01-06T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.category",
+    "pk": 7,
+    "fields": {
+      "name": "بازی‌سازی",
+      "slug": "game-development",
+      "description": "آموزش و مقالات مربوط به توسعه بازی",
+      "created_at": "2024-01-07T10:00:00Z",
+      "updated_at": "2024-01-07T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.category",
+    "pk": 8,
+    "fields": {
+      "name": "طراحی UI/UX",
+      "slug": "ui-ux-design",
+      "description": "طراحی رابط کاربری و تجربه کاربری",
+      "created_at": "2024-01-08T10:00:00Z",
+      "updated_at": "2024-01-08T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.category",
+    "pk": 9,
+    "fields": {
+      "name": "اخبار انجمن",
+      "slug": "association-news",
+      "description": "اخبار و اطلاعیه‌های انجمن علمی",
+      "created_at": "2024-01-09T10:00:00Z",
+      "updated_at": "2024-01-09T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.category",
+    "pk": 10,
+    "fields": {
+      "name": "مسابقات برنامه‌نویسی",
+      "slug": "programming-contests",
+      "description": "اطلاعات مربوط به مسابقات برنامه‌نویسی",
+      "created_at": "2024-01-10T10:00:00Z",
+      "updated_at": "2024-01-10T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 1,
+    "fields": {
+      "name": "پایتون",
+      "slug": "python",
+      "created_at": "2024-01-01T10:00:00Z",
+      "updated_at": "2024-01-01T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 2,
+    "fields": {
+      "name": "جاوااسکریپت",
+      "slug": "javascript",
+      "created_at": "2024-01-02T10:00:00Z",
+      "updated_at": "2024-01-02T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 3,
+    "fields": {
+      "name": "ری‌اکت",
+      "slug": "react",
+      "created_at": "2024-01-03T10:00:00Z",
+      "updated_at": "2024-01-03T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 4,
+    "fields": {
+      "name": "جنگو",
+      "slug": "django",
+      "created_at": "2024-01-04T10:00:00Z",
+      "updated_at": "2024-01-04T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 5,
+    "fields": {
+      "name": "یادگیری عمیق",
+      "slug": "deep-learning",
+      "created_at": "2024-01-05T10:00:00Z",
+      "updated_at": "2024-01-05T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 6,
+    "fields": {
+      "name": "تنسورفلو",
+      "slug": "tensorflow",
+      "created_at": "2024-01-06T10:00:00Z",
+      "updated_at": "2024-01-06T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 7,
+    "fields": {
+      "name": "کیبرنتیز",
+      "slug": "kubernetes",
+      "created_at": "2024-01-07T10:00:00Z",
+      "updated_at": "2024-01-07T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 8,
+    "fields": {
+      "name": "داکر",
+      "slug": "docker",
+      "created_at": "2024-01-08T10:00:00Z",
+      "updated_at": "2024-01-08T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 9,
+    "fields": {
+      "name": "گیت",
+      "slug": "git",
+      "created_at": "2024-01-09T10:00:00Z",
+      "updated_at": "2024-01-09T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 10,
+    "fields": {
+      "name": "لینوکس",
+      "slug": "linux",
+      "created_at": "2024-01-10T10:00:00Z",
+      "updated_at": "2024-01-10T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 11,
+    "fields": {
+      "name": "الگوریتم",
+      "slug": "algorithm",
+      "created_at": "2024-01-11T10:00:00Z",
+      "updated_at": "2024-01-11T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.tag",
+    "pk": 12,
+    "fields": {
+      "name": "ساختمان داده",
+      "slug": "data-structure",
+      "created_at": "2024-01-12T10:00:00Z",
+      "updated_at": "2024-01-12T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 1,
+    "fields": {
+      "title": "مقدمه‌ای بر یادگیری ماشین با پایتون",
+      "slug": "introduction-to-machine-learning-with-python",
+      "content": "# مقدمه‌ای بر یادگیری ماشین با پایتون\n\nیادگیری ماشین یکی از مهم‌ترین شاخه‌های هوش مصنوعی است که امروزه کاربردهای فراوانی در صنایع مختلف دارد.\n\n## کتابخانه‌های مهم\n\n- **Scikit-learn**: برای الگوریتم‌های کلاسیک\n- **TensorFlow**: برای یادگیری عمیق\n- **Pandas**: برای پردازش داده\n- **NumPy**: برای محاسبات عددی\n\n## مثال ساده\n\n```python\nfrom sklearn.linear_model import LinearRegression\nimport numpy as np\n\n# داده‌های نمونه\nX = np.array([[1], [2], [3], [4]])\ny = np.array([2, 4, 6, 8])\n\n# ایجاد مدل\nmodel = LinearRegression()\nmodel.fit(X, y)\n\n# پیش‌بینی\nprint(model.predict([[5]]))\n```\n\nاین مثال ساده نشان می‌دهد که چگونه می‌توان با استفاده از کتابخانه Scikit-learn یک مدل رگرسیون خطی ایجاد کرد.",
+      "excerpt": "آموزش مقدماتی یادگیری ماشین با استفاده از زبان پایتون و کتابخانه‌های محبوب",
+      "author": 1,
+      "status": "published",
+      "published_at": "2024-01-15T10:00:00Z",
+      "category": 1,
+      "is_featured": true,
+      "created_at": "2024-01-15T09:00:00Z",
+      "updated_at": "2024-01-15T09:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 2,
+    "fields": {
+      "title": "ساخت API با Django REST Framework",
+      "slug": "building-api-with-django-rest-framework",
+      "content": "# ساخت API با Django REST Framework\n\nDjango REST Framework یکی از قدرتمندترین ابزارها برای ساخت API در پایتون است.\n\n## نصب و راه‌اندازی\n\n```bash\npip install djangorestframework\n```\n\n## ایجاد Serializer\n\n```python\nfrom rest_framework import serializers\nfrom .models import Post\n\nclass PostSerializer(serializers.ModelSerializer):\n    class Meta:\n        model = Post\n        fields = '__all__'\n```\n\n## ایجاد ViewSet\n\n```python\nfrom rest_framework import viewsets\nfrom .models import Post\nfrom .serializers import PostSerializer\n\nclass PostViewSet(viewsets.ModelViewSet):\n    queryset = Post.objects.all()\n    serializer_class = PostSerializer\n```\n\nبا این روش می‌توانید به راحتی API های قدرتمند و قابل اعتماد بسازید.",
+      "excerpt": "آموزش گام به گام ساخت API با استفاده از Django REST Framework",
+      "author": 2,
+      "status": "published",
+      "published_at": "2024-01-20T14:30:00Z",
+      "category": 2,
+      "is_featured": false,
+      "created_at": "2024-01-20T13:30:00Z",
+      "updated_at": "2024-01-20T13:30:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 3,
+    "fields": {
+      "title": "امنیت در اپلیکیشن‌های وب",
+      "slug": "web-application-security",
+      "content": "# امنیت در اپلیکیشن‌های وب\n\nامنیت یکی از مهم‌ترین جنبه‌های توسعه اپلیکیشن‌های وب است.\n\n## تهدیدات رایج\n\n- **SQL Injection**: تزریق کد SQL مخرب\n- **XSS**: اجرای اسکریپت مخرب در مرورگر\n- **CSRF**: درخواست جعلی بین سایتی\n- **Authentication Bypass**: دور زدن احراز هویت\n\n## راه‌های محافظت\n\n```python\n# استفاده از ORM برای جلوگیری از SQL Injection\nUser.objects.filter(username=username)\n\n# Escape کردن خروجی HTML\nfrom django.utils.html import escape\nsafe_content = escape(user_input)\n\n# استفاده از CSRF Token\n{% csrf_token %}\n```\n\nهمیشه امنیت را در اولویت قرار دهید.",
+      "excerpt": "بررسی تهدیدات امنیتی رایج در اپلیکیشن‌های وب و راه‌های مقابله با آن‌ها",
+      "author": 3,
+      "status": "published",
+      "published_at": "2024-01-25T16:00:00Z",
+      "category": 3,
+      "is_featured": true,
+      "created_at": "2024-01-25T15:00:00Z",
+      "updated_at": "2024-01-25T15:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 4,
+    "fields": {
+      "title": "تحلیل داده با Pandas",
+      "slug": "data-analysis-with-pandas",
+      "content": "# تحلیل داده با Pandas\n\nPandas یکی از قدرتمندترین کتابخانه‌های پایتون برای تحلیل داده است.\n\n## خواندن داده\n\n```python\nimport pandas as pd\n\n# خواندن از CSV\ndf = pd.read_csv('data.csv')\n\n# خواندن از Excel\ndf = pd.read_excel('data.xlsx')\n\n# خواندن از JSON\ndf = pd.read_json('data.json')\n```\n\n## عملیات پایه\n\n```python\n# نمایش اطلاعات کلی\nprint(df.info())\nprint(df.describe())\n\n# فیلتر کردن\nfiltered_df = df[df['age'] > 25]\n\n# گروه‌بندی\ngrouped = df.groupby('category').mean()\n```\n\nPandas ابزاری قدرتمند برای تحلیل داده است.",
+      "excerpt": "آموزش کار با کتابخانه Pandas برای تحلیل و پردازش داده در پایتون",
+      "author": 4,
+      "status": "published",
+      "published_at": "2024-02-01T11:00:00Z",
+      "category": 4,
+      "is_featured": false,
+      "created_at": "2024-02-01T10:00:00Z",
+      "updated_at": "2024-02-01T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 5,
+    "fields": {
+      "title": "توسعه اپلیکیشن موبایل با React Native",
+      "slug": "mobile-app-development-with-react-native",
+      "content": "# توسعه اپلیکیشن موبایل با React Native\n\nReact Native امکان توسعه اپلیکیشن‌های موبایل کراس پلتفرم را فراهم می‌کند.\n\n## مزایا\n\n- **کراس پلتفرم**: یک کد برای iOS و Android\n- **Performance**: عملکرد نزدیک به Native\n- **Hot Reload**: تغییرات فوری\n- **Community**: جامعه بزرگ و فعال\n\n## شروع پروژه\n\n```bash\nnpx react-native init MyApp\ncd MyApp\nnpx react-native run-android\n```\n\n## کامپوننت ساده\n\n```jsx\nimport React from 'react';\nimport { View, Text, StyleSheet } from 'react-native';\n\nconst App = () => {\n  return (\n    <View style={styles.container}>\n      <Text style={styles.title}>سلام دنیا!</Text>\n    </View>\n  );\n};\n\nconst styles = StyleSheet.create({\n  container: {\n    flex: 1,\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  title: {\n    fontSize: 24,\n    fontWeight: 'bold',\n  },\n});\n\nexport default App;\n```",
+      "excerpt": "راهنمای شروع توسعه اپلیکیشن موبایل با React Native",
+      "author": 5,
+      "status": "published",
+      "published_at": "2024-02-05T13:30:00Z",
+      "category": 5,
+      "is_featured": false,
+      "created_at": "2024-02-05T12:30:00Z",
+      "updated_at": "2024-02-05T12:30:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 6,
+    "fields": {
+      "title": "مبانی شبکه‌های کامپیوتری",
+      "slug": "computer-networks-fundamentals",
+      "content": "# مبانی شبکه‌های کامپیوتری\n\nشبکه‌های کامپیوتری پایه و اساس ارتباطات مدرن هستند.\n\n## مدل OSI\n\n1. **Physical Layer**: لایه فیزیکی\n2. **Data Link Layer**: لایه پیوند داده\n3. **Network Layer**: لایه شبکه\n4. **Transport Layer**: لایه انتقال\n5. **Session Layer**: لایه جلسه\n6. **Presentation Layer**: لایه ارائه\n7. **Application Layer**: لایه کاربرد\n\n## پروتکل‌های مهم\n\n- **TCP/IP**: پروتکل اصلی اینترنت\n- **HTTP/HTTPS**: انتقال صفحات وب\n- **FTP**: انتقال فایل\n- **SMTP**: ارسال ایمیل\n- **DNS**: تبدیل نام دامنه\n\n## مثال ساده با Python\n\n```python\nimport socket\n\n# ایجاد سوکت\ns = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n\n# اتصال به سرور\ns.connect(('google.com', 80))\n\n# ارسال درخواست HTTP\nrequest = \"GET / HTTP/1.1\\r\\nHost: google.com\\r\\n\\r\\n\"\ns.send(request.encode())\n\n# دریافت پاسخ\nresponse = s.recv(1024)\nprint(response.decode())\n\ns.close()\n```",
+      "excerpt": "آشنایی با مفاهیم پایه شبکه‌های کامپیوتری و پروتکل‌های مهم",
+      "author": 6,
+      "status": "published",
+      "published_at": "2024-02-10T15:00:00Z",
+      "category": 6,
+      "is_featured": false,
+      "created_at": "2024-02-10T14:00:00Z",
+      "updated_at": "2024-02-10T14:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 7,
+    "fields": {
+      "title": "ساخت بازی با Unity",
+      "slug": "game-development-with-unity",
+      "content": "# ساخت بازی با Unity\n\nUnity یکی از محبوب‌ترین موتورهای بازی‌سازی است.\n\n## ویژگی‌های Unity\n\n- **کراس پلتفرم**: انتشار در پلتفرم‌های مختلف\n- **Visual Scripting**: برنامه‌نویسی بصری\n- **Asset Store**: فروشگاه منابع\n- **Community**: جامعه بزرگ\n\n## اسکریپت ساده C#\n\n```csharp\nusing UnityEngine;\n\npublic class PlayerController : MonoBehaviour\n{\n    public float speed = 5.0f;\n    \n    void Update()\n    {\n        float horizontal = Input.GetAxis(\"Horizontal\");\n        float vertical = Input.GetAxis(\"Vertical\");\n        \n        Vector3 movement = new Vector3(horizontal, 0, vertical);\n        transform.Translate(movement * speed * Time.deltaTime);\n    }\n}\n```\n\n## مراحل ساخت بازی\n\n1. **طراحی**: ایده و مفهوم بازی\n2. **Prototyping**: نمونه اولیه\n3. **Development**: توسعه اصلی\n4. **Testing**: تست و رفع باگ\n5. **Publishing**: انتشار بازی\n\nUnity ابزاری قدرتمند برای ساخت بازی است.",
+      "excerpt": "راهنمای شروع بازی‌سازی با موتور Unity",
+      "author": 7,
+      "status": "published",
+      "published_at": "2024-02-15T12:00:00Z",
+      "category": 7,
+      "is_featured": true,
+      "created_at": "2024-02-15T11:00:00Z",
+      "updated_at": "2024-02-15T11:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 8,
+    "fields": {
+      "title": "اصول طراحی UI/UX",
+      "slug": "ui-ux-design-principles",
+      "content": "# اصول طراحی UI/UX\n\nطراحی رابط کاربری و تجربه کاربری نقش مهمی در موفقیت محصولات دیجیتال دارد.\n\n## اصول UI\n\n- **Consistency**: یکنواختی در طراحی\n- **Hierarchy**: سلسله مراتب بصری\n- **Contrast**: تضاد مناسب\n- **Alignment**: تراز بندی صحیح\n- **Proximity**: قرارگیری عناصر مرتبط\n\n## اصول UX\n\n- **Usability**: قابلیت استفاده\n- **Accessibility**: دسترسی‌پذیری\n- **User-Centered**: محوریت کاربر\n- **Feedback**: بازخورد مناسب\n- **Error Prevention**: جلوگیری از خطا\n\n## ابزارهای طراحی\n\n- **Figma**: طراحی رابط کاربری\n- **Adobe XD**: پروتوتایپ سازی\n- **Sketch**: طراحی برای Mac\n- **InVision**: همکاری تیمی\n\n## فرآیند طراحی\n\n1. **Research**: تحقیق و بررسی\n2. **Wireframing**: طراحی اسکلت\n3. **Prototyping**: نمونه‌سازی\n4. **Testing**: تست با کاربران\n5. **Iteration**: بهبود مداوم",
+      "excerpt": "آشنایی با اصول و مبانی طراحی رابط کاربری و تجربه کاربری",
+      "author": 8,
+      "status": "published",
+      "published_at": "2024-02-20T14:30:00Z",
+      "category": 8,
+      "is_featured": false,
+      "created_at": "2024-02-20T13:30:00Z",
+      "updated_at": "2024-02-20T13:30:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 9,
+    "fields": {
+      "title": "اطلاعیه برگزاری مسابقه برنامه‌نویسی",
+      "slug": "programming-contest-announcement",
+      "content": "# اطلاعیه برگزاری مسابقه برنامه‌نویسی\n\nانجمن علمی مهندسی کامپیوتر دانشگاه برگزاری مسابقه برنامه‌نویسی بهاری را اعلام می‌کند.\n\n## جزئیات مسابقه\n\n- **تاریخ**: ۲۲ مارس ۲۰۲۴\n- **زمان**: ۹ صبح تا ۱۲ ظهر\n- **مکان**: آزمایشگاه کامپیوتر شماره ۱\n- **مدت زمان**: ۳ ساعت\n- **تعداد مسائل**: ۸ مسئله\n\n## جوایز\n\n- **نفر اول**: ۵ میلیون تومان\n- **نفر دوم**: ۳ میلیون تومان\n- **نفر سوم**: ۲ میلیون تومان\n\n## قوانین\n\n- مسابقه به صورت انفرادی برگزار می‌شود\n- زبان‌های مجاز: C++, Java, Python\n- استفاده از اینترنت ممنوع است\n- ثبت نام تا ۲۰ مارس ادامه دارد\n\n## ثبت نام\n\nبرای ثبت نام به دفتر انجمن مراجعه کنید یا از طریق وب‌سایت اقدام نمایید.\n\nمنتظر حضور گرم شما هستیم!",
+      "excerpt": "اطلاعیه برگزاری مسابقه برنامه‌نویسی بهاری انجمن علمی",
+      "author": 1,
+      "status": "published",
+      "published_at": "2024-02-25T10:00:00Z",
+      "category": 9,
+      "is_featured": true,
+      "created_at": "2024-02-25T09:00:00Z",
+      "updated_at": "2024-02-25T09:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.post",
+    "pk": 10,
+    "fields": {
+      "title": "نتایج مسابقه ACM ICPC منطقه‌ای",
+      "slug": "acm-icpc-regional-results",
+      "content": "# نتایج مسابقه ACM ICPC منطقه‌ای\n\nتیم‌های دانشگاه ما در مسابقه ACM ICPC منطقه‌ای عملکرد درخشانی داشتند.\n\n## نتایج تیم‌ها\n\n### تیم Alpha\n- **اعضا**: علی احمدی، سارا محمدی، رضا کریمی\n- **رتبه**: ۵ منطقه‌ای\n- **مسائل حل شده**: ۷ از ۱۲\n\n### تیم Beta\n- **اعضا**: مریم حسینی، حسن زارع، زهرا صفری\n- **رتبه**: ۱۲ منطقه‌ای\n- **مسائل حل شده**: ۵ از ۱۲\n\n### تیم Gamma\n- **اعضا**: محمد رحمانی، فاطمه مرادی، امیر قربانی\n- **رتبه**: ۱۸ منطقه‌ای\n- **مسائل حل شده**: ۴ از ۱۲\n\n## تبریک و تشکر\n\nاز تمامی شرکت‌کنندگان تشکر می‌کنیم و امیدواریم سال آینده نتایج بهتری کسب کنیم.\n\n## آماده‌سازی برای سال آینده\n\nبرای آماده‌سازی تیم‌های سال آینده، کارگاه‌های تمرینی برگزار خواهد شد.",
+      "excerpt": "گزارش عملکرد تیم‌های دانشگاه در مسابقه ACM ICPC منطقه‌ای",
+      "author": 2,
+      "status": "published",
+      "published_at": "2024-03-01T16:00:00Z",
+      "category": 10,
+      "is_featured": false,
+      "created_at": "2024-03-01T15:00:00Z",
+      "updated_at": "2024-03-01T15:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 1,
+    "fields": {
+      "post": 1,
+      "author": 3,
+      "content": "مقاله بسیار مفیدی بود. ممنون از نویسنده",
+      "is_approved": true,
+      "created_at": "2024-01-16T10:00:00Z",
+      "updated_at": "2024-01-16T10:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 2,
+    "fields": {
+      "post": 1,
+      "author": 4,
+      "content": "آیا می‌توانید مثال‌های بیشتری ارائه دهید؟",
+      "is_approved": true,
+      "created_at": "2024-01-17T11:00:00Z",
+      "updated_at": "2024-01-17T11:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 3,
+    "fields": {
+      "post": 2,
+      "author": 5,
+      "content": "Django REST Framework واقعاً قدرتمند است",
+      "is_approved": true,
+      "created_at": "2024-01-21T09:00:00Z",
+      "updated_at": "2024-01-21T09:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 4,
+    "fields": {
+      "post": 3,
+      "author": 6,
+      "content": "امنیت واقعاً مهم است. مقاله خوبی بود",
+      "is_approved": true,
+      "created_at": "2024-01-26T12:00:00Z",
+      "updated_at": "2024-01-26T12:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 5,
+    "fields": {
+      "post": 4,
+      "author": 7,
+      "content": "Pandas برای تحلیل داده عالی است",
+      "is_approved": true,
+      "created_at": "2024-02-02T14:00:00Z",
+      "updated_at": "2024-02-02T14:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 6,
+    "fields": {
+      "post": 5,
+      "author": 8,
+      "content": "React Native گزینه خوبی برای موبایل است",
+      "is_approved": true,
+      "created_at": "2024-02-06T15:00:00Z",
+      "updated_at": "2024-02-06T15:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 7,
+    "fields": {
+      "post": 6,
+      "author": 9,
+      "content": "شبکه پایه همه چیز است",
+      "is_approved": true,
+      "created_at": "2024-02-11T16:00:00Z",
+      "updated_at": "2024-02-11T16:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 8,
+    "fields": {
+      "post": 7,
+      "author": 10,
+      "content": "Unity برای شروع بازی‌سازی عالی است",
+      "is_approved": true,
+      "created_at": "2024-02-16T13:00:00Z",
+      "updated_at": "2024-02-16T13:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 9,
+    "fields": {
+      "post": 8,
+      "author": 11,
+      "content": "طراحی UI/UX خیلی مهم است",
+      "is_approved": true,
+      "created_at": "2024-02-21T17:00:00Z",
+      "updated_at": "2024-02-21T17:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.comment",
+    "pk": 10,
+    "fields": {
+      "post": 9,
+      "author": 12,
+      "content": "حتماً در مسابقه شرکت می‌کنم",
+      "is_approved": true,
+      "created_at": "2024-02-26T11:00:00Z",
+      "updated_at": "2024-02-26T11:00:00Z",
+      "is_deleted": false
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 1,
+    "fields": {
+      "post": 1,
+      "user": 3,
+      "created_at": "2024-01-16T10:30:00Z"
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 2,
+    "fields": {
+      "post": 1,
+      "user": 4,
+      "created_at": "2024-01-17T11:30:00Z"
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 3,
+    "fields": {
+      "post": 1,
+      "user": 5,
+      "created_at": "2024-01-18T12:00:00Z"
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 4,
+    "fields": {
+      "post": 2,
+      "user": 6,
+      "created_at": "2024-01-21T09:30:00Z"
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 5,
+    "fields": {
+      "post": 2,
+      "user": 7,
+      "created_at": "2024-01-22T10:00:00Z"
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 6,
+    "fields": {
+      "post": 3,
+      "user": 8,
+      "created_at": "2024-01-26T12:30:00Z"
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 7,
+    "fields": {
+      "post": 3,
+      "user": 9,
+      "created_at": "2024-01-27T13:00:00Z"
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 8,
+    "fields": {
+      "post": 4,
+      "user": 10,
+      "created_at": "2024-02-02T14:30:00Z"
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 9,
+    "fields": {
+      "post": 5,
+      "user": 11,
+      "created_at": "2024-02-06T15:30:00Z"
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 10,
+    "fields": {
+      "post": 6,
+      "user": 12,
+      "created_at": "2024-02-11T16:30:00Z"
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 11,
+    "fields": {
+      "post": 7,
+      "user": 1,
+      "created_at": "2024-02-16T13:30:00Z"
+    }
+  },
+  {
+    "model": "blog.like",
+    "pk": 12,
+    "fields": {
+      "post": 8,
+      "user": 2,
+      "created_at": "2024-02-21T17:30:00Z"
+    }
+  }
+]

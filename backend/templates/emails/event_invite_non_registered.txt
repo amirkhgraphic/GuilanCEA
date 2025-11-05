@@ -1,0 +1,11 @@
+{{ user.get_full_name|default:user.username }} عزیز،
+
+شما هنوز در رویداد «{{ event.title }}» ثبت‌نام نکرده‌اید.
+تاریخ برگزاری: {{ start_time }}
+مکان: {% if event.address %}{{ event.address }}{% else %}{{ event.event_type_display }}{% endif %}
+
+مشاهده و ثبت‌نام:
+{{ event_url }}
+
+با احترام
+تیم انجمن علمی مهندسی کامپیوتر

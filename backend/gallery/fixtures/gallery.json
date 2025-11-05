@@ -1,0 +1,218 @@
+[
+  {
+    "model": "gallery.gallery",
+    "pk": 1,
+    "fields": {
+      "created_at": "2024-01-15T10:30:00Z",
+      "updated_at": "2024-01-15T10:30:00Z",
+      "is_deleted": false,
+      "title": "کارگاه یادگیری ماشین - تصویر ۱",
+      "description": "شرکت‌کنندگان در حال یادگیری مفاهیم یادگیری ماشین",
+      "image": "gallery/ml_workshop_1.jpg",
+      "uploaded_by": 1,
+      "alt_text": "دانشجویان در کارگاه یادگیری ماشین",
+      "file_size": 2048000,
+      "width": 1920,
+      "height": 1080,
+      "is_public": true
+    }
+  },
+  {
+    "model": "gallery.gallery",
+    "pk": 2,
+    "fields": {
+      "created_at": "2024-01-20T14:15:00Z",
+      "updated_at": "2024-01-20T14:15:00Z",
+      "is_deleted": false,
+      "title": "مسابقه برنامه‌نویسی - لحظه اعلام نتایج",
+      "description": "اعلام نتایج مسابقه برنامه‌نویسی و اهدای جوایز",
+      "image": "gallery/programming_contest_results.jpg",
+      "uploaded_by": 2,
+      "alt_text": "اهدای جوایز مسابقه برنامه‌نویسی",
+      "file_size": 1536000,
+      "width": 1600,
+      "height": 900,
+      "is_public": true
+    }
+  },
+  {
+    "model": "gallery.gallery",
+    "pk": 3,
+    "fields": {
+      "created_at": "2024-01-25T09:45:00Z",
+      "updated_at": "2024-01-25T09:45:00Z",
+      "is_deleted": false,
+      "title": "سمینار امنیت سایبری",
+      "description": "دکتر رضایی در حال ارائه مطالب امنیت سایبری",
+      "image": "gallery/cybersecurity_seminar.jpg",
+      "uploaded_by": 5,
+      "alt_text": "سخنرانی در سمینار امنیت سایبری",
+      "file_size": 1792000,
+      "width": 1800,
+      "height": 1200,
+      "is_public": true
+    }
+  },
+  {
+    "model": "gallery.gallery",
+    "pk": 4,
+    "fields": {
+      "created_at": "2024-02-01T16:20:00Z",
+      "updated_at": "2024-02-01T16:20:00Z",
+      "is_deleted": false,
+      "title": "کارگاه React.js - کدنویسی عملی",
+      "description": "شرکت‌کنندگان در حال کدنویسی با React.js",
+      "image": "gallery/react_workshop_coding.jpg",
+      "uploaded_by": 9,
+      "alt_text": "کدنویسی در کارگاه React.js",
+      "file_size": 2304000,
+      "width": 2048,
+      "height": 1152,
+      "is_public": true
+    }
+  },
+  {
+    "model": "gallery.gallery",
+    "pk": 5,
+    "fields": {
+      "created_at": "2024-02-05T11:30:00Z",
+      "updated_at": "2024-02-05T11:30:00Z",
+      "is_deleted": false,
+      "title": "بازدید از دیجی‌کالا - ورودی شرکت",
+      "description": "دانشجویان در ورودی شرکت دیجی‌کالا",
+      "image": "gallery/digikala_visit_entrance.jpg",
+      "uploaded_by": 3,
+      "alt_text": "بازدید از شرکت دیجی‌کالا",
+      "file_size": 1920000,
+      "width": 1920,
+      "height": 1280,
+      "is_public": true
+    }
+  },
+  {
+    "model": "gallery.gallery",
+    "pk": 6,
+    "fields": {
+      "created_at": "2024-02-10T22:45:00Z",
+      "updated_at": "2024-02-10T22:45:00Z",
+      "is_deleted": false,
+      "title": "هکاتون هوش مصنوعی - شب اول",
+      "description": "تیم‌ها در حال کار شبانه روزی در هکاتون",
+      "image": "gallery/ai_hackathon_night.jpg",
+      "uploaded_by": 6,
+      "alt_text": "کار شبانه در هکاتون هوش مصنوعی",
+      "file_size": 1664000,
+      "width": 1600,
+      "height": 1067,
+      "is_public": true
+    }
+  },
+  {
+    "model": "gallery.gallery",
+    "pk": 7,
+    "fields": {
+      "created_at": "2024-02-15T13:10:00Z",
+      "updated_at": "2024-02-15T13:10:00Z",
+      "is_deleted": false,
+      "title": "سمینار کارآفرینی - پنل بحث",
+      "description": "پنل بحث با کارآفرینان موفق فناوری",
+      "image": "gallery/entrepreneurship_panel.jpg",
+      "uploaded_by": 1,
+      "alt_text": "پنل بحث کارآفرینی فناوری",
+      "file_size": 2176000,
+      "width": 1920,
+      "height": 1080,
+      "is_public": true
+    }
+  },
+  {
+    "model": "gallery.gallery",
+    "pk": 8,
+    "fields": {
+      "created_at": "2024-02-20T15:25:00Z",
+      "updated_at": "2024-02-20T15:25:00Z",
+      "is_deleted": false,
+      "title": "کارگاه DevOps - آموزش Docker",
+      "description": "آموزش عملی Docker و کانتینرها",
+      "image": "gallery/devops_docker_training.jpg",
+      "uploaded_by": 8,
+      "alt_text": "آموزش Docker در کارگاه DevOps",
+      "file_size": 1856000,
+      "width": 1728,
+      "height": 1152,
+      "is_public": true
+    }
+  },
+  {
+    "model": "gallery.gallery",
+    "pk": 9,
+    "fields": {
+      "created_at": "2024-02-25T12:40:00Z",
+      "updated_at": "2024-02-25T12:40:00Z",
+      "is_deleted": false,
+      "title": "مسابقه طراحی UI/UX - آثار شرکت‌کنندگان",
+      "description": "نمایش آثار طراحی شده توسط شرکت‌کنندگان",
+      "image": "gallery/uiux_contest_designs.jpg",
+      "uploaded_by": 12,
+      "alt_text": "آثار مسابقه طراحی UI/UX",
+      "file_size": 2048000,
+      "width": 2048,
+      "height": 1365,
+      "is_public": true
+    }
+  },
+  {
+    "model": "gallery.gallery",
+    "pk": 10,
+    "fields": {
+      "created_at": "2024-03-01T17:55:00Z",
+      "updated_at": "2024-03-01T17:55:00Z",
+      "is_deleted": false,
+      "title": "نشست فارغ‌التحصیلان - عکس گروهی",
+      "description": "عکس یادگاری با فارغ‌التحصیلان و دانشجویان فعلی",
+      "image": "gallery/alumni_group_photo.jpg",
+      "uploaded_by": 5,
+      "alt_text": "عکس گروهی نشست فارغ‌التحصیلان",
+      "file_size": 2560000,
+      "width": 2560,
+      "height": 1440,
+      "is_public": true
+    }
+  },
+  {
+    "model": "gallery.gallery",
+    "pk": 11,
+    "fields": {
+      "created_at": "2024-03-05T08:20:00Z",
+      "updated_at": "2024-03-05T08:20:00Z",
+      "is_deleted": false,
+      "title": "آزمایشگاه کامپیوتر - محیط کار",
+      "description": "نمایی از آزمایشگاه کامپیوتر دانشکده",
+      "image": "gallery/computer_lab.jpg",
+      "uploaded_by": 9,
+      "alt_text": "آزمایشگاه کامپیوتر دانشکده",
+      "file_size": 1792000,
+      "width": 1792,
+      "height": 1024,
+      "is_public": true
+    }
+  },
+  {
+    "model": "gallery.gallery",
+    "pk": 12,
+    "fields": {
+      "created_at": "2024-03-10T14:35:00Z",
+      "updated_at": "2024-03-10T14:35:00Z",
+      "is_deleted": false,
+      "title": "کتابخانه دانشکده - بخش کتب فنی",
+      "description": "بخش کتب فنی و مهندسی کامپیوتر کتابخانه",
+      "image": "gallery/library_tech_books.jpg",
+      "uploaded_by": 4,
+      "alt_text": "کتب فنی کتابخانه دانشکده",
+      "file_size": 1536000,
+      "width": 1536,
+      "height": 1024,
+      "is_public": true
+    }
+  }
+]

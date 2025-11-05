@@ -1,0 +1,19 @@
+<!DOCTYPE html><html lang="fa" dir="rtl"><body style="margin:0;padding:0;background:#ffffff;">
+  <table role="presentation" width="100%" style="border-collapse:collapse;">
+    <tr><td align="center" style="padding:20px;">
+      <table role="presentation" width="600" style="width:100%;max-width:600px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
+        <tr><td align="center" style="background:#2563eb;color:#fff;padding:18px;font-family:Tahoma,Arial,sans-serif;font-size:16px;">اطلاعیه</td></tr>
+        <tr>
+          <td style="background:#f9fafb;padding:22px 30px;text-align:right;font-family:Tahoma,Arial,sans-serif;font-size:14px;color:#374151;">
+            <p style="margin:0 0 10px 0;">{{ user.get_full_name|default:'کاربر' }} عزیز،</p>
+            <div style="margin:10px 0 0 0;">{{ body_html|safe }}</div>
+            <div style="text-align:center;margin:16px 0;">
+              <a href="{{ event_url }}" style="display:inline-block;background:#2563eb;color:#fff;text-decoration:none;padding:10px 22px;border-radius:6px;">جزئیات رویداد</a>
+            </div>
+          </td>
+        </tr>
+        <tr><td align="center" style="padding:14px 20px;color:#6b7280;font-family:Tahoma,Arial,sans-serif;font-size:12px;">&copy; {% now 'Y' %} انجمن علمی</td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>
