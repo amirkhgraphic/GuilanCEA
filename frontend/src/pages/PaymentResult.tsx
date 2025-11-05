@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useSearchParams, Link } from 'react-router-dom';
 import QRCode from 'react-qr-code';
 import jsPDF from 'jspdf';
@@ -58,6 +59,53 @@ export default function PaymentResult() {
   const money = (n?: number) => typeof n === 'number' ? n.toLocaleString('fa-IR') : '—';
   const receiptRef = useRef<HTMLDivElement | null>(null);
 
+  const siteUrl = 'https://east-guilan-ce.ir';
+  const siteName = 'East Guilan CE';
+  const canonicalUrl = `${siteUrl}/payments/result`;
+  const toAbsoluteUrl = (url?: string | null) => {
+    if (!url) return undefined;
+    if (url.startsWith('http')) return url;
+    const normalizedSite = siteUrl.endsWith('/') ? siteUrl.slice(0, -1) : siteUrl;
+    const normalizedPath = url.startsWith('/') ? url.slice(1) : url;
+    return `${normalizedSite}/${normalizedPath}`;
+  };
+  const eventTitle = data?.title || (eventId ? `Event #${eventId}` : 'Event payment');
+  const referenceFragment = refId ? ` Reference: ${refId}.` : '';
+  const pageState =
+    status === 'success'
+      ? 'Payment successful'
+      : status === 'failed'
+      ? 'Payment failed'
+      : 'Payment status';
+  const pageTitle = `${pageState} | ${siteName}`;
+  const pageDescription = `${ok ? 'Payment confirmed' : 'Review your payment status'} for ${eventTitle}.${referenceFragment}`;
+  const ogImage = toAbsoluteUrl(data?.thumb) ?? `${siteUrl}/favicon.ico`;
+  const helmet = (
+    <Helmet>
+      <title>{pageTitle}</title>
+      <meta name="description" content={pageDescription} />
+      <meta name="robots" content="noindex, nofollow" />
+      <link rel="canonical" href={canonicalUrl} />
+      <meta property="og:title" content={pageTitle} />
+      <meta property="og:description" content={pageDescription} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:image" content={ogImage} />
+      <meta property="og:locale" content="fa_IR" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={pageTitle} />
+      <meta name="twitter:description" content={pageDescription} />
+      <meta name="twitter:image" content={ogImage} />
+    </Helmet>
+  );
+  const renderWithHelmet = (node: JSX.Element) => (
+    <>
+      {helmet}
+      {node}
+    </>
+  );
+
   const qrValue = useMemo(() => {
     // لینک قابل بررسی/اشتراک‌گذاری
     const base = window.location.origin;
@@ -107,7 +155,7 @@ export default function PaymentResult() {
     }
   };
 
-  return (
+  return renderWithHelmet(
     <div className="min-h-[60vh] flex items-center justify-center p-4 bg-background" dir="rtl">
       <Card className="w-full max-w-2xl bg-card text-card-foreground border-border">
         <CardHeader className="print:hidden">
