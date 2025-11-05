@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
@@ -54,6 +55,24 @@ export default function Auth() {
   const [registerData, setRegisterData] = useState(initialRegister);
   const [regErrors, setRegErrors] = useState<RegisterErrors>({});
   const [tab, setTab] = useState<'login' | 'register'>('login');
+
+  const siteUrl = 'https://east-guilan-ce.ir';
+  const siteName = 'East Guilan CE';
+  const canonicalUrl = `${siteUrl}/auth`;
+  const ogImage = `${siteUrl}/favicon.ico`;
+  const metaRobots = 'noindex, nofollow';
+
+  const { pageTitle, pageDescription } = useMemo(() => {
+    const variant = tab === 'register' ? 'Sign Up' : 'Sign In';
+    const description =
+      tab === 'register'
+        ? 'Create your East Guilan Computer Engineering Association account to join events, workshops, and student programs.'
+        : 'Sign in to the East Guilan Computer Engineering Association to manage your profile and event registrations.';
+    return {
+      pageTitle: `${variant} | ${siteName}`,
+      pageDescription: description,
+    };
+  }, [tab, siteName]);
 
   const { data: majors, isLoading: majorsLoading } = useQuery({
     queryKey: ['majors'],
@@ -229,7 +248,25 @@ export default function Auth() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <meta name="robots" content={metaRobots} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:site_name" content={siteName} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:locale" content="fa_IR" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <meta name="twitter:image" content={ogImage} />
+      </Helmet>
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader dir="rtl">
           <CardTitle>انجمن علمی کامپیوتر گیلان</CardTitle>
@@ -505,6 +542,7 @@ export default function Auth() {
           </Tabs>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </>
   );
 }
