@@ -1,3 +1,5 @@
+"""Schemas for communications-related endpoints."""
+
 from datetime import datetime
 from typing import Optional, List
 
@@ -11,7 +13,6 @@ from communications.models import (
 )
 
 
-# Communication Schemas
 class AnnouncementSchema(ModelSchema):
     author: AuthorSchema
     content_html: str
@@ -101,12 +102,13 @@ class PushNotificationSchema(Schema):
     data: Optional[dict] = None
     target_audience: str = "all"
 
-# Response Schemas
 class MessageResponseSchema(Schema):
+    """Simple message payload for API responses."""
     message: str
     success: bool = True
 
 class AnnouncementStatsSchema(Schema):
+    """Summary statistics for announcements."""
     total_announcements: int
     published_announcements: int
     draft_announcements: int
@@ -115,6 +117,7 @@ class AnnouncementStatsSchema(Schema):
     push_sent_count: int
 
 class NewsletterStatsSchema(Schema):
+    """Summary statistics for newsletter subscriptions."""
     total_subscriptions: int
     active_subscriptions: int
     confirmed_subscriptions: int

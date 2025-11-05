@@ -93,9 +93,9 @@ class Event(BaseModel):
 
     @property
     def has_available_slots(self):
-        """Check if there are available slots for registration"""
+        """Check whether registration slots are available, treating None as unlimited capacity."""
         if self.capacity is None:
-            return True  # Unlimited capacity
+            return True
         return self.current_attendees_count < self.capacity
 
 

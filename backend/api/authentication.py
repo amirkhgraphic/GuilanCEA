@@ -38,5 +38,4 @@ def create_refresh_token(user):
     }
     return jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
-# Create auth instance
 jwt_auth = JWTAuth()

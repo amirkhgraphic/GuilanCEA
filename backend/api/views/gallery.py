@@ -96,17 +96,16 @@ def update_image(request, image_id: int, data: GalleryCreateSchema):
 
 @gallery_router.delete("/images/{image_id}", response={200: MessageSchema, 400: ErrorSchema}, auth=jwt_auth)
 def delete_image(request, image_id: int):
-    """Delete gallery image (soft delete)"""
+    """Soft delete a gallery image owned by the requester or committee."""
     user = request.auth
     image = get_object_or_404(Gallery, id=image_id)
     
     if not (image.uploaded_by == user or user.is_superuser or user.is_staff):
         return 400, {"error": "You can only delete your own images"}
     
-    image.delete()  # This will soft delete
+    image.delete()
     return 200, {"message": "Image deleted successfully"}
 
-# --- Soft Delete API Endpoints for Gallery ---
 
 @gallery_router.get("/deleted/images", response=List[GallerySchema], auth=jwt_auth)
 def list_deleted_gallery_images(request):

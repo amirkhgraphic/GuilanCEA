@@ -98,9 +98,9 @@ class Post(BaseModel):
 
     @property
     def reading_time(self):
-        """Estimate reading time in minutes"""
+        """Estimate reading time in minutes assuming 200 words per minute."""
         word_count = len(self.content.split())
-        return max(1, word_count // 200)  # Assuming 200 words per minute
+        return max(1, word_count // 200)
 
 class Comment(BaseModel):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')

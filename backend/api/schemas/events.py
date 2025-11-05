@@ -1,3 +1,5 @@
+"""Event and gallery API schemas."""
+
 from uuid import UUID
 from ninja import ModelSchema, Schema
 from typing import Literal, Optional, List
@@ -8,8 +10,8 @@ from events.models import Event, Registration
 from gallery.models import Gallery
 
 
-# Gallery Schemas
 class EventGallerySchema(ModelSchema):
+    """Schema representing gallery items associated with an event."""
     uploaded_by: AuthorSchema
     file_size_mb: float
     markdown_url: str
@@ -27,8 +29,8 @@ class EventGallerySchema(ModelSchema):
             return request.build_absolute_uri(obj.image.url)
         return None
 
-# Events Schemas
 class EventSchema(ModelSchema):
+    """Schema providing full event details for API responses."""
     gallery_images: List[EventGallerySchema]
     description_html: str
     registration_count: int
@@ -60,6 +62,7 @@ class EventSchema(ModelSchema):
 
 
 class EventListSchema(Schema):
+    """Condensed event representation for list endpoints."""
     id: int
     title: str
     slug: str
@@ -88,6 +91,7 @@ class EventListSchema(Schema):
         return obj.registrations.filter(status__in=[Registration.StatusChoices.CONFIRMED, Registration.StatusChoices.ATTENDED]).count()
 
 class EventCreateSchema(Schema):
+    """Payload for creating events via the API."""
     title: str
     description: str
     event_type: str
@@ -104,6 +108,7 @@ class EventCreateSchema(Schema):
     gallery_image_ids: Optional[List[int]] = []
 
 class EventUpdateSchema(Schema):
+    """Payload for updating events via the API."""
     title: Optional[str] = None
     description: Optional[str] = None
     event_type: Optional[str] = None
@@ -120,6 +125,7 @@ class EventUpdateSchema(Schema):
     gallery_image_ids: Optional[List[int]] = None
 
 class RegistrationSchema(ModelSchema):
+    """Schema describing a registration entry with event context."""
     user: AuthorSchema
     event: EventListSchema
 
@@ -134,6 +140,7 @@ class RegistrationStatusUpdateSchema(Schema):
     status: str
 
 class RegisterationDetailSchema(Schema):
+    """Detailed registration information with associated event metadata."""
     event_image: Optional[str]
     event_title: str
     event_type: str
@@ -143,6 +150,7 @@ class RegisterationDetailSchema(Schema):
     success_markdown: Optional[str]
 
 class EventBriefSchema(Schema):
+    """Minimal event representation used for nested responses."""
     id: int
     title: str
     slug: str
@@ -153,6 +161,7 @@ class EventBriefSchema(Schema):
     absolute_image_url: Optional[str] = None
 
 class MyEventRegistrationOut(Schema):
+    """Registration information as returned to authenticated users."""
     id: int
     created_at: datetime
     status: Literal["pending", "confirmed", "cancelled", "attended"]

@@ -80,6 +80,7 @@ class MajorChoices(models.TextChoices):
 from django.db import models
 
 class UniversityChoices(models.TextChoices):
+    """University codes preserving legacy constant names for backward compatibility."""
     # ========= دولتی (وزارت علوم) =========
     # موارد قبلی شما (بدون تغییر کدها)
     GILAN         = 'GILAN',         'دانشگاه گیلان'
@@ -107,7 +108,7 @@ class UniversityChoices(models.TextChoices):
     URMIA         = 'URMIA',         'دانشگاه ارومیه'
     ZANJAN        = 'ZANJAN',        'دانشگاه زنجان'
     ARDABIL       = 'ARDABIL',       'دانشگاه محقق اردبیلی'
-    ARak_UNI      = 'ARAK_UNI',      'دانشگاه اراک'  # حفظ همان نام ثابت قبلی
+    ARak_UNI      = 'ARAK_UNI',      'دانشگاه اراک'
     SEMNAN        = 'SEMNAN',        'دانشگاه سمنان'
     SHAHROOD      = 'SHAHROOD',      'دانشگاه صنعتی شاهرود'
     QOM_UNI       = 'QOM_UNI',       'دانشگاه قم'
