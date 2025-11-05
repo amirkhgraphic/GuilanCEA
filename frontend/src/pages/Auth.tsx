@@ -57,17 +57,17 @@ export default function Auth() {
   const [tab, setTab] = useState<'login' | 'register'>('login');
 
   const siteUrl = 'https://east-guilan-ce.ir';
-  const siteName = 'East Guilan CE';
+  const siteName = 'انجمن علمی کامپیوتر شرق دانشگاه گیلان';
   const canonicalUrl = `${siteUrl}/auth`;
   const ogImage = `${siteUrl}/favicon.ico`;
   const metaRobots = 'noindex, nofollow';
 
   const { pageTitle, pageDescription } = useMemo(() => {
-    const variant = tab === 'register' ? 'Sign Up' : 'Sign In';
+    const variant = tab === 'register' ? 'ثبت‌نام' : 'ورود';
     const description =
       tab === 'register'
-        ? 'Create your East Guilan Computer Engineering Association account to join events, workshops, and student programs.'
-        : 'Sign in to the East Guilan Computer Engineering Association to manage your profile and event registrations.';
+        ? 'برای پیوستن به رویدادها، کارگاه‌ها و برنامه‌های انجمن علمی کامپیوتر شرق گیلان حساب کاربری بسازید.'
+        : 'برای مدیریت پروفایل و ثبت‌نام‌ رویدادها وارد انجمن علمی کامپیوتر شرق گیلان شوید.';
     return {
       pageTitle: `${variant} | ${siteName}`,
       pageDescription: description,

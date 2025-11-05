@@ -59,7 +59,7 @@ export default function Profile() {
   });
 
   const siteUrl = 'https://east-guilan-ce.ir';
-  const siteName = 'East Guilan CE';
+  const siteName = 'انجمن علمی کامپیوتر شرق دانشگاه گیلان';
   const canonicalUrl = `${siteUrl}/profile`;
   const toAbsoluteSiteUrl = (url?: string | null) => {
     if (!url) return undefined;
@@ -72,9 +72,9 @@ export default function Profile() {
   const { pageTitle, pageDescription, ogImage } = useMemo(() => {
     const nameParts = [me?.first_name, me?.last_name].filter(Boolean) as string[];
     const displayName = nameParts.join(' ').trim();
-    const identifier = displayName || me?.username || me?.email || 'Member';
-    const title = `${identifier} | Profile | ${siteName}`;
-    const description = `Manage the profile for ${identifier} on the East Guilan Computer Engineering Association platform, update personal details, and review event registrations.`;
+    const identifier = displayName || me?.username || me?.email || 'عضو';
+    const title = `پروفایل ${identifier} | ${siteName}`;
+    const description = `مدیریت پروفایل ${identifier} در انجمن علمی کامپیوتر شرق گیلان؛ به‌روزرسانی اطلاعات شخصی و مرور ثبت‌نام‌ رویدادها.`;
     const image = toAbsoluteSiteUrl(me?.profile_picture) ?? `${siteUrl}/favicon.ico`;
     return { pageTitle: title, pageDescription: description, ogImage: image };
   }, [me?.first_name, me?.last_name, me?.username, me?.email, me?.profile_picture, siteName, siteUrl]);
