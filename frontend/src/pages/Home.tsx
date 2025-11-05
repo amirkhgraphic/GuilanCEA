@@ -9,19 +9,19 @@ import { Link } from "react-router-dom";
 
 const heroTitle = "انجمن علمی کامپیوتر دانشگاه گیلان";
 const heroDescription =
-  "با ما همراه شوید و در دنیای علوم کامپیوتر و فناوری پیشرفت کنید. رویدادها، محتوای آموزشی و جامعه‌ای پویا برای رشد شما فراهم است.";
+  "با ما همراه شوید و در دنیای مهندسی کامپیوتر و علوم کامپیوتر و فناوری پیشرفت کنید. رویدادها، محتوای آموزشی و جامعه‌ای پویا برای رشد شما فراهم است. این وب‌سایت به دست جمعی از دانشجویان دانشکده‌ فنی و مهندسی شرق دانشگاه گیلان توسعه داده شده است.";
 
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: heroTitle,
-  url: "https://frontend-host-domain.example",
-  sameAs: ["https://frontend-host-domain.example/blog", "https://frontend-host-domain.example/events"],
+  url: "https://east-guilan-ce.ir",
+  sameAs: ["https://east-guilan-ce.ir/blog", "https://east-guilan-ce.ir/events"],
   description: heroDescription,
-  logo: "https://frontend-host-domain.example/favicon.ico",
+  logo: "https://east-guilan-ce.ir/favicon.ico",
   contactPoint: {
     "@type": "ContactPoint",
-    email: "info@frontend-host-domain.example",
+    email: "admin@east-guilan-ce.ir",
     contactType: "customer support",
     availableLanguage: ["fa", "en"]
   }
@@ -36,8 +36,8 @@ export default function Home() {
         <meta property="og:title" content={heroTitle} />
         <meta property="og:description" content={heroDescription} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://frontend-host-domain.example" />
-        <meta property="og:image" content="https://frontend-host-domain.example/og-image.png" />
+        <meta property="og:url" content="https://east-guilan-ce.ir" />
+        <meta property="og:image" content="https://east-guilan-ce.ir/favicon.ico" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={heroTitle} />
         <meta name="twitter:description" content={heroDescription} />
