@@ -77,7 +77,8 @@ class BaseModelAdmin(ModelAdmin):
             actions.pop("hard_delete_selected", None)
 
         is_deleted_filter = request.GET.get('is_deleted')
-        if is_deleted_filter != '1':  # فقط در صفحهٔ Deleted نمایش restore
+        should_show_restore_actions = is_deleted_filter == '1'
+        if not should_show_restore_actions:
             actions.pop('restore_selected', None)
             actions.pop('hard_delete_selected', None)
 

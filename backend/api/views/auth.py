@@ -261,11 +261,11 @@ def reset_password_confirm(request, data: PasswordResetConfirmSchema):
 
 @auth_router.get("/users/deleted", response=List[UserProfileSchema], auth=jwt_auth)
 def list_deleted_users(request):
-    """List all soft-deleted users (Admin/Committee only)"""
+    """List soft-deleted users via the dedicated manager (Admin/Committee only)."""
     if not (request.auth.is_staff or request.auth.is_superuser):
         return 403, {"error": "اجازه دسترسی ندارید."}
 
-    return User.deleted_objects.all()  # Use the 'dead' manager to get only deleted users
+    return User.deleted_objects.all()
 
 @auth_router.post("/users/{user_id}/restore", response={200: MessageSchema, 400: ErrorSchema}, auth=jwt_auth)
 def restore_user(request, user_id: int):

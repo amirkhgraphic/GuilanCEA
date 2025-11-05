@@ -5,6 +5,9 @@ from PIL import Image
 
 from utils.models import BaseModel
 
+
+MAX_IMAGE_FILE_SIZE_BYTES = 2 * 1024 * 1024
+
 class Gallery(BaseModel):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -61,8 +64,8 @@ class Gallery(BaseModel):
             
             # Compress if file size is too large
             quality = 85
-            if self.file_size and self.file_size > 2 * 1024 * 1024:  # 2MB
-                quality = 70
+        if self.file_size and self.file_size > MAX_IMAGE_FILE_SIZE_BYTES:
+            quality = 70
             
             img.save(self.image.path, "JPEG", quality=quality, optimize=True)
 

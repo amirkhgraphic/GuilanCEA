@@ -1,3 +1,5 @@
+"""Blog API schemas."""
+
 from ninja import Schema, ModelSchema
 from typing import Optional, List
 from datetime import datetime
@@ -5,7 +7,6 @@ from datetime import datetime
 from blog.models import Category, Tag, Comment
 
 
-# Blog Schemas
 class CategorySchema(ModelSchema):
     class Config:
         model = Category

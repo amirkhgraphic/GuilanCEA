@@ -1,10 +1,11 @@
+"""Authentication-related API schemas."""
+
 from ninja import Schema, ModelSchema
 from typing import Optional
 
 from users.models import User
 
 
-# User Schemas
 class UserRegistrationSchema(ModelSchema):
 
     class Config:

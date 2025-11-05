@@ -1,21 +1,17 @@
+"""Celery application configuration and scheduling."""
+
 import os
-from decouple import config
+
 from celery import Celery
 from celery.schedules import crontab
+from decouple import config
 
-# Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.development')
 
 app = Celery('config')
-
-# Using a string here means the worker doesn't have to serialize
-# the configuration object to child processes.
 app.config_from_object('django.conf:settings', namespace='CELERY')
-
-# Load task modules from all registered Django apps.
 app.autodiscover_tasks()
 
-# Celery Configuration
 app.conf.update(
     broker_url=config('REDIS_URL', default='redis://localhost:6379/0'),
     result_backend=config('REDIS_URL', default='redis://localhost:6379/0'),
@@ -31,28 +27,30 @@ app.conf.update(
     worker_max_tasks_per_child=1000,
 )
 
-# Celery Beat configuration
 app.conf.beat_schedule = {
     'send-event-reminders': {
         'task': 'communications.tasks.send_event_reminders',
-        'schedule': crontab(minute=0, hour='*/1'),  # Every hour
+        'schedule': crontab(minute=0, hour='*/1'),
+        'description': 'Runs hourly to notify about upcoming events.',
     },
     'send-weekly-newsletter': {
         'task': 'communications.tasks.send_weekly_newsletter',
-        'schedule': crontab(hour=9, minute=0, day_of_week=1),  # Monday at 9 AM
+        'schedule': crontab(hour=9, minute=0, day_of_week=1),
+        'description': 'Runs every Monday at 09:00 UTC.',
     },
     'cleanup-expired-tokens': {
         'task': 'communications.tasks.cleanup_expired_tokens',
-        'schedule': crontab(hour=2, minute=0),  # Daily at 2 AM
+        'schedule': crontab(hour=2, minute=0),
+        'description': 'Runs daily at 02:00 UTC.',
     },
     'process-scheduled-announcements': {
         'task': 'communications.tasks.process_scheduled_announcements',
-        'schedule': crontab(minute='*/15'),  # Every 15 minutes
+        'schedule': crontab(minute='*/15'),
+        'description': 'Runs every 15 minutes to dispatch scheduled announcements.',
     },
 }
 
-EMAIL_TIMEOUT = 10  # seconds
+EMAIL_TIMEOUT_SECONDS = 10
 
-# Celery time limits so tasks don’t hang forever
 CELERY_TASK_SOFT_TIME_LIMIT = 20
 CELERY_TASK_TIME_LIMIT = 30

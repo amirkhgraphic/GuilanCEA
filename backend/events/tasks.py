@@ -15,11 +15,14 @@ from utils.templatetags.jalali import fa_digits, jdate
 
 
 logger = logging.getLogger(__name__)
+ANNOUNCEMENT_TASK_SOFT_LIMIT_SECONDS = 30
+ANNOUNCEMENT_TASK_HARD_LIMIT_SECONDS = 45
 
 @shared_task(bind=True, max_retries=3)
 def send_registration_confirmation_email(self, registration_pk: str):
+    """Send a registration confirmation email, loading the model lazily to avoid circular imports."""
     try:
-        from .models import Registration  # local import to avoid circular
+        from .models import Registration
         reg = (
             Registration.objects
             .select_related("event", "user")
@@ -130,17 +133,19 @@ def send_skyroom_credentials_individual_task(self, reg_id: int):
     ارسال نام‌کاربری/رمز برای اسکای‌روم
     - username = user.email
     - password = registration.ticket_id[:8]
+    - url = event.online_link (اگر لینک در فیلد online_link ذخیره شده باشد)
     """
     r = Registration.objects.get(pk=reg_id)
     event = r.event
     user = r.user
     sky_user = user.email.strip().split('@')[0]
     sky_pass = str(r.ticket_id)[:8]
+    skyroom_url = event.online_link
     try:
         ctx = {
             "user": user,
             "event": event,
-            "skyroom_url": event.online_link,  # اگر لینک اسکای‌روم در online_link ذخیره می‌کنید
+            "skyroom_url": skyroom_url,
             "sky_username": sky_user,
             "sky_password": sky_pass,
             "event_url": f"{settings.FRONTEND_ROOT}events/{event.slug}",
@@ -236,8 +241,8 @@ def queue_event_announcement(self, event_id: int, subject: str, body_html: str, 
     retry_backoff=True,
     retry_jitter=True,
     retry_kwargs={"max_retries": 3},
-    soft_time_limit=30,   # زمان نرم برای هر کاربر
-    time_limit=45,        # هارد لیمیت برای هر کاربر
+    soft_time_limit=ANNOUNCEMENT_TASK_SOFT_LIMIT_SECONDS,
+    time_limit=ANNOUNCEMENT_TASK_HARD_LIMIT_SECONDS,
 )
 def send_event_announcement_to_user(self, event_id: int, registration_id: int, subject: str, body_html: str):
     """
@@ -442,27 +447,27 @@ def queue_skyroom_credentials(self, event_id: int):
     retry_backoff=True,
     retry_jitter=True,
     retry_kwargs={"max_retries": 3},
-    soft_time_limit=30,   # زمان نرم برای هر کاربر
-    time_limit=45,        # هارد لیمیت برای هر کاربر
+    soft_time_limit=ANNOUNCEMENT_TASK_SOFT_LIMIT_SECONDS,
+    time_limit=ANNOUNCEMENT_TASK_HARD_LIMIT_SECONDS,
 )
 def send_skyroom_credentials_to_user(self, event_id: int, registration_id: int):
     """
     تسک کوچک و اتمی: ارسال نام‌کاربری/رمز اسکای‌روم برای یک Registration.
     با لاگ ایدمپوتنسی تا ارسال تکراری نداشته باشیم.
     """
-    user = None  # برای هندل کردن استثناها
+    user = None
     log = None
 
     try:
         r = Registration.objects.select_related("user", "event").get(pk=registration_id)
         user = r.user
-        event = r.event  # از خود Registration می‌گیریم تا یک کوئری کمتر بزنیم
+        event = r.event
 
         # ایدمپوتنسی: اگر قبلاً ارسال شده یا در صف/درحال ارسال است، Skip
         log, created = EventEmailLog.objects.get_or_create(
             event_id=event_id,
             user_id=user.id,
-            kind=EventEmailLog.KIND_SKYROOM_CREDENTIALS,  # مطمئن شوید این کانستنت را دارید
+            kind=getattr(EventEmailLog, "KIND_SKYROOM_CREDENTIALS", "skyroom_credentials"),
             defaults={"status": EventEmailLog.STATUS_PENDING},
         )
         if not created and log.status in (
@@ -473,12 +478,13 @@ def send_skyroom_credentials_to_user(self, event_id: int, registration_id: int):
 
         # ساخت یوزرنیم/پسورد
         sky_username = (user.email or "").strip().split("@")[0]
-        sky_password = (str(r.ticket_id or "")[:8])  # مطابق توضیح شما
+        sky_password = str(r.ticket_id or "")[:8]
+        skyroom_url = event.online_link
 
         ctx = {
             "user": user,
             "event": event,
-            "skyroom_url": event.online_link,  # اگر لینک اسکای‌روم اینجاست
+            "skyroom_url": skyroom_url,
             "sky_username": sky_username,
             "sky_password": sky_password,
             "event_url": f"{settings.FRONTEND_ROOT}events/{event.slug}",

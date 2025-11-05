@@ -12,7 +12,7 @@ import csv
 
 # اگر openpyxl نصب بود، XLSX را هم می‌خوانیم
 try:
-    import openpyxl  # for xlsx
+    import openpyxl
 except Exception:
     openpyxl = None
 
@@ -33,8 +33,8 @@ def major_to_code(label):
         return None
     # نگاشت‌های مورد نیاز
     mapping = {
-        "مهندسی کامپیوتر": MajorChoices.CE,  # "CE"
-        "مهندسی صنایع": MajorChoices.IE,     # "IE"
+        "مهندسی کامپیوتر": MajorChoices.CE,
+        "مهندسی صنایع": MajorChoices.IE,
     }
     return mapping.get(label, None)
 
@@ -212,7 +212,7 @@ class Command(BaseCommand):
         def do_import():
             nonlocal created_users, reused_users, created_regs, reused_regs, updated_users, skipped_rows
 
-            for i, row in enumerate(data[1:], start=2):  # از ردیف دوم (بعد از هدر)
+            for row_number, row in enumerate(data[1:], start=2):
                 try:
                     get = lambda key: normalize(row[headers_map[key]]) if key in headers_map and headers_map[key] < len(row) else None
 
@@ -226,7 +226,7 @@ class Command(BaseCommand):
                     email = get("email")
 
                     if not first_name and not last_name:
-                        continue  # ردیف خالی
+                        continue
 
                     # سال
                     year_of_study = None
@@ -271,7 +271,7 @@ class Command(BaseCommand):
                         # اگر نمی‌خوای اصلاً کاربر جدید بسازی، از فلگ --no-create استفاده کن
                         if options.get("no_create"):
                             skipped_rows += 1
-                            self.stderr.write(f"[Row {i}] skipped: user not found and --no-create is set (email={email})")
+                            self.stderr.write(f"[Row {row_number}] skipped: user not found and --no-create is set (email={email})")
                             continue
 
                         # ساخت کاربر جدید (بدون +۲ کردن ایمیل)
@@ -284,7 +284,7 @@ class Command(BaseCommand):
 
                         user = User(
                             username=username,
-                            email=email,  # همینی که هست؛ بدون +۲
+                            email=email,
                             first_name=first_name or "",
                             last_name=last_name or "",
                             student_id=student_id or None,
@@ -314,7 +314,7 @@ class Command(BaseCommand):
                 except Exception as e:
                     skipped_rows += 1
                     # برای دیباگ:
-                    self.stderr.write(f"[Row {i}] skipped due to error: {e}")
+                    self.stderr.write(f"[Row {row_number}] skipped due to error: {e}")
 
             if dry_run:
                 self.stdout.write(self.style.WARNING("Dry-run active; rolling back all changes."))

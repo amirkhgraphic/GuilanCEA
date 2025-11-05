@@ -122,14 +122,14 @@ def update_post(request, slug: str, data: PostCreateSchema):
 
 @blog_router.delete("/posts/{slug}", response={200: MessageSchema, 400: ErrorSchema}, auth=jwt_auth)
 def delete_post(request, slug: str):
-    """Delete a post (soft delete)"""
+    """Soft delete a post owned by the requester or committee."""
     user = request.auth
     post = get_object_or_404(Post, slug=slug)
     
     if not (post.author == user or user.is_superuser or user.is_staff):
         return 400, {"error": "You can only delete your own posts"}
     
-    post.delete()  # This will soft delete
+    post.delete()
     return 200, {"message": "Post deleted successfully"}
 
 @blog_router.get("/deleted/posts", response=List[PostListSchema], auth=jwt_auth)

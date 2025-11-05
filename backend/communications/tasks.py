@@ -12,6 +12,7 @@ from communications.push_notifications import push_service
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
+SYSTEM_USER_ID = 1
 
 
 @shared_task(bind=True, max_retries=3)
@@ -73,12 +74,12 @@ def send_newsletter_confirmation_task(self, subscription_id):
 
 @shared_task
 def send_event_reminders():
-    """Send reminders for events starting in 24 hours"""
+    """Send reminders for events starting about 24 hours from now within a 30-minute window."""
     try:
-        # Get events starting in 24 hours
-        tomorrow = timezone.now() + timedelta(hours=24)
-        start_range = tomorrow - timedelta(minutes=30)  # 30-minute window
-        end_range = tomorrow + timedelta(minutes=30)
+        reminder_target = timezone.now() + timedelta(hours=24)
+        window = timedelta(minutes=30)
+        start_range = reminder_target - window
+        end_range = reminder_target + window
         
         events = Event.objects.filter(
             start_time__range=(start_range, end_range),
@@ -119,7 +120,7 @@ def send_event_reminders():
 
 @shared_task
 def send_weekly_newsletter():
-    """Send weekly newsletter with recent announcements and upcoming events"""
+    """Send the weekly newsletter as the system user with recent announcements and upcoming events."""
     try:
         # Get active newsletter subscribers
         subscribers = NewsletterSubscription.objects.filter(
@@ -149,7 +150,6 @@ def send_weekly_newsletter():
             is_deleted=False
         ).order_by('start_time')[:5]
         
-        # Create newsletter announcement
         newsletter_content = f"""
 # Weekly Newsletter - {timezone.now().strftime('%B %d, %Y')}
 
@@ -167,13 +167,12 @@ def send_weekly_newsletter():
         if not recent_announcements.exists() and not upcoming_events.exists():
             newsletter_content += "\nNo recent announcements or upcoming events this week."
         
-        # Create newsletter announcement
         newsletter = Announcement.objects.create(
             title=f"Weekly Newsletter - {timezone.now().strftime('%B %d, %Y')}",
             content=newsletter_content,
             announcement_type='newsletter',
             priority='normal',
-            author_id=1,  # System user
+            author_id=SYSTEM_USER_ID,
             is_published=True,
             publish_date=timezone.now(),
             send_email=True,

@@ -24,13 +24,13 @@ class EventResource(resources.ModelResource):
         export_order = fields
 
 class RegistrationResource(resources.ModelResource):
+    """Export registrations with user attributes and shortened ticket identifiers."""
+
     event = fields.Field(
         column_name='event',
         attribute='event',
         widget=ForeignKeyWidget(Event, 'title')
     )
-
-    # User-related columns
     user_username = fields.Field(
         column_name='user_username',
         attribute='user',
@@ -63,15 +63,15 @@ class RegistrationResource(resources.ModelResource):
             'user_last_name',
             'registered_at',
             'status',
-            'ticket_id',        # will be truncated via dehydrate_*
+            'ticket_id',
             'created_at',
             'updated_at',
             'is_deleted',
             'deleted_at',
         )
-        export_order = fields  # keep the same order as above
+        export_order = fields
 
-    # Trim ticket_id to 8 characters in the export
     def dehydrate_ticket_id(self, obj):
+        """Limit ticket identifiers to eight characters in exports."""
         val = getattr(obj, 'ticket_id', '')
         return str(val)[:8] if val else ''
