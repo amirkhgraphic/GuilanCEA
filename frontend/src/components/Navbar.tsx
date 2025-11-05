@@ -79,8 +79,6 @@ export default function Navbar() {
 
           {/* همبرگر (فقط موبایل) */}
           <div className="md:hidden">
-            <ModeToggle />
-
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon" aria-label="منو">
@@ -105,6 +103,11 @@ export default function Navbar() {
                     <NavItem to="/events"  onClick={() => setOpen(false)}>رویدادها</NavItem>
                     {isAuthenticated && (user as any)?.is_staff &&
                       <NavItem to="/admin" onClick={() => setOpen(false)}>ادمین</NavItem>}
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-md border px-3 py-2">
+                    <span className="text-sm text-muted-foreground">تغییر تم</span>
+                    <ModeToggle />
                   </div>
 
                   <div className="pt-4 border-t grid gap-2">
