@@ -29,13 +29,11 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       redis:
-        image: bitnami/redis:7.2
-        env:
-          REDIS_PASSWORD: redis-password
+        image: redis:7-alpine
         ports:
           - 6379:6379
         options: >-
-          --health-cmd "redis-cli -a redis-password ping"
+          --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -55,10 +53,10 @@ jobs:
       DB_PASSWORD: password
       DB_HOST: localhost
       DB_PORT: "5432"
-      REDIS_PASSWORD: redis-password
-      REDIS_URL: redis://:redis-password@localhost:6379/0
-      CELERY_BROKER_URL: redis://:redis-password@localhost:6379/0
-      CELERY_RESULT_BACKEND: redis://:redis-password@localhost:6379/1
+      REDIS_PASSWORD: ""
+      REDIS_URL: redis://localhost:6379/0
+      CELERY_BROKER_URL: redis://localhost:6379/0
+      CELERY_RESULT_BACKEND: redis://localhost:6379/1
       EMAIL_BACKEND: django.core.mail.backends.console.EmailBackend
       EMAIL_HOST: localhost
       EMAIL_PORT: "1025"
