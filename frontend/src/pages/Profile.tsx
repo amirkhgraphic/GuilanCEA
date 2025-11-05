@@ -1,6 +1,7 @@
 import type * as Types from '@/lib/types';
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { Navigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,6 +57,47 @@ export default function Profile() {
     university: null,
     student_id: '',
   });
+
+  const siteUrl = 'https://east-guilan-ce.ir';
+  const siteName = 'انجمن علمی کامپیوتر شرق دانشگاه گیلان';
+  const canonicalUrl = `${siteUrl}/profile`;
+  const toAbsoluteSiteUrl = (url?: string | null) => {
+    if (!url) return undefined;
+    if (url.startsWith('http')) return url;
+    const normalizedSite = siteUrl.endsWith('/') ? siteUrl.slice(0, -1) : siteUrl;
+    const normalizedPath = url.startsWith('/') ? url.slice(1) : url;
+    return `${normalizedSite}/${normalizedPath}`;
+  };
+
+  const { pageTitle, pageDescription, ogImage } = useMemo(() => {
+    const nameParts = [me?.first_name, me?.last_name].filter(Boolean) as string[];
+    const displayName = nameParts.join(' ').trim();
+    const identifier = displayName || me?.username || me?.email || 'عضو';
+    const title = `پروفایل ${identifier} | ${siteName}`;
+    const description = `مدیریت پروفایل ${identifier} در انجمن علمی کامپیوتر شرق گیلان؛ به‌روزرسانی اطلاعات شخصی و مرور ثبت‌نام‌ رویدادها.`;
+    const image = toAbsoluteSiteUrl(me?.profile_picture) ?? `${siteUrl}/favicon.ico`;
+    return { pageTitle: title, pageDescription: description, ogImage: image };
+  }, [me?.first_name, me?.last_name, me?.username, me?.email, me?.profile_picture, siteName, siteUrl]);
+
+  const helmet = (
+    <Helmet>
+      <title>{pageTitle}</title>
+      <meta name="description" content={pageDescription} />
+      <meta name="robots" content="noindex, nofollow" />
+      <link rel="canonical" href={canonicalUrl} />
+      <meta property="og:title" content={pageTitle} />
+      <meta property="og:description" content={pageDescription} />
+      <meta property="og:type" content="profile" />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:image" content={ogImage} />
+      <meta property="og:locale" content="fa_IR" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={pageTitle} />
+      <meta name="twitter:description" content={pageDescription} />
+      <meta name="twitter:image" content={ogImage} />
+    </Helmet>
+  );
 
   const loadProfile = async () => {
     try {
@@ -123,7 +165,12 @@ export default function Profile() {
 
 
   if (!loading && !isAuthenticated) {
-    return <Navigate to="/auth" replace />;
+    return (
+      <>
+        {helmet}
+        <Navigate to="/auth" replace />
+      </>
+    );
   }
 
   const kv = (label: string, value: React.ReactNode) => (
@@ -194,9 +241,11 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center bg-background p-4">
-      <div className="w-full max-w-3xl">
-        <Card>
+    <>
+      {helmet}
+      <div className="min-h-[70vh] flex flex-col items-center justify-center bg-background p-4">
+        <div className="w-full max-w-3xl">
+          <Card>
           <CardHeader dir="rtl" className="text-right">
             <div className="flex flex-col gap-4 items-center sm:flex-row">
 
@@ -470,8 +519,9 @@ export default function Profile() {
               </div>
             )}
           </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

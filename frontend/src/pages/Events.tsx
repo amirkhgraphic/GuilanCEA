@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { api } from '@/lib/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +11,7 @@ import { formatJalali, getThumbUrl } from '@/lib/utils';
 
 
 function labelPrice(event: any) {
-  const price = Number(event?.price ?? 0);
+  const price = Number(event?.price ?? 0) / 10;
   return price <= 0 ? "رایگان" : `${price.toLocaleString("fa-IR")} تومان`;
 }
 function modeFa(event_type: any) {
@@ -43,6 +44,74 @@ export default function Events() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
+  const siteUrl = 'https://east-guilan-ce.ir';
+  const siteName = 'East Guilan CE';
+  const pageTitle = `Events | ${siteName}`;
+  const pageDescription =
+    'Discover upcoming and past events organized by the East Guilan Computer Engineering Association, including workshops, competitions, and community programs.';
+  const canonicalUrl = `${siteUrl}/events`;
+
+  const toAbsoluteUrl = (url?: string | null) => {
+    if (!url) return undefined;
+    if (url.startsWith('http')) return url;
+    const normalizedSite = siteUrl.endsWith('/') ? siteUrl.slice(0, -1) : siteUrl;
+    const normalizedPath = url.startsWith('/') ? url.slice(1) : url;
+    return `${normalizedSite}/${normalizedPath}`;
+  };
+
+  const ogImage = useMemo(() => {
+    if (!events.length) return `${siteUrl}/favicon.ico`;
+    return toAbsoluteUrl(getThumbUrl(events[0])) ?? `${siteUrl}/favicon.ico`;
+  }, [events]);
+
+  const listStructuredData = useMemo(() => {
+    if (!events.length) return null;
+
+    const itemListElement = events.map((eventItem, index) => {
+      const listItem: Record<string, unknown> = {
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `${siteUrl}/events/${eventItem.slug}`,
+        name: eventItem.title,
+        description: eventItem.description,
+        startDate: eventItem.start_time,
+      };
+
+      if (eventItem.end_time) {
+        listItem.endDate = eventItem.end_time;
+      }
+
+      const imageUrl = toAbsoluteUrl(getThumbUrl(eventItem));
+      if (imageUrl) {
+        listItem.image = imageUrl;
+      }
+
+      const placeName = eventItem.location || eventItem.address;
+      if (placeName) {
+        const place: Record<string, unknown> = {
+          '@type': 'Place',
+          name: placeName,
+        };
+        if (eventItem.address) {
+          place.address = eventItem.address;
+        }
+        listItem.location = place;
+      }
+
+      return listItem;
+    });
+
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: pageTitle,
+      description: pageDescription,
+      url: canonicalUrl,
+      numberOfItems: events.length,
+      itemListElement,
+    };
+  }, [events, canonicalUrl, pageDescription, pageTitle]);
+
   useEffect(() => {
     loadEvents();
   }, [search]);
@@ -64,7 +133,28 @@ export default function Events() {
   };
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:site_name" content={siteName} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:locale" content="fa_IR" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        <meta name="twitter:image" content={ogImage} />
+        {listStructuredData && (
+          <script type="application/ld+json">{JSON.stringify(listStructuredData)}</script>
+        )}
+      </Helmet>
+
+      <div className="min-h-screen bg-background" dir="rtl">
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8">رویدادها</h1>
 
@@ -133,6 +223,7 @@ export default function Events() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </>
   );
 }

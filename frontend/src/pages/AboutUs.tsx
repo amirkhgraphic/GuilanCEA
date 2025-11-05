@@ -1,8 +1,47 @@
 import React from 'react';
 
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 
 // ------ داده‌های قابل تنظیم ------
+const SITE_URL = 'https://east-guilan-ce.ir';
+const SITE_NAME_FA = 'انجمن علمی کامپیوتر شرق گیلان';
+const ABOUT_CANONICAL = `${SITE_URL}/about`;
+const ABOUT_TITLE = `درباره ما | ${SITE_NAME_FA}`;
+const ABOUT_DESCRIPTION =
+  'آشنایی با تاریخچه، مأموریت‌ها و دستاوردهای انجمن علمی کامپیوتر شرق گیلان و راه‌های مشارکت دانشجویان در برنامه‌های انجمن.';
+const ABOUT_KEYWORDS =
+  'انجمن علمی کامپیوتر شرق گیلان, انجمن علمی مهندسی کامپیوتر دانشگاه گیلان، انجمن علمی علوم کامپیوتر، انجمن علمی شرق گیلان، انجمن علمی مهندسی کامپیوتر شرق گیلان، دانشکده فنی و مهندسی شرق گیلان، انجمن علمی کامپیوتر, فعالیت‌های دانشجویی, انجمن‌های علمی ایران, رویدادهای فناوری، برنامه نویسی، انجمن علمی دانشجویی، دانشگاه گیلان، فنی شرق';
+
+const ABOUT_STRUCTURED_DATA = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: ABOUT_TITLE,
+  description: ABOUT_DESCRIPTION,
+  url: ABOUT_CANONICAL,
+  mainEntity: {
+    '@type': 'Organization',
+    name: SITE_NAME_FA,
+    url: SITE_URL,
+    logo: `${SITE_URL}/favicon.ico`,
+    sameAs: [
+      'https://instagram.com/guilance.ir',
+      'https://t.me/guilance',
+      'https://t.me/guilancea'
+    ],
+    areaServed: 'IR',
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        contactType: 'customer support',
+        email: 'eastguilanceassociation@gmail.com',
+        availableLanguage: ['fa'],
+        areaServed: 'IR'
+      }
+    ]
+  }
+};
+
 const ORG = {
   title: 'انجمن‌های علمی کامپیوتر گیلان', // تیتر کلی
   subtitle:
@@ -99,7 +138,27 @@ const CONTACTS = [
 
 export default function AboutUs() {
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <>
+      <Helmet>
+        <title>{ABOUT_TITLE}</title>
+        <meta name="description" content={ABOUT_DESCRIPTION} />
+        <meta name="keywords" content={ABOUT_KEYWORDS} />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={ABOUT_CANONICAL} />
+        <meta property="og:title" content={ABOUT_TITLE} />
+        <meta property="og:description" content={ABOUT_DESCRIPTION} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={ABOUT_CANONICAL} />
+        <meta property="og:site_name" content={SITE_NAME_FA} />
+        <meta property="og:image" content={`${SITE_URL}/favicon.ico`} />
+        <meta property="og:locale" content="fa_IR" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={ABOUT_TITLE} />
+        <meta name="twitter:description" content={ABOUT_DESCRIPTION} />
+        <meta name="twitter:image" content={`${SITE_URL}/favicon.ico`} />
+        <script type="application/ld+json">{JSON.stringify(ABOUT_STRUCTURED_DATA)}</script>
+      </Helmet>
+      <div className="min-h-screen bg-background" dir="rtl">
       {/* Hero */}
       <section className="bg-gradient-to-b from-muted/40 to-transparent">
         <div className="container mx-auto max-w-6xl px-4 py-12">
@@ -287,7 +346,8 @@ export default function AboutUs() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }
 
