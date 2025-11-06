@@ -5,6 +5,7 @@ import { api } from "@/lib/api";
 import PaymentResult from "@/components/PaymentResult";
 import { formatJalali } from "@/lib/utils";
 import Markdown from '@/components/Markdown';
+import { Helmet } from "react-helmet-async";
 
 export default function EventFreeSuccessPage() {
   const { slug } = useParams();
@@ -18,8 +19,54 @@ export default function EventFreeSuccessPage() {
     enabled: Boolean(registrationId),
   });
 
+  const siteUrl = 'https://east-guilan-ce.ir';
+  const siteName = 'East Guilan CE';
+  const canonicalUrl = slug ? `${siteUrl}/events/${slug}/success` : `${siteUrl}/events`;
+  const registrationTitle = data?.event_title || slug || 'Event registration';
+  const ticketSummary = data?.ticket_id ? ` Ticket: ${data.ticket_id}.` : '';
+  const pageState = isLoading
+    ? 'Verifying registration'
+    : isError || !data
+    ? 'Registration not found'
+    : 'Registration confirmed';
+  const pageTitle = `${pageState} | ${siteName}`;
+  const registrationCode = registrationId || 'your registration';
+  const pageDescription = data
+    ? `Registration confirmed for ${registrationTitle}.${ticketSummary}`
+    : isError
+    ? `We could not verify ${registrationCode}.`
+    : registrationId
+    ? `Verifying registration ${registrationId} for ${registrationTitle}.`
+    : 'Review your registration status and ticket details.';
+  const helmet = (
+    <Helmet>
+      <title>{pageTitle}</title>
+      <meta name="description" content={pageDescription} />
+      <meta name="robots" content="noindex, nofollow" />
+      <link rel="canonical" href={canonicalUrl} />
+      <meta property="og:title" content={pageTitle} />
+      <meta property="og:description" content={pageDescription} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:image" content={`${siteUrl}/favicon.ico`} />
+      <meta property="og:locale" content="fa_IR" />
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:title" content={pageTitle} />
+      <meta name="twitter:description" content={pageDescription} />
+      <meta name="twitter:image" content={`${siteUrl}/favicon.ico`} />
+    </Helmet>
+  );
+
+  const renderWithHelmet = (node: JSX.Element) => (
+    <>
+      {helmet}
+      {node}
+    </>
+  );
+
   if (isLoading) {
-    return (
+    return renderWithHelmet(
       <div className="container py-10" dir="rtl">
         در حال بارگذاری...
       </div>
@@ -28,7 +75,7 @@ export default function EventFreeSuccessPage() {
 
   // اگر بک‌اند چیزی برنگرداند یا خطا داد
   if (!data || isError) {
-    return (
+    return renderWithHelmet(
       <div className="container py-10" dir="rtl">
         <PaymentResult
           title="اطلاعات ثبت‌نام در دسترس نیست"
@@ -62,7 +109,7 @@ export default function EventFreeSuccessPage() {
     { label: "مبلغ", value: "رایگان" },
   ];
 
-  return (
+  return renderWithHelmet(
     <div className="container py-10" dir="rtl">
       <PaymentResult
         title="ثبت‌نام با موفقیت انجام شد 🎉"
