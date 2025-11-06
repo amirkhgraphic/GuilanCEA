@@ -27,12 +27,10 @@ export default function EventDetail() {
   const isFree = useMemo(() => basePrice <= 0, [basePrice]);
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
-
   const siteUrl = 'https://east-guilan-ce.ir';
-  const siteName = 'East Guilan CE';
+  const siteName = 'انجمن علمی کامپیوتر شرق گیلان';
   const defaultDescription =
-    'Explore detailed information about community, academic, and professional events hosted by the East Guilan Computer Engineering Association.';
+    'جزئیات کامل رویدادهای انجمن علمی کامپیوتر شرق گیلان شامل زمان، مکان و شرایط ثبت‌نام.';
 
   const toAbsoluteUrl = (url?: string | null) => {
     if (!url) return undefined;
@@ -44,10 +42,7 @@ export default function EventDetail() {
 
   const sanitizeDescription = (value?: string | null) => {
     if (!value) return defaultDescription;
-    const stripped = value
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+    const stripped = value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
     if (!stripped) return defaultDescription;
     if (stripped.length <= 160) return stripped;
     return `${stripped.slice(0, 157)}...`;
@@ -57,11 +52,12 @@ export default function EventDetail() {
   const primaryImage = event
     ? toAbsoluteUrl(getThumbUrl(event)) ?? `${siteUrl}/favicon.ico`
     : `${siteUrl}/favicon.ico`;
-  const pageTitle = event ? `${event.title} | ${siteName}` : `Event Details | ${siteName}`;
+  const pageTitle = event ? `${event.title} | ${siteName}` : `جزئیات رویداد | ${siteName}`;
   const pageDescription = sanitizeDescription(event?.description);
   const pageRobots = event?.status === 'draft' ? 'noindex, nofollow' : 'index, follow';
 
-  // -- ÙˆØ¶Ø¹ÛŒØª Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ú©Ø§Ø±Ø¨Ø±
+  const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
     async function check() {
@@ -79,14 +75,15 @@ export default function EventDetail() {
   const goSuccess = (registrationId?: string) => {
     const q = registrationId ? `?registration_id=${registrationId}` : '';
     setAlreadyRegistered(true);
-    toast({ title: 'Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ù…ÙˆÙÙ‚ÛŒØªâ€ŒØ¢Ù…ÛŒØ² Ø¨ÙˆØ¯!', variant: 'success' });
+
+    toast({ title: 'ثبت‌نام با موفقیت انجام شد!', variant: 'success' });
     navigate(`/events/${event!.slug}/success${q}`);
   };
 
   const handleMainCTA = async () => {
     if (!event) return;
     if (!isAuthenticated) {
-      toast({ title: 'Ø§Ø¨ØªØ¯Ø§ ÙˆØ§Ø±Ø¯ Ø´ÙˆÛŒØ¯', description: 'Ø¨Ø±Ø§ÛŒ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ù†ÛŒØ§Ø² Ø¨Ù‡ ÙˆØ±ÙˆØ¯ Ø¯Ø§Ø±ÛŒØ¯.', variant: 'destructive' });
+      toast({ title: 'ابتدا وارد شوید', description: 'برای ثبت‌نام در رویداد باید وارد حساب کاربری خود شوید.', variant: 'destructive' });
       navigate('/auth');
       return;
     }
@@ -99,7 +96,7 @@ export default function EventDetail() {
         const msg = e?.message || '';
         if (msg.includes('already registered') || msg.includes('Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…')) {
           setAlreadyRegistered(true);
-          toast({ title: 'Ù‚Ø¨Ù„Ø§Ù‹ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ú©Ø±Ø¯Ù‡â€ŒØ§ÛŒØ¯', variant: 'destructive' });
+          toast({ title: 'شما قبلاً ثبت‌نام کرده‌اید', variant: 'destructive' });
           return;
         }
         throw e;
@@ -114,7 +111,7 @@ export default function EventDetail() {
   const handleContinueFromModal = async (coupon?: string, finalAmount?: number) => {
     if (!event) return;
     if (!isAuthenticated) {
-      toast({ title: 'Ø§Ø¨ØªØ¯Ø§ ÙˆØ§Ø±Ø¯ Ø´ÙˆÛŒØ¯', description: 'Ø¨Ø±Ø§ÛŒ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ù†ÛŒØ§Ø² Ø¨Ù‡ ÙˆØ±ÙˆØ¯ Ø¯Ø§Ø±ÛŒØ¯.', variant: 'destructive' });
+      toast({ title: 'ابتدا وارد شوید', description: 'برای ثبت‌نام در رویداد باید وارد حساب کاربری خود شوید.', variant: 'destructive' });
       navigate('/auth');
       return;
     }
@@ -150,8 +147,7 @@ export default function EventDetail() {
         return; // Ù…Ù‡Ù…: Ø§ÛŒÙ†Ø¬Ø§ Ø®Ø±ÙˆØ¬
       }
 
-      // 3) Ø¯Ø± ØºÛŒØ± Ø§ÛŒÙ†ØµÙˆØ±ØªØŒ Ù¾Ø±Ø¯Ø§Ø®Øª Ø¨Ø³Ø§Ø²
-      const description = `Ù¾Ø±Ø¯Ø§Ø®Øª Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ø±ÙˆÛŒØ¯Ø§Ø¯: ${event.title}`;
+      const description = `پرداخت رویداد: ${event.title}`;
       const result = await api.createPayment({
         event_id: event.id,
         description,
@@ -202,10 +198,10 @@ export default function EventDetail() {
       const msg = e?.message || '';
       if (msg.includes('already registered') || msg.includes('Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…')) {
         setAlreadyRegistered(true);
-        toast({ title: 'Ù‚Ø¨Ù„Ø§Ù‹ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ú©Ø±Ø¯Ù‡â€ŒØ§ÛŒØ¯', variant: 'destructive' });
+        toast({ title: 'شما قبلاً ثبت‌نام کرده‌اید', variant: 'destructive' });
         return;
       }
-      toast({ title: 'Ø®Ø·Ø§ Ø¯Ø± Ø´Ø±ÙˆØ¹ Ù¾Ø±Ø¯Ø§Ø®Øª', description: msg || 'Ù…Ø´Ú©Ù„ÛŒ Ø±Ø® Ø¯Ø§Ø¯', variant: 'destructive' });
+      toast({ title: 'خطا در پردازش پرداخت', description: msg || 'لطفاً دوباره تلاش کنید.', variant: 'destructive' });
     } finally {
       setSubmitting(false);
       setOpen(false);
@@ -220,7 +216,7 @@ export default function EventDetail() {
         const data = await api.getEventBySlug(slug);
         setEvent(data);
       } catch (e: any) {
-        toast({ title: 'Ø®Ø·Ø§ Ø¯Ø± Ø¯Ø±ÛŒØ§ÙØª Ø±ÙˆÛŒØ¯Ø§Ø¯', description: e?.message || 'Ù…Ø´Ú©Ù„ÛŒ Ø±Ø® Ø¯Ø§Ø¯', variant: 'destructive' });
+        toast({ title: 'خطا در بارگذاری رویداد', description: e?.message || 'لطفاً دوباره تلاش کنید.', variant: 'destructive' });
       } finally {
         setLoading(false);
       }
@@ -278,7 +274,6 @@ export default function EventDetail() {
     const full = !unlimited && remaining <= 0;
     return { registrationOpen, remaining, full };
   }, [event, rsTs, deadlineTs, nowTs]);
-
   const eventStructuredData = useMemo(() => {
     if (!event) return null;
 
@@ -393,11 +388,13 @@ export default function EventDetail() {
 
   if (loading) {
     return withHelmet(
-      <div className="min-h-[60vh] flex items-center justify-center text-muted-foreground">Ø¯Ø± Ø­Ø§Ù„ Ø¨Ø§Ø±Ú¯Ø°Ø§Ø±ÛŒ...</div>
+      <div className="min-h-[60vh] flex items-center justify-center text-muted-foreground">در حال بارگذاری رویداد...</div>
     );
   }
   if (!event) {
-    return withHelmet(<div className="min-h-[60vh] flex items-center justify-center">Ø±ÙˆÛŒØ¯Ø§Ø¯ Ù¾ÛŒØ¯Ø§ Ù†Ø´Ø¯</div>);
+    return withHelmet(
+      <div className="min-h-[60vh] flex items-center justify-center">رویداد مورد نظر یافت نشد.</div>
+    );
   }
 
   // ÙˆØ¶Ø¹ÛŒØªâ€ŒÙ‡Ø§ÛŒ Ù†Ù…Ø§ÛŒØ´ Ù¾ÛŒØ§Ù… Ø¨Ø§Ù„Ø§ÛŒ ØµÙØ­Ù‡
@@ -411,7 +408,7 @@ export default function EventDetail() {
       {beforeStart && (
         <div className="mb-6">
           <div className="rounded-xl border p-4 text-center bg-sky-50 text-sky-900 border-sky-200 dark:bg-sky-900/30 dark:text-sky-100 dark:border-sky-800">
-            Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ø§Ø² <strong className="font-semibold">{formatJalali(event.registration_start_date!)}</strong> Ø¨Ø§Ø² Ù…ÛŒâ€ŒØ´ÙˆØ¯.
+            ثبت‌نام از <strong className="font-semibold">{formatJalali(event.registration_start_date!)}</strong> آغاز می‌شود.
           </div>
         </div>
       )}
@@ -420,7 +417,7 @@ export default function EventDetail() {
         <div className="mb-6">
           <div className="rounded-xl border p-4 text-center bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-100 dark:border-emerald-800">
             <div className="flex flex-col items-center gap-1 sm:flex-row sm:justify-center">
-              <span>Ø²Ù…Ø§Ù† Ø¨Ø§Ù‚ÛŒÙ…Ø§Ù†Ø¯Ù‡ ØªØ§ Ù¾Ø§ÛŒØ§Ù† Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…:</span>
+              <span>زمان باقی‌مانده تا پایان ثبت‌نام:</span>
               <strong className="font-extrabold tracking-wider sm:ms-1">
                 {formatRemainingWords(remainingMs!)}
               </strong>
@@ -432,7 +429,7 @@ export default function EventDetail() {
       {ended && (
         <div className="mb-6">
           <div className="rounded-xl border p-4 text-center bg-rose-50 text-rose-900 border-rose-200 dark:bg-rose-900/30 dark:text-rose-100 dark:border-rose-800">
-            Ù…Ù‡Ù„Øª Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ø¨Ù‡ Ù¾Ø§ÛŒØ§Ù† Ø±Ø³ÛŒØ¯
+            مهلت ثبت‌نام به پایان رسیده است.
           </div>
         </div>
       )}
@@ -473,7 +470,7 @@ export default function EventDetail() {
           {/* Ú¯Ø§Ù„Ø±ÛŒ */}
           {event.gallery_images?.length ? (
             <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-3">Ú¯Ø§Ù„Ø±ÛŒ</h3>
+              <h3 className="text-lg font-semibold mb-3">گالری تصاویر</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {event.gallery_images.map((g) => (
                   <img
@@ -493,27 +490,27 @@ export default function EventDetail() {
           <div className="lg:sticky lg:top-24">
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Ø¬Ø²Ø¦ÛŒØ§Øª Ø±ÙˆÛŒØ¯Ø§Ø¯</CardTitle>
-                <CardDescription>Ø§Ø·Ù„Ø§Ø¹Ø§Øª ØªÚ©Ù…ÛŒÙ„ÛŒ</CardDescription>
+                <CardTitle className="text-base">اطلاعات ثبت‌نام</CardTitle>
+                <CardDescription>جزئیات دسترسی به رویداد</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
-                {event.address && <div>ðŸ“ {event.address}</div>}
+                {event.address && <div>آدرس: {event.address}</div>}
                 {event.online_link && (
                   <div className="truncate">
-                    ðŸ”— <a className="underline" href={event.online_link} target="_blank" rel="noreferrer">{event.online_link}</a>
+                    لینک برگزاری: <a className="underline" href={event.online_link} target="_blank" rel="noreferrer">{event.online_link}</a>
                   </div>
                 )}
-                <div>Ø¸Ø±ÙÛŒØª: {event.capacity == null ? 'Ù†Ø§Ù…Ø­Ø¯ÙˆØ¯' : event.capacity.toLocaleString('fa-IR')}</div>
+                <div>ظرفیت کل: {event.capacity == null ? 'نامحدود' : event.capacity.toLocaleString('fa-IR')}</div>
                 {meta && (
                   <>
                     {!event.capacity ? null : (
                       <div>
-                        Ø¸Ø±ÙÛŒØª Ø¨Ø§Ù‚ÛŒÙ…Ø§Ù†Ø¯Ù‡: {meta.remaining === Infinity ? 'Ù†Ø§Ù…Ø­Ø¯ÙˆØ¯' : meta.remaining.toLocaleString('fa-IR')}
+                        ظرفیت باقی‌مانده: {meta.remaining === Infinity ? 'نامحدود' : meta.remaining.toLocaleString('fa-IR')}
                       </div>
                     )}
                   </>
                 )}
-                <div>Ù‡Ø²ÛŒÙ†Ù‡: {event.price ? `${(event.price / 10).toLocaleString('fa-IR')} ØªÙˆÙ…Ø§Ù†` : 'Ø±Ø§ÛŒÚ¯Ø§Ù†'}</div>
+                <div>هزینه حضور: {event.price ? `${(event.price / 10).toLocaleString('fa-IR')} تومان` : 'رایگان'}</div>
 
                 {/* Ù†Ù…Ø§ÛŒØ´ Ø²Ù…Ø§Ù† Ø´Ø±ÙˆØ¹/Ù¾Ø§ÛŒØ§Ù† Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ø¯Ø± UI Ø­Ø°Ù Ø´Ø¯Ù‡ */}
 
@@ -529,18 +526,19 @@ export default function EventDetail() {
                   }
                 >
                   {event.status !== 'published'
-                    ? 'ØºÛŒØ±Ù‚Ø§Ø¨Ù„ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…'
+                    ? 'ثبت‌نام این رویداد فعال نیست'
                     : alreadyRegistered
-                    ? 'Ù‚Ø¨Ù„Ø§Ù‹ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ú©Ø±Ø¯Ù‡â€ŒØ§ÛŒØ¯'
+                    ? 'شما قبلاً ثبت‌نام کرده‌اید'
                     : !meta?.registrationOpen
-                    ? 'Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ø¨Ø§Ø² Ù†ÛŒØ³Øª'
+                    ? 'ثبت‌نام هنوز آغاز نشده است'
                     : meta?.full
-                    ? 'Ø¸Ø±ÙÛŒØª ØªÚ©Ù…ÛŒÙ„'
+                    ? 'ظرفیت ثبت‌نام تکمیل شده است'
                     : submitting
                     ? 'Ø¯Ø± Ø­Ø§Ù„ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…...'
                     : event.price === 0
-                    ? 'Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… (Ø±Ø§ÛŒÚ¯Ø§Ù†)'
-                    : `Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ùˆ Ù¾Ø±Ø¯Ø§Ø®Øª`}
+                    ? 'ثبت‌نام (رایگان)'
+                    : 'ثبت‌نام و ادامه پرداخت'
+                  }
                 </Button>
 
                 {!isFree && (
