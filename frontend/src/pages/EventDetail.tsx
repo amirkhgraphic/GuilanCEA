@@ -12,7 +12,7 @@ import CouponDialogFa from '@/components/CouponDialogFa';
 import { formatJalali, getThumbUrl } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 
-const typeLabel: Record<string, string> = { online: 'آنلاین', on_site: 'حضوری', hybrid: 'ترکیبی' };
+const typeLabel: Record<string, string> = { online: 'Ø¢Ù†Ù„Ø§ÛŒÙ†', on_site: 'Ø­Ø¶ÙˆØ±ÛŒ', hybrid: 'ØªØ±Ú©ÛŒØ¨ÛŒ' };
 
 export default function EventDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -58,7 +58,38 @@ export default function EventDetail() {
 
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
 
-  // -- ÙˆØ¶Ø¹ÛŒØª Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ú©Ø§Ø±Ø¨Ø±
+  const siteUrl = 'https://east-guilan-ce.ir';
+  const siteName = 'East Guilan CE';
+  const defaultDescription =
+    'Explore detailed information about community, academic, and professional events hosted by the East Guilan Computer Engineering Association.';
+
+  const toAbsoluteUrl = (url?: string | null) => {
+    if (!url) return undefined;
+    if (url.startsWith('http')) return url;
+    const normalizedSite = siteUrl.endsWith('/') ? siteUrl.slice(0, -1) : siteUrl;
+    const normalizedPath = url.startsWith('/') ? url.slice(1) : url;
+    return `${normalizedSite}/${normalizedPath}`;
+  };
+
+  const sanitizeDescription = (value?: string | null) => {
+    if (!value) return defaultDescription;
+    const stripped = value
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!stripped) return defaultDescription;
+    if (stripped.length <= 160) return stripped;
+    return `${stripped.slice(0, 157)}...`;
+  };
+
+  const canonicalUrl = event ? `${siteUrl}/events/${event.slug}` : `${siteUrl}/events`;
+  const primaryImage = event
+    ? toAbsoluteUrl(getThumbUrl(event)) ?? `${siteUrl}/favicon.ico`
+    : `${siteUrl}/favicon.ico`;
+  const pageTitle = event ? `${event.title} | ${siteName}` : `Event Details | ${siteName}`;
+  const pageDescription = sanitizeDescription(event?.description);
+  const pageRobots = event?.status === 'draft' ? 'noindex, nofollow' : 'index, follow';
+
   useEffect(() => {
     let cancelled = false;
     async function check() {
@@ -76,6 +107,7 @@ export default function EventDetail() {
   const goSuccess = (registrationId?: string) => {
     const q = registrationId ? `?registration_id=${registrationId}` : '';
     setAlreadyRegistered(true);
+
     toast({ title: 'ثبت‌نام با موفقیت انجام شد!', variant: 'success' });
     navigate(`/events/${event!.slug}/success${q}`);
   };
@@ -94,7 +126,7 @@ export default function EventDetail() {
         goSuccess(res.ticket_id);
       } catch (e: any) {
         const msg = e?.message || '';
-        if (msg.includes('already registered') || msg.includes('ثبت‌نام')) {
+        if (msg.includes('already registered') || msg.includes('Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…')) {
           setAlreadyRegistered(true);
           toast({ title: 'شما قبلاً ثبت‌نام کرده‌اید', variant: 'destructive' });
           return;
@@ -147,7 +179,6 @@ export default function EventDetail() {
         return; // Ù…Ù‡Ù…: Ø§ÛŒÙ†Ø¬Ø§ Ø®Ø±ÙˆØ¬
       }
 
-      // 3) Ø¯Ø± ØºÛŒØ± Ø§ÛŒÙ†ØµÙˆØ±ØªØŒ Ù¾Ø±Ø¯Ø§Ø®Øª Ø¨Ø³Ø§Ø²
       const description = `پرداخت رویداد: ${event.title}`;
       const result = await api.createPayment({
         event_id: event.id,
@@ -197,7 +228,7 @@ export default function EventDetail() {
     } catch (e: any) {
       // Ù‡Ù†Ø¯Ù„ Ø®Ø·Ø§ÛŒ Â«Ù‚Ø¨Ù„Ø§Ù‹ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ú©Ø±Ø¯Ù‡â€ŒØ§ÛŒØ¯Â» Ø¨Ø±Ø§ÛŒ Ø­Ø§Ù„Øª Ù¾Ø±Ø¯Ø§Ø®Øª ØµÙØ± Ù‡Ù… Ù…ÙÛŒØ¯Ù‡
       const msg = e?.message || '';
-      if (msg.includes('already registered') || msg.includes('ثبت‌نام')) {
+      if (msg.includes('already registered') || msg.includes('Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…')) {
         setAlreadyRegistered(true);
         toast({ title: 'شما قبلاً ثبت‌نام کرده‌اید', variant: 'destructive' });
         return;
@@ -260,8 +291,8 @@ export default function EventDetail() {
     const hours = Math.floor((total % 86400) / 3600);
     const minutes = Math.floor((total % 3600) / 60);
     const seconds = total % 60;
-    if (days === 0) return `${nf2.format(hours)} ساعت و ${nf2.format(minutes)} دقیقه و ${nf2.format(seconds)} ثانیه`;
-    return `${nfd.format(days)} روز و ${nf2.format(hours)} ساعت و ${nf2.format(minutes)} دقیقه و ${nf2.format(seconds)} ثانیه`;
+    if (days === 0) return `${nf2.format(hours)} Ø³Ø§Ø¹Øª Ùˆ ${nf2.format(minutes)} Ø¯Ù‚ÛŒÙ‚Ù‡ Ùˆ ${nf2.format(seconds)} Ø«Ø§Ù†ÛŒÙ‡`;
+    return `${nfd.format(days)} Ø±ÙˆØ² Ùˆ ${nf2.format(hours)} Ø³Ø§Ø¹Øª Ùˆ ${nf2.format(minutes)} Ø¯Ù‚ÛŒÙ‚Ù‡ Ùˆ ${nf2.format(seconds)} Ø«Ø§Ù†ÛŒÙ‡`;
   };
 ``
   // -- Ù…Ù†Ø·Ù‚ Ø¨Ø§Ø²/Ø¨Ø³ØªÙ‡ Ø¨ÙˆØ¯Ù† Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… (Ø´Ø±ÙˆØ¹ Ùˆ Ù¾Ø§ÛŒØ§Ù† Ø±Ø§ Ù„Ø­Ø§Ø¸ Ù…ÛŒâ€ŒÚ©Ù†ÛŒÙ…Ø› UI Ø´Ø±ÙˆØ¹ Ø±Ø§ Ù†Ø´Ø§Ù† Ù†Ù…ÛŒâ€ŒØ¯Ù‡ÛŒÙ…)
@@ -387,6 +418,118 @@ export default function EventDetail() {
     </>
   );
 
+
+  const eventStructuredData = useMemo(() => {
+    if (!event) return null;
+
+    const attendanceModeMap: Record<string, string> = {
+      online: 'https://schema.org/OnlineEventAttendanceMode',
+      on_site: 'https://schema.org/OfflineEventAttendanceMode',
+      hybrid: 'https://schema.org/MixedEventAttendanceMode',
+    };
+
+    const statusMap: Record<string, string> = {
+      published: 'https://schema.org/EventScheduled',
+      completed: 'https://schema.org/EventCompleted',
+      cancelled: 'https://schema.org/EventCancelled',
+      draft: 'https://schema.org/EventPostponed',
+    };
+
+    const data: Record<string, unknown> = {
+      '@context': 'https://schema.org',
+      '@type': 'Event',
+      name: event.title,
+      description: pageDescription,
+      startDate: event.start_time,
+      url: canonicalUrl,
+      eventAttendanceMode: attendanceModeMap[event.event_type] ?? attendanceModeMap.hybrid,
+      eventStatus: statusMap[event.status] ?? statusMap.published,
+      organizer: {
+        '@type': 'Organization',
+        name: siteName,
+        url: siteUrl,
+      },
+    };
+
+    if (event.end_time) {
+      data.endDate = event.end_time;
+    }
+
+    if (primaryImage) {
+      data.image = [primaryImage];
+    }
+
+    if (event.event_type === 'online') {
+      data.location = {
+        '@type': 'VirtualLocation',
+        url: event.online_link || canonicalUrl,
+      };
+    } else {
+      const location: Record<string, unknown> = {
+        '@type': 'Place',
+        name: event.location || event.address || siteName,
+      };
+      if (event.address) {
+        location.address = event.address;
+      }
+      if (event.location) {
+        location.description = event.location;
+      }
+      data.location = location;
+    }
+
+    const offers: Record<string, unknown> = {
+      '@type': 'Offer',
+      url: canonicalUrl,
+      priceCurrency: 'IRR',
+      price: String(event.price ?? 0),
+      availability: meta?.full ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+    };
+
+    if (event.registration_start_date) {
+      offers.validFrom = event.registration_start_date;
+    }
+    if (event.registration_end_date) {
+      offers.validThrough = event.registration_end_date;
+    }
+
+    data.offers = offers;
+
+    return data;
+  }, [event, pageDescription, canonicalUrl, primaryImage, meta?.full, siteName, siteUrl]);
+
+  const helmet = (
+    <Helmet>
+      <title>{pageTitle}</title>
+      <meta name="description" content={pageDescription} />
+      <meta name="robots" content={pageRobots} />
+      <link rel="canonical" href={canonicalUrl} />
+      <meta property="og:title" content={pageTitle} />
+      <meta property="og:description" content={pageDescription} />
+      <meta property="og:type" content="event" />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:image" content={primaryImage} />
+      <meta property="og:locale" content="fa_IR" />
+      {event?.start_time && <meta property="event:start_time" content={event.start_time} />}
+      {event?.end_time && <meta property="event:end_time" content={event.end_time} />}
+      {event?.updated_at && <meta property="og:updated_time" content={event.updated_at} />}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={pageTitle} />
+      <meta name="twitter:description" content={pageDescription} />
+      <meta name="twitter:image" content={primaryImage} />
+      {eventStructuredData && (
+        <script type="application/ld+json">{JSON.stringify(eventStructuredData)}</script>
+      )}
+    </Helmet>
+  );
+
+  const withHelmet = (node: JSX.Element) => (
+    <>
+      {helmet}
+      {node}
+    </>
+  );
 
   if (loading) {
     return withHelmet(
@@ -536,7 +679,7 @@ export default function EventDetail() {
                     : meta?.full
                     ? 'ظرفیت ثبت‌نام تکمیل شده است'
                     : submitting
-                    ? 'در حال ثبت‌نام...'
+                    ? 'Ø¯Ø± Ø­Ø§Ù„ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…...'
                     : event.price === 0
                     ? 'ثبت‌نام (رایگان)'
                     : 'ثبت‌نام و ادامه پرداخت'
@@ -560,3 +703,12 @@ export default function EventDetail() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
