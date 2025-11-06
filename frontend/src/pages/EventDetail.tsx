@@ -58,38 +58,6 @@ export default function EventDetail() {
 
   const [alreadyRegistered, setAlreadyRegistered] = useState(false);
 
-  const siteUrl = 'https://east-guilan-ce.ir';
-  const siteName = 'East Guilan CE';
-  const defaultDescription =
-    'Explore detailed information about community, academic, and professional events hosted by the East Guilan Computer Engineering Association.';
-
-  const toAbsoluteUrl = (url?: string | null) => {
-    if (!url) return undefined;
-    if (url.startsWith('http')) return url;
-    const normalizedSite = siteUrl.endsWith('/') ? siteUrl.slice(0, -1) : siteUrl;
-    const normalizedPath = url.startsWith('/') ? url.slice(1) : url;
-    return `${normalizedSite}/${normalizedPath}`;
-  };
-
-  const sanitizeDescription = (value?: string | null) => {
-    if (!value) return defaultDescription;
-    const stripped = value
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    if (!stripped) return defaultDescription;
-    if (stripped.length <= 160) return stripped;
-    return `${stripped.slice(0, 157)}...`;
-  };
-
-  const canonicalUrl = event ? `${siteUrl}/events/${event.slug}` : `${siteUrl}/events`;
-  const primaryImage = event
-    ? toAbsoluteUrl(getThumbUrl(event)) ?? `${siteUrl}/favicon.ico`
-    : `${siteUrl}/favicon.ico`;
-  const pageTitle = event ? `${event.title} | ${siteName}` : `Event Details | ${siteName}`;
-  const pageDescription = sanitizeDescription(event?.description);
-  const pageRobots = event?.status === 'draft' ? 'noindex, nofollow' : 'index, follow';
-
   useEffect(() => {
     let cancelled = false;
     async function check() {
