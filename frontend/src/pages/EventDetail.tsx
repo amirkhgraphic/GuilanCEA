@@ -454,7 +454,7 @@ export default function EventDetail() {
                   <CardTitle className="text-2xl">{event.title}</CardTitle>
                   <CardDescription className="mt-1">
                     {formatJalali(event.start_time)}
-                    {event.end_time ? ` â€” ${formatJalali(event.end_time)}` : null}
+                    {event.end_time ? ` تا ${formatJalali(event.end_time)}` : null}
                   </CardDescription>
                 </div>
                 <div className="flex flex-col items-end gap-2">
