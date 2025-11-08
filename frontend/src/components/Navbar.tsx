@@ -40,12 +40,6 @@ export default function Navbar() {
         <div className="flex items-center justify-between gap-3">
           {/* برند */}
           <Link to="/" className="flex items-center gap-2">
-            <img
-              src="/favicon.ico"
-              alt="لوگوی انجمن کامپیوتر"
-              className="h-8 w-auto"
-              height={32} width={32}
-            />
             <span className="sm:inline text-2xl font-bold text-primary">
               انجمن علمی کامپیوتر گیلان
             </span>
