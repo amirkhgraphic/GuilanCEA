@@ -12,7 +12,7 @@ import CouponDialogFa from '@/components/CouponDialogFa';
 import { formatJalali, getThumbUrl } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 
-const typeLabel: Record<string, string> = { online: 'Ø¢Ù†Ù„Ø§ÛŒÙ†', on_site: 'Ø­Ø¶ÙˆØ±ÛŒ', hybrid: 'ØªØ±Ú©ÛŒØ¨ÛŒ' };
+const typeLabel: Record<string, string> = { online: 'آنلاین', on_site: 'حضوری', hybrid: 'آنلاین و حضوری' };
 
 export default function EventDetail() {
   const { slug } = useParams<{ slug: string }>();
