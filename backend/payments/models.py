@@ -37,27 +37,27 @@ class DiscountCode(BaseModel):
             return (0, 0)
          
         if not self.is_active:
-            raise HttpError(400, "Invalid or inactive discount code.")
+            raise HttpError(400, "کد تخفیف نامعتبر یا غیرفعال است.")
 
         n = timezone.now()
         if self.starts_at and n < self.starts_at:
-            raise HttpError(400, "Discount code is not active yet.")
+            raise HttpError(400, "کد تخفیف هنوز فعال نشده است.")
         if self.ends_at and n > self.ends_at:
-            raise HttpError(400, "Discount code has expired.")
+            raise HttpError(400, "کد تخفیف منقضی شده است.")
 
         if self.applicable_events.exists() and not self.applicable_events.filter(pk=event.pk).exists():
-            raise HttpError(400, "Discount code is not applicable to this event.")
+            raise HttpError(400, "کد تخفیف برای این رویداد قابل استفاده نیست.")
 
         if self.min_amount and event.price < self.min_amount:
-            raise HttpError(400, "Order amount is below the minimum for this code.")
+            raise HttpError(400, "مبلغ سفارش کمتر از حداقل لازم برای این کد است.")
 
         used_qs = Payment.objects.filter(discount_code=self, status__in=[Payment.OrderStatusChoices.PAID, Payment.OrderStatusChoices.PENDING])
         if self.usage_limit_total is not None and used_qs.count() >= self.usage_limit_total:
-            raise HttpError(400, "Discount code usage limit reached.")
+            raise HttpError(400, "حداکثر تعداد استفاده از این کد تخفیف تکمیل شده است.")
 
         used_by_user = used_qs.filter(user=user).count()
         if self.usage_limit_per_user is not None and used_by_user >= self.usage_limit_per_user:
-            raise HttpError(400, "You have already used this discount code the maximum allowed times.")
+            raise HttpError(400, "شما حداکثر تعداد مجاز استفاده از این کد تخفیف را مصرف کرده‌اید.")
 
         if self.type == DiscountCode.Type.FIXED:
             disc = min(self.value, event.price)
@@ -68,7 +68,7 @@ class DiscountCode(BaseModel):
 
         final_amount = max(event.price - disc, 0)
         if 0 < final_amount < 10_000:
-            raise HttpError(400, "Final payable amount would be below 10,000 IRR with this discount.")
+            raise HttpError(400, "با این تخفیف مبلغ قابل پرداخت به کمتر از ۱۰٬۰۰۰ ریال می‌رسد.")
 
         return (final_amount, disc)
 
