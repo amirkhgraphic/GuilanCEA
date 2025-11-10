@@ -119,13 +119,9 @@ export default function EventDetail() {
     try {
       setSubmitting(true);
 
-      // 1) Ø§ÙˆÙ„ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ø±Ø§ Ø¨Ø³Ø§Ø² (Ø¯Ø± Ù‡Ø± Ø¯Ùˆ Ø­Ø§Ù„Øª)
-      //    Ø¨Ù‡ØªØ±Ù‡ Ø®Ø±ÙˆØ¬ÛŒ Ø±Ùˆ Ù†Ú¯Ù‡ Ø¯Ø§Ø±ÛŒ Ø¨Ø±Ø§ÛŒ Ø±ÙØªÙ† Ø¨Ù‡ ØµÙØ­Ù‡Ù” Ù…ÙˆÙÙ‚ÛŒØª
       const reg = await api.registerForEvent(event.id); // Ø§Ù†ØªØ¸Ø§Ø±: { ticket_id: string }
       
-      // 2) Ø§Ú¯Ø± Ù…Ø¨Ù„Øº Ù†Ù‡Ø§ÛŒÛŒ Ø§Ø² Ù…ÙˆØ¯Ø§Ù„ ØµÙØ±Ù‡ØŒ Ø§ØµÙ„Ø§Ù‹ Ù¾Ø±Ø¯Ø§Ø®Øª Ù†Ù…ÛŒâ€ŒØ®ÙˆØ§ÛŒÙ…
       if (finalAmount === 0) {
-        // (Ø§Ø®ØªÛŒØ§Ø±ÛŒ) Ù‡Ø± Ú†ÛŒØ²ÛŒ Ú©Ù‡ Ø¯ÙˆØ³Øª Ø¯Ø§Ø±ÛŒ Ø¨Ø±Ø§ÛŒ Ø±Ø³ÛŒØ¯/Ø«Ø¨Øª Ù†Ú¯Ù‡ Ø¯Ø§Ø±ÛŒ
         sessionStorage.setItem('payment:last', JSON.stringify({
           event_id: event.id,
           slug: event.slug,
@@ -259,8 +255,8 @@ export default function EventDetail() {
     const hours = Math.floor((total % 86400) / 3600);
     const minutes = Math.floor((total % 3600) / 60);
     const seconds = total % 60;
-    if (days === 0) return `${nf2.format(hours)} Ø³Ø§Ø¹Øª Ùˆ ${nf2.format(minutes)} Ø¯Ù‚ÛŒÙ‚Ù‡ Ùˆ ${nf2.format(seconds)} Ø«Ø§Ù†ÛŒÙ‡`;
-    return `${nfd.format(days)} Ø±ÙˆØ² Ùˆ ${nf2.format(hours)} Ø³Ø§Ø¹Øª Ùˆ ${nf2.format(minutes)} Ø¯Ù‚ÛŒÙ‚Ù‡ Ùˆ ${nf2.format(seconds)} Ø«Ø§Ù†ÛŒÙ‡`;
+    if (days === 0) return `${nf2.format(hours)} ساعت و ${nf2.format(minutes)} دقیقه و ${nf2.format(seconds)} ثانیه`;
+    return `${nfd.format(days)} روز و ${nf2.format(hours)} ساعت و ${nf2.format(minutes)} دقیقه و ${nf2.format(seconds)} ثانیه`;
   };
 ``
   // -- Ù…Ù†Ø·Ù‚ Ø¨Ø§Ø²/Ø¨Ø³ØªÙ‡ Ø¨ÙˆØ¯Ù† Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… (Ø´Ø±ÙˆØ¹ Ùˆ Ù¾Ø§ÛŒØ§Ù† Ø±Ø§ Ù„Ø­Ø§Ø¸ Ù…ÛŒâ€ŒÚ©Ù†ÛŒÙ…Ø› UI Ø´Ø±ÙˆØ¹ Ø±Ø§ Ù†Ø´Ø§Ù† Ù†Ù…ÛŒâ€ŒØ¯Ù‡ÛŒÙ…)

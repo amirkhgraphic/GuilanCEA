@@ -43,8 +43,8 @@ class PaymentAdmin(BaseModelAdmin, ImportExportModelAdmin):
     resource_class = PaymentResource
     
     list_display = (
-        'id', 'user', 'event', 'base_amount', 'discount_amount', 'amount',
-        'status', 'authority', 'ref_id', 'created_at', 'verified_at', 'is_deleted'
+        'id', 'user', 'event', 'base_amount', 'discount_code', 'discount_amount', 'amount',
+        'status', 'created_at', 'verified_at', 'is_deleted'
     )
     list_filter = (
         'status', 'event', 'user', 'discount_code',
@@ -54,7 +54,7 @@ class PaymentAdmin(BaseModelAdmin, ImportExportModelAdmin):
         'user__email', 'authority', 'ref_id', 'discount_code__code'
     )
     readonly_fields = (
-        'user', 'event', 'base_amount', 'discount_code', 'discount_amount', 'amount', 'authority',
+        'user', 'event', 'base_amount', 'discount_code', 'discount_code', 'discount_amount', 'amount', 'authority',
         'status', 'ref_id', 'card_pan', 'card_hash', 'created_at', 'updated_at', 'deleted_at'
     )
 
@@ -63,7 +63,7 @@ class PaymentAdmin(BaseModelAdmin, ImportExportModelAdmin):
             'fields': ('user', 'event', 'status', 'created_at', 'updated_at')
         }),
         ('Price Info', {
-            'fields': ('base_amount', 'discount_amount', 'amount')
+            'fields': ('base_amount', 'discount_code', 'discount_amount', 'amount')
         }),
         ('Others', {
             'fields': ('authority', 'ref_id', 'card_pan', 'card_hash')
