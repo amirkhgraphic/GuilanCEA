@@ -96,6 +96,7 @@ class UniversityChoices(models.TextChoices):
     ISFAHAN_UNI   = 'ISFAHAN_UNI',   'دانشگاه اصفهان'
     IUT           = 'IUT',           'دانشگاه صنعتی اصفهان'
     SHIRAZ_UNI    = 'SHIRAZ_UNI',    'دانشگاه شیراز'
+    SHIRAZ_TECH   = 'SHIRAZ_TECH',   'دانشگاه صنعتی شیراز'
     TABRIZ_UNI    = 'TABRIZ_UNI',    'دانشگاه تبریز'
     FERDOWSI      = 'FERDOWSI',      'دانشگاه فردوسی مشهد'
     RAZI          = 'RAZI',          'دانشگاه رازی'
