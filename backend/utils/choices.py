@@ -116,6 +116,7 @@ class UniversityChoices(models.TextChoices):
     MAL_ASHTAR    = 'MAL_ASHTAR',    'دانشگاه صنعتی مالک‌اشتر'
     SAHAND        = 'SAHAND',        'دانشگاه صنعتی سهند'
     BABOL_NOSH    = 'BABOL_NOSH',    'دانشگاه صنعتی نوشیروانی بابل'
+    BIRGAND       = 'BIRGAND',       'دانشگاه بیرجند'
 
     # ======= افزودنی‌های دولتی (نمونه‌های شاخص و پرتکرار) =======
     ALZAHRA       = 'ALZAHRA',       'دانشگاه الزهرا'
