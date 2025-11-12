@@ -37,6 +37,14 @@ class DiscountCodeAdmin(BaseModelAdmin, ImportExportModelAdmin):
 
     readonly_fields = ('deleted_at', )
 
+    actions = BaseModelAdmin.actions + [
+        'deactivate_codes',
+    ]
+
+    @admin.action(description="Deactivate selected discount codes")
+    def deactivate_codes(self, request, queryset):
+        queryset.update(is_active=False)
+        self.message_user(request, f"Deactivate {queryset.count()} discount codes.")
 
 @admin.register(Payment)
 class PaymentAdmin(BaseModelAdmin, ImportExportModelAdmin):
