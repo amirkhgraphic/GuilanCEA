@@ -113,6 +113,7 @@ class UniversityChoices(models.TextChoices):
     SEMNAN        = 'SEMNAN',        'دانشگاه سمنان'
     SHAHROOD      = 'SHAHROOD',      'دانشگاه صنعتی شاهرود'
     QOM_UNI       = 'QOM_UNI',       'دانشگاه قم'
+    QOM_TECH      = 'QOM_TECH',       'دانشگاه صنعتی قم'
     IKIU          = 'IKIU',          'دانشگاه بین‌المللی امام خمینی قزوین'
     MAL_ASHTAR    = 'MAL_ASHTAR',    'دانشگاه صنعتی مالک‌اشتر'
     SAHAND        = 'SAHAND',        'دانشگاه صنعتی سهند'
