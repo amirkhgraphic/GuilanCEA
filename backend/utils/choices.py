@@ -101,6 +101,7 @@ class UniversityChoices(models.TextChoices):
     FERDOWSI      = 'FERDOWSI',      'دانشگاه فردوسی مشهد'
     IMAMREZA      = 'IMAMREZA',      'دانشگاه بین المللی امام رضا مشهد'
     RAZI          = 'RAZI',          'دانشگاه رازی'
+    SHAHRKORD     = 'SHAHRKORD',     'دانشگاه شهرکرد'
     BUALI         = 'BUALI',         'دانشگاه بوعلی‌سینا'
     KURDISTAN     = 'KURDISTAN',     'دانشگاه کردستان'
     YAZD_UNI      = 'YAZD_UNI',      'دانشگاه یزد'
