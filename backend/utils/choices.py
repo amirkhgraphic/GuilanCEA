@@ -99,6 +99,7 @@ class UniversityChoices(models.TextChoices):
     SHIRAZ_TECH   = 'SHIRAZ_TECH',   'دانشگاه صنعتی شیراز'
     TABRIZ_UNI    = 'TABRIZ_UNI',    'دانشگاه تبریز'
     FERDOWSI      = 'FERDOWSI',      'دانشگاه فردوسی مشهد'
+    IMAMREZA      = 'IMAMREZA',      'دانشگاه بین المللی امام رضا مشهد'
     RAZI          = 'RAZI',          'دانشگاه رازی'
     BUALI         = 'BUALI',         'دانشگاه بوعلی‌سینا'
     KURDISTAN     = 'KURDISTAN',     'دانشگاه کردستان'
