@@ -7,7 +7,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from import_export.admin import ImportExportModelAdmin
 from simplemde.widgets import SimpleMDEEditor
 
-from users.models import User
+from users.models import User, University, Major
 from users.resources import UserResource
 from users.tasks import send_verification_email
 from utils.admin import SoftDeleteListFilter, BaseModelAdmin
@@ -15,6 +15,7 @@ from utils.admin import SoftDeleteListFilter, BaseModelAdmin
 
 class UserAdminForm(forms.ModelForm):
     bio = forms.CharField(widget=SimpleMDEEditor(), required=False)
+    student_id = forms.CharField(required=False)
 
     class Meta:
         model = User
@@ -25,7 +26,7 @@ class UserAdmin(BaseUserAdmin, BaseModelAdmin, ImportExportModelAdmin):
     form = UserAdminForm
     resource_class = UserResource
     list_display = ('email', 'username', 'university', 'is_email_verified', 'date_joined')
-    list_filter = ('is_email_verified', 'university', 'is_staff', 'year_of_study', SoftDeleteListFilter)
+    list_filter = ('is_email_verified', 'is_staff', 'year_of_study', SoftDeleteListFilter)
     search_fields = ('email', 'username', 'student_id', 'first_name', 'last_name')
     ordering = ('-date_joined',)
 
