@@ -106,3 +106,17 @@ class UserAdmin(BaseUserAdmin, BaseModelAdmin, ImportExportModelAdmin):
             )
         if failed:
             self.message_user(request, f"ارسال برای {failed} کاربر با خطا مواجه شد.", level=messages.ERROR)
+
+
+@admin.register(University)
+class UniversityAdmin(BaseModelAdmin):
+    list_display = ('name', 'code', 'is_active', 'created_at')
+    list_filter = ('is_active', SoftDeleteListFilter)
+    search_fields = ('name', 'code')
+
+
+@admin.register(Major)
+class MajorAdmin(BaseModelAdmin):
+    list_display = ('name', 'code', 'is_active', 'created_at')
+    list_filter = ('is_active', SoftDeleteListFilter)
+    search_fields = ('name', 'code')
