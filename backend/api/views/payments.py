@@ -21,6 +21,22 @@ def create_payment(request, payload: CreatePaymentIn):
     if Payment.objects.filter(status=Payment.OrderStatusChoices.PAID, user=request.auth, event=event).exists():
         raise HttpError(400, "You have already registered in this event")
 
+    registration = (
+        Registration.objects.filter(event=event, user=request.auth, is_deleted=False)
+        .order_by("-registered_at")
+        .first()
+    )
+    if not registration or registration.status == Registration.StatusChoices.CANCELLED:
+        registration = Registration.objects.create(
+            event=event,
+            user=request.auth,
+            status=Registration.StatusChoices.PENDING,
+            final_price=event.price,
+        )
+    elif registration.final_price is None:
+        registration.final_price = event.price
+        registration.save(update_fields=["final_price"])
+
     discount_code = None
     discount_amount = 0
     final_amount = event.price
@@ -31,6 +47,37 @@ def create_payment(request, payload: CreatePaymentIn):
         if discount_code:
             final_amount, discount_amount = discount_code.calculate_discount(event, request.auth)
 
+    registration_updates = []
+    if discount_code and registration.discount_code_id != discount_code.id:
+        registration.discount_code = discount_code
+        registration_updates.append("discount_code")
+    if registration.discount_amount != discount_amount:
+        registration.discount_amount = discount_amount
+        registration_updates.append("discount_amount")
+    if registration.final_price != final_amount:
+        registration.final_price = final_amount
+        registration_updates.append("final_price")
+
+    if final_amount == 0:
+        if registration.status != Registration.StatusChoices.CONFIRMED:
+            registration.status = Registration.StatusChoices.CONFIRMED
+            registration_updates.append("status")
+        if registration_updates:
+            registration.save(update_fields=list(set(registration_updates)))
+        else:
+            registration.save(update_fields=["status"])
+
+        return {
+            "start_pay_url": None,
+            "authority": None,
+            "base_amount": event.price,
+            "discount_amount": discount_amount if discount_amount else 0,
+            "amount": 0,
+        }
+
+    if registration_updates:
+        registration.save(update_fields=list(set(registration_updates)))
+
     pay = Payment.objects.create(
         user=request.auth,
         event=event,
@@ -39,6 +86,7 @@ def create_payment(request, payload: CreatePaymentIn):
         discount_amount=discount_amount,
         amount=final_amount,
         status=Payment.OrderStatusChoices.INIT,
+        registration=registration,
     )
 
     callback_url = getattr(settings, "ZARINPAL_CALLBACK_URL", "http://localhost:8000/api/payments/callback")
@@ -132,10 +180,18 @@ def callback(request, Authority: str | None = None, Status: str | None = None):
         pay.verified_at = timezone.now()
         pay.save(update_fields=["status", "ref_id", "card_pan", "card_hash", "verified_at"])
 
-        registration = Registration.objects.filter(user=pay.user, event=pay.event, status=Registration.StatusChoices.PENDING).first()
+        registration = pay.registration or Registration.objects.filter(
+            user=pay.user,
+            event=pay.event,
+            status=Registration.StatusChoices.PENDING,
+        ).first()
         if registration:
             registration.status = Registration.StatusChoices.CONFIRMED
-            registration.save(update_fields=["status"])
+            updates = ["status"]
+            if registration.final_price is None:
+                registration.final_price = pay.amount
+                updates.append("final_price")
+            registration.save(update_fields=updates)
 
         return redirect(f"{settings.FRONTEND_CALLBACK_URL}?status=success&event_id={pay.event_id}&ref_id={pay.ref_id}")
 

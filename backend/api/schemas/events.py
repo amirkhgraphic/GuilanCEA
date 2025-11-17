@@ -128,13 +128,24 @@ class RegistrationSchema(ModelSchema):
     """Schema describing a registration entry with event context."""
     user: AuthorSchema
     event: EventListSchema
+    discount_code: str | None = None
 
     class Config:
         model = Registration
         model_fields = [
-            'id', 'status', 'registered_at', 'ticket_id',
-            'created_at', 'updated_at'
+            'id',
+            'status',
+            'registered_at',
+            'ticket_id',
+            'discount_amount',
+            'final_price',
+            'created_at',
+            'updated_at',
         ]
+
+    @staticmethod
+    def resolve_discount_code(obj):
+        return obj.discount_code.code if obj.discount_code else None
 
 class RegistrationStatusUpdateSchema(Schema):
     status: str
@@ -169,3 +180,7 @@ class MyEventRegistrationOut(Schema):
 
 class RegistrationStatusOut(Schema):
     is_registered: bool
+
+
+class RegistrationCreateSchema(Schema):
+    discount_code: Optional[str] = None

@@ -10,21 +10,21 @@ from uuid import UUID
 
 from api.authentication import jwt_auth
 from events.models import Event, Registration
+from payments.models import DiscountCode
 from api.schemas import (
     EventSchema,
     EventCreateSchema,
     EventUpdateSchema,
     EventListSchema,
-
     RegistrationSchema,
     RegistrationStatusUpdateSchema,
     RegisterationDetailSchema,
-    MyEventRegistrationOut, 
-    RegistrationStatusOut, 
+    MyEventRegistrationOut,
+    RegistrationStatusOut,
     EventBriefSchema,
-
     MessageSchema,
     ErrorSchema,
+    RegistrationCreateSchema,
 )
 
 events_router = Router()
@@ -136,8 +136,16 @@ def list_event_registrations(request, event_id: int, limit: int = 20, offset: in
     registrations = queryset[offset:offset + limit]
     return registrations
 
-@events_router.post("/{int:event_id}/register", response=RegistrationSchema, auth=jwt_auth)
-def register_for_event(request, event_id: int):
+@events_router.post(
+    "/{int:event_id}/register",
+    response=RegistrationSchema,
+    auth=jwt_auth,
+)
+def register_for_event(
+    request,
+    event_id: int,
+    payload: RegistrationCreateSchema | None = None,
+):
     """Register current user for an event"""
     event = get_object_or_404(Event, id=event_id, is_deleted=False)
     user = request.auth
@@ -155,21 +163,61 @@ def register_for_event(request, event_id: int):
         raise HttpError(400, "ظرفیت شرکت‌کنندگان تکمیل است")
 
     # Create or get existing registration
-    registration, _ = Registration.objects.get_or_create(
+    discount_code = None
+    if payload and payload.discount_code:
+        discount_code = payload.discount_code
+    elif request.GET.get("discount_code"):
+        discount_code = request.GET.get("discount_code")
+
+    registration, created = Registration.objects.get_or_create(
         event=event,
         user=user,
-        status=Registration.StatusChoices.PENDING
+        status=Registration.StatusChoices.PENDING,
+        defaults={"final_price": event.price},
     )
 
     if registration.status == Registration.StatusChoices.CONFIRMED:
         return HttpError(400, "شما قبلا در این ایونت ثبت‌نام کرده‌اید")
 
     if registration.status == Registration.StatusChoices.CANCELLED:
-        registration = Registration.objects.create(event=event, user=user, status=Registration.StatusChoices.PENDING)
+        registration = Registration.objects.create(
+            event=event,
+            user=user,
+            status=Registration.StatusChoices.PENDING,
+            final_price=event.price,
+        )
+    elif not created and registration.final_price is None:
+        registration.final_price = event.price
+        registration.save(update_fields=["final_price"])
 
-    if not event.price:
+    applied_code = None
+    discount_amount = 0
+    final_price = event.price
+    fields_to_update = []
+
+    if discount_code:
+        applied_code = DiscountCode.objects.filter(
+            code=discount_code,
+            applicable_events=event,
+            is_active=True,
+        ).first()
+        if not applied_code:
+            raise HttpError(400, "UcO_ O�OrU?UOU? U.O1O�O\"O� U+UOO3O�")
+        final_price, discount_amount = applied_code.calculate_discount(event, user)
+        registration.discount_code = applied_code
+        registration.discount_amount = discount_amount
+        fields_to_update.extend(["discount_code", "discount_amount"])
+
+    if registration.final_price != final_price:
+        registration.final_price = final_price
+        fields_to_update.append("final_price")
+
+    if not event.price or final_price == 0:
         registration.status = Registration.StatusChoices.CONFIRMED
-        registration.save(update_fields=["status"])
+        fields_to_update.append("status")
+
+    if fields_to_update:
+        registration.save(update_fields=list(set(fields_to_update)))
 
     return registration
 

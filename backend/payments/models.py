@@ -89,6 +89,14 @@ class Payment(BaseModel):
     discount_amount = models.PositiveIntegerField(default=0, editable=False)
     amount = models.PositiveIntegerField(editable=False)
 
+    registration = models.ForeignKey(
+        "events.Registration",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="payments",
+        editable=False,
+    )
     authority = models.CharField(max_length=64, unique=True, null=True, blank=True, editable=False)
     status = models.IntegerField(choices=OrderStatusChoices.choices, default=OrderStatusChoices.INIT, editable=False)
     ref_id = models.CharField(max_length=64, null=True, blank=True, editable=False)
@@ -106,3 +114,4 @@ class Payment(BaseModel):
 
     def __str__(self):
         return f"{self.user.email}:{self.event} - {self.get_status_display()}"
+

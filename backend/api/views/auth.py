@@ -11,7 +11,7 @@ import uuid
 import jwt
 from ninja import Router
 
-from users.models import User
+from users.models import User, Major, University
 from users.tasks import send_verification_email, send_password_reset_email
 from api.authentication import create_jwt_token, create_refresh_token, jwt_auth
 from api.schemas import (
@@ -22,24 +22,52 @@ from api.schemas import (
 
 auth_router = Router()
 
+def _get_major_from_code(code: str | None):
+    if not code:
+        return None
+    return Major.objects.filter(code=code, is_deleted=False).first()
+
+
+def _get_university_from_code(code: str | None):
+    if not code:
+        return None
+    return University.objects.filter(code=code, is_deleted=False).first()
+
+
 @auth_router.post("/register", response={201: MessageSchema, 400: ErrorSchema})
 def register(request, data: UserRegistrationSchema):
     """Register a new user"""
     try:
         if data.student_id and len(str(data.student_id)) < 10:
-            return 400, {"error": "کد دانشجویی معتبر نیست."}
+            return 400, {"error": "Student ID must be at least 10 characters long."}
 
-        # Check if user already exists
+        major_obj = None
+        if data.major:
+            major_obj = _get_major_from_code(data.major)
+            if not major_obj:
+                return 400, {"error": "Selected major is not recognized."}
+
+        university_obj = None
+        if data.university:
+            university_obj = _get_university_from_code(data.university)
+            if not university_obj:
+                return 400, {"error": "Selected university is not recognized."}
+
         if User.objects.filter(username=data.username).exists():
-            return 400, {"error": "نام کاربری قبلاً استفاده شده است."}
-        
+            return 400, {"error": "Username is already in use."}
+
         if User.objects.filter(email=data.email).exists():
-            return 400, {"error": "ایمیل قبلاً استفاده شده است."}
+            return 400, {"error": "Email is already registered."}
 
-        if data.student_id and User.objects.filter(university=data.university, student_id=data.student_id).exists():
-            return 400, {"error": "کاربری با این کد دانشجویی در این دانشگاه ثبت شده است."}
+        if (
+            data.student_id
+            and university_obj
+            and User.objects.filter(
+                university=university_obj, student_id=data.student_id
+            ).exists()
+        ):
+            return 400, {"error": "This student ID is already registered at that university."}
 
-        # Create user
         User.objects.create_user(
             username=data.username,
             email=data.email,
@@ -48,14 +76,17 @@ def register(request, data: UserRegistrationSchema):
             first_name=data.first_name or "",
             last_name=data.last_name or "",
             year_of_study=data.year_of_study,
-            major=data.major or "",
-            university=data.university or "",
+            major=major_obj,
+            university=university_obj,
         )
-        
-        return 201, {"message": "حساب شما با موفقیت ایجاد شد. برای ادامه، ابتدا ایمیل خود را تأیید کنید."}
+
+        return 201, {"message": "Registration successful. Please check your inbox to verify your email."}
 
     except Exception as e:
-        return 400, {"error": "خطایی رخ داده است. لطفاً با پشتیبانی تماس بگیرید.", "details": str(e)}
+        return 400, {
+            "error": "Unable to register user.",
+            "details": str(e),
+        }
 
 @auth_router.post("/login", response={200: TokenSchema, 401: ErrorSchema})
 def login(request, data: UserLoginSchema):
@@ -168,10 +199,31 @@ def get_profile(request):
 def update_profile(request, data: UserUpdateSchema):
     """Update current user profile"""
     user = request.auth
-    
-    for field, value in data.dict(exclude_unset=True).items():
+    payload = data.dict(exclude_unset=True)
+
+    if "major" in payload:
+        code = payload.pop("major")
+        if code:
+            major_obj = _get_major_from_code(code)
+            if not major_obj:
+                return 400, {"error": "UcO_ O�OrU?UOU? O�U^UcU+ O�O�UOUOO_."}
+            payload["major"] = major_obj
+        else:
+            payload["major"] = None
+
+    if "university" in payload:
+        code = payload.pop("university")
+        if code:
+            uni_obj = _get_university_from_code(code)
+            if not uni_obj:
+                return 400, {"error": "UcO U.U^OO�O_ O�U^UcU+ O�O�UOUOO_."}
+            payload["university"] = uni_obj
+        else:
+            payload["university"] = None
+
+    for field, value in payload.items():
         setattr(user, field, value)
-    
+
     user.save()
     return 200, user
 
@@ -287,3 +339,5 @@ def check_username_availability(request, username: str):
     """Check if a username is available for registration"""
     exists = User.objects.filter(username=username).exists()
     return {"exists": exists}
+
+

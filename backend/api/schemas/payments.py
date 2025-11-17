@@ -10,8 +10,8 @@ class CreatePaymentIn(Schema):
 
 
 class CreatePaymentOut(Schema):
-    start_pay_url: str
-    authority: str
+    start_pay_url: str | None = None
+    authority: str | None = None
     base_amount: int
     discount_amount: int
     amount: int

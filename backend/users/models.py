@@ -6,7 +6,28 @@ import uuid
 from datetime import timedelta
 
 from utils.models import BaseModel
-from utils.choices import MajorChoices, UniversityChoices
+class University(BaseModel):
+    code = models.CharField(max_length=64, unique=True)
+    name = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class Major(BaseModel):
+    code = models.CharField(max_length=64, unique=True)
+    name = models.CharField(max_length=255)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
 
 
 class User(AbstractUser, BaseModel):
@@ -16,15 +37,19 @@ class User(AbstractUser, BaseModel):
 
     student_id = models.CharField(max_length=20, null=True)
     year_of_study = models.IntegerField(null=True, blank=True)
-    major = models.CharField(
-        max_length=16,
-        choices=MajorChoices.choices,
-        blank=True, null=True
+    major = models.ForeignKey(
+        Major,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='users',
     )
-    university = models.CharField(
-        max_length=127,
-        choices=UniversityChoices.choices,
-        blank=True, null=True
+    university = models.ForeignKey(
+        University,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='users',
     )
     is_email_verified = models.BooleanField(default=False)
     email_verification_token = models.UUIDField(default=uuid.uuid4, unique=True)
@@ -46,6 +71,16 @@ class User(AbstractUser, BaseModel):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
+
+    def get_major_display(self):
+        if self.major:
+            return self.major.name
+        return None
+
+    def get_university_display(self):
+        if self.university:
+            return self.university.name
+        return None
 
     def regenerate_verification_token(self):
         self.email_verification_token = uuid.uuid4()
