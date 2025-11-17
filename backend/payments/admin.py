@@ -55,7 +55,7 @@ class PaymentAdmin(BaseModelAdmin, ImportExportModelAdmin):
         'status', 'created_at', 'verified_at', 'is_deleted'
     )
     list_filter = (
-        'status', 'event', 'user', 'discount_code',
+        'status', 'event',
         SoftDeleteListFilter,
     )
     search_fields = (

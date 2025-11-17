@@ -11,9 +11,9 @@ from utils.admin import SoftDeleteListFilter, BaseModelAdmin
 class GalleryAdmin(BaseModelAdmin, ImportExportModelAdmin):
     resource_class = GalleryResource
     list_display = ('title', 'image_preview', 'uploaded_by', 'file_size_display', 'dimensions', 'is_public', 'created_at')
-    list_filter = ('is_public', 'uploaded_by', 'created_at', SoftDeleteListFilter)
+    list_filter = ('is_public', 'created_at', SoftDeleteListFilter)
     search_fields = ('title', 'description', 'alt_text')
-    readonly_fields = ('file_size', 'width', 'height', 'image_preview_large', 'markdown_url')
+    readonly_fields = ('uploaded_by', 'file_size', 'width', 'height', 'image_preview_large', 'markdown_url')
     
     fieldsets = (
         ('Image Info', {
