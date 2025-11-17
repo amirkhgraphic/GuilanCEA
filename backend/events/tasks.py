@@ -127,6 +127,11 @@ def _send_html_email(subject, html_body, to_email):
     msg.send()
 
 
+def _build_email_context(*parts):
+    values = [str(part) for part in parts if part not in (None, "")]
+    return "|".join(values) if values else None
+
+
 @shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=True, retry_kwargs={"max_retries": 3}, soft_time_limit=60)
 def send_skyroom_credentials_individual_task(self, reg_id: int):
     """
@@ -258,20 +263,19 @@ def send_event_announcement_to_user(self, event_id: int, registration_id: int, s
         user = r.user
         event = r.event
 
-        # ایدمپوتنسی: اگر قبلاً ارسال شده یا در صف/درحال ارسال است، Skip
-        # توجه: مطمئن شوید این مقدار enum/ثابت را در EventEmailLog دارید
-        kind = getattr(EventEmailLog, "KIND_EVENT_ANNOUNCEMENT3", "event_announcement3")
-
-        log, created = EventEmailLog.objects.get_or_create(
+        context_key = _build_email_context(
+            "event_announcement3",
+            event.slug or event.id,
+            subject,
+            body_html,
+        )
+        log, skip = EventEmailLog.claim(
             event_id=event_id,
             user_id=user.id,
-            kind=kind,
-            defaults={"status": EventEmailLog.STATUS_PENDING},
+            kind=EventEmailLog.KIND_EVENT_ANNOUNCEMENT3,
+            context=context_key,
         )
-        if not created and log.status in (
-            EventEmailLog.STATUS_PENDING,
-            EventEmailLog.STATUS_SENT,
-        ):
+        if skip:
             return {"skipped": True, "status": log.status}
 
         # کانتکست رندر ایمیل: body_html مستقیم داخل تمپلیت شما اینجکت می‌شود
@@ -294,34 +298,20 @@ def send_event_announcement_to_user(self, event_id: int, registration_id: int, s
         msg.attach_alternative(html, "text/html")
         msg.send()
 
-        log.status = EventEmailLog.STATUS_SENT
-        log.sent_at = timezone.now()
-        log.error = ""
-        # اگر فیلد updated_at دارید
-        log.save(update_fields=["status", "sent_at", "error", "updated_at"] if hasattr(log, "updated_at") else ["status", "sent_at", "error"])
+        log.mark_sent()
 
         logger.info('Event announcement for "%s" sent to %s', event.title, user.email)
         return f"Email sent to {user.email}"
 
     except SoftTimeLimitExceeded:
         if log:
-            log.status = EventEmailLog.STATUS_FAILED
-            log.error = "Soft time limit exceeded"
-            if hasattr(log, "updated_at"):
-                log.save(update_fields=["status", "error", "updated_at"])
-            else:
-                log.save(update_fields=["status", "error"])
+            log.mark_failed("Soft time limit exceeded")
         logger.warning("Soft time limit exceeded (event_id=%s, registration_id=%s)", event_id, registration_id)
         raise
 
     except Exception as exc:
         if log:
-            log.status = EventEmailLog.STATUS_FAILED
-            log.error = str(exc)
-            if hasattr(log, "updated_at"):
-                log.save(update_fields=["status", "error", "updated_at"])
-            else:
-                log.save(update_fields=["status", "error"])
+            log.mark_failed(str(exc))
         logger.error("Failed to send event announcement email: %s", exc, exc_info=True)
         raise
 
@@ -349,12 +339,6 @@ def queue_invites_to_non_registered_users(self, event_id: int, only_verified=Tru
            .exclude(email__isnull=True).exclude(email="") \
            .distinct()
 
-    # از ارسال‌های قبلی (موفق یا درحال انتظار) عبور کن
-    qs = qs.exclude(
-        email_logs__event_id=event_id,
-        email_logs__kind=EventEmailLog.KIND_INVITE_NON_REGISTERED,
-    )
-
     user_ids = list(qs.values_list("id", flat=True))
 
     # گَروهِ تسک‌های کوچک
@@ -370,14 +354,6 @@ def send_invite_to_user(self, event_id: int, user_id: int):
     event = Event.objects.get(pk=event_id)
     user = User.objects.get(pk=user_id)
 
-    # ایدمپوتنسی: اگر قبلاً این ایمیل رزرو/ارسال شده، Skip
-    log, created = EventEmailLog.objects.get_or_create(
-        event_id=event_id, user_id=user_id, kind=EventEmailLog.KIND_INVITE_NON_REGISTERED,
-        defaults={"status": EventEmailLog.STATUS_PENDING}
-    )
-    if not created and log.status in (EventEmailLog.STATUS_PENDING, EventEmailLog.STATUS_SENT):
-        return {"skipped": True, "status": log.status}
-
     # ساخت محتوا
     context = {
         "user": user,
@@ -385,9 +361,23 @@ def send_invite_to_user(self, event_id: int, user_id: int):
         "event_url": _event_url(event),
         "start_time": fa_digits(jdate(event.start_time))
     }
+    # ایدمپوتنسی: اگر قبلاً این ایمیل رزرو/ارسال شده، Skip
     subject = f"دعوت به شرکت در «{event.title}»"
     text_body = render_to_string("emails/event_invite_non_registered.txt", context)
     html_body = render_to_string("emails/event_invite_non_registered.html", context)
+    context_key = _build_email_context(
+        "invite_non_registered",
+        event.slug or event.id,
+        html_body,
+    )
+    log, skip = EventEmailLog.claim(
+        event_id=event_id,
+        user_id=user_id,
+        kind=EventEmailLog.KIND_INVITE_NON_REGISTERED,
+        context=context_key,
+    )
+    if skip:
+        return {"skipped": True, "status": log.status}
 
     try:
         msg = EmailMultiAlternatives(
@@ -399,15 +389,10 @@ def send_invite_to_user(self, event_id: int, user_id: int):
         msg.attach_alternative(html_body, "text/html")
         msg.send()
 
-        log.status = EventEmailLog.STATUS_SENT
-        log.sent_at = timezone.now()
-        log.error = ""
-        log.save(update_fields=["status", "sent_at", "error", "updated_at"])
+        log.mark_sent()
         return f"Email sent to {user.email}"
     except Exception as exc:
-        log.status = EventEmailLog.STATUS_FAILED
-        log.error = str(exc)
-        log.save(update_fields=["status", "error", "updated_at"])
+        log.mark_failed(str(exc))
         raise
 
 
@@ -463,23 +448,26 @@ def send_skyroom_credentials_to_user(self, event_id: int, registration_id: int):
         user = r.user
         event = r.event
 
-        # ایدمپوتنسی: اگر قبلاً ارسال شده یا در صف/درحال ارسال است، Skip
-        log, created = EventEmailLog.objects.get_or_create(
-            event_id=event_id,
-            user_id=user.id,
-            kind=getattr(EventEmailLog, "KIND_SKYROOM_CREDENTIALS", "skyroom_credentials"),
-            defaults={"status": EventEmailLog.STATUS_PENDING},
-        )
-        if not created and log.status in (
-            EventEmailLog.STATUS_PENDING,
-            EventEmailLog.STATUS_SENT,
-        ):
-            return {"skipped": True, "status": log.status}
-
         # ساخت یوزرنیم/پسورد
         sky_username = (user.email or "").strip().split("@")[0]
         sky_password = str(r.ticket_id or "")[:8]
         skyroom_url = event.online_link
+
+        context_key = _build_email_context(
+            "skyroom_credentials",
+            event.slug or event.id,
+            sky_username,
+            sky_password,
+            skyroom_url,
+        )
+        log, skip = EventEmailLog.claim(
+            event_id=event_id,
+            user_id=user.id,
+            kind=EventEmailLog.KIND_SKYROOM_CREDENTIALS,
+            context=context_key,
+        )
+        if skip:
+            return {"skipped": True, "status": log.status}
 
         ctx = {
             "user": user,
@@ -503,10 +491,7 @@ def send_skyroom_credentials_to_user(self, event_id: int, registration_id: int):
         msg.attach_alternative(html, "text/html")
         msg.send()
 
-        log.status = EventEmailLog.STATUS_SENT
-        log.sent_at = timezone.now()
-        log.error = ""
-        log.save(update_fields=["status", "sent_at", "error", "updated_at"])
+        log.mark_sent()
 
         logger.info('Skyroom credentials for "%s" sent to %s', event.title, user.email)
         return f"Email sent to {user.email}"
@@ -514,9 +499,7 @@ def send_skyroom_credentials_to_user(self, event_id: int, registration_id: int):
     except SoftTimeLimitExceeded as exc:
         # ثبت خطا و اجازه به Celery برای retry خودکار
         if log:
-            log.status = EventEmailLog.STATUS_FAILED
-            log.error = "Soft time limit exceeded"
-            log.save(update_fields=["status", "error", "updated_at"])
+            log.mark_failed("Soft time limit exceeded")
         logger.warning(
             "Soft time limit exceeded for event_id=%s, registration_id=%s", event_id, registration_id
         )
@@ -524,8 +507,6 @@ def send_skyroom_credentials_to_user(self, event_id: int, registration_id: int):
 
     except Exception as exc:
         if log:
-            log.status = EventEmailLog.STATUS_FAILED
-            log.error = str(exc)
-            log.save(update_fields=["status", "error", "updated_at"])
+            log.mark_failed(str(exc))
         logger.error("Failed to send skyroom credentials email: %s", exc, exc_info=True)
         raise
