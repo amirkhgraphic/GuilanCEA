@@ -1,9 +1,12 @@
 from django.db import models
+from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.utils.text import slugify
 
+import hashlib
 import uuid
+
 import markdown
 from location_field.models.plain import PlainLocationField as LocationField
 
@@ -172,28 +175,29 @@ class Registration(BaseModel):
 
 
 class EventEmailLog(BaseModel):
-    # todo: implement better and more scalable email log (HIGH)
-    KIND_INVITE_NON_REGISTERED = "invite_non_registered"
-    KIND_SKYROOM_CREDENTIALS = "send_skyroom_credentials"
-    KIND_EVENT_ANNOUNCEMENT = "send_event_announcement"
-    KIND_EVENT_ANNOUNCEMENT2 = "send_event_announcement2"
-    KIND_EVENT_ANNOUNCEMENT3 = "send_event_announcement3"
-    KIND_CHOICES = (
-        (KIND_INVITE_NON_REGISTERED, "Invite non-registered users"),
-        (KIND_SKYROOM_CREDENTIALS, "send skyroom credentials"),
-        (KIND_EVENT_ANNOUNCEMENT, "send_event_announcement"),
-        (KIND_EVENT_ANNOUNCEMENT2, "send_event_announcement2"),
-        (KIND_EVENT_ANNOUNCEMENT3, "send_event_announcement3"),
-    )
+    class KindChoices(models.TextChoices):
+        INVITE_NON_REGISTERED = "invite_non_registered", "Invite non-registered users"
+        SKYROOM_CREDENTIALS = "send_skyroom_credentials", "Skyroom credentials"
+        EVENT_ANNOUNCEMENT = "send_event_announcement", "Event announcement"
+        EVENT_ANNOUNCEMENT2 = "send_event_announcement2", "Event announcement 2"
+        EVENT_ANNOUNCEMENT3 = "send_event_announcement3", "Event announcement 3"
 
-    STATUS_PENDING = "pending"
-    STATUS_SENT = "sent"
-    STATUS_FAILED = "failed"
-    STATUS_CHOICES = (
-        (STATUS_PENDING, "Pending"),
-        (STATUS_SENT, "Sent"),
-        (STATUS_FAILED, "Failed"),
-    )
+    class StatusChoices(models.TextChoices):
+        PENDING = "pending", "Pending"
+        SENT = "sent", "Sent"
+        FAILED = "failed", "Failed"
+
+    KIND_INVITE_NON_REGISTERED = KindChoices.INVITE_NON_REGISTERED
+    KIND_SKYROOM_CREDENTIALS = KindChoices.SKYROOM_CREDENTIALS
+    KIND_EVENT_ANNOUNCEMENT = KindChoices.EVENT_ANNOUNCEMENT
+    KIND_EVENT_ANNOUNCEMENT2 = KindChoices.EVENT_ANNOUNCEMENT2
+    KIND_EVENT_ANNOUNCEMENT3 = KindChoices.EVENT_ANNOUNCEMENT3
+    KIND_CHOICES = KindChoices.choices
+
+    STATUS_PENDING = StatusChoices.PENDING
+    STATUS_SENT = StatusChoices.SENT
+    STATUS_FAILED = StatusChoices.FAILED
+    STATUS_CHOICES = StatusChoices.choices
 
     event = models.ForeignKey('events.Event', on_delete=models.CASCADE, related_name='email_logs')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='email_logs')
@@ -201,9 +205,10 @@ class EventEmailLog(BaseModel):
     status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_PENDING)
     error = models.TextField(blank=True, null=True)
     sent_at = models.DateTimeField(blank=True, null=True)
+    context_hash = models.CharField(max_length=64, blank=True, null=True)
 
     class Meta:
-        unique_together = ("event", "user", "kind")
+        unique_together = ("event", "user", "kind", "context_hash")
         indexes = [
             models.Index(fields=["event", "kind", "status"]),
             models.Index(fields=["user", "kind", "status"]),
@@ -211,3 +216,47 @@ class EventEmailLog(BaseModel):
 
     def __str__(self):
         return f"{self.event.id} - {self.user.id} - {self.kind} - {self.status}"
+
+    @staticmethod
+    def _hash_context(context):
+        if context is None:
+            return None
+        if not isinstance(context, str):
+            context = str(context)
+        return hashlib.sha256(context.encode("utf-8")).hexdigest()
+
+    @classmethod
+    def claim(cls, *, event_id, user_id, kind, context=None):
+        context_hash = cls._hash_context(context)
+        log, created = cls.objects.get_or_create(
+            event_id=event_id,
+            user_id=user_id,
+            kind=kind,
+            context_hash=context_hash,
+            defaults={"status": cls.STATUS_PENDING},
+        )
+        if not created and log.status in (cls.STATUS_PENDING, cls.STATUS_SENT):
+            return log, True
+        if not created:
+            log._commit_status(cls.STATUS_PENDING, error="")
+        return log, False
+
+    def _commit_status(self, status, *, error="", sent_at=None):
+        self.status = status
+        self.error = error
+        update_fields = ["status", "error"]
+        if status == self.STATUS_SENT:
+            self.sent_at = sent_at or timezone.now()
+            update_fields.append("sent_at")
+        elif self.sent_at is not None:
+            self.sent_at = None
+            update_fields.append("sent_at")
+        if hasattr(self, "updated_at"):
+            update_fields.append("updated_at")
+        self.save(update_fields=update_fields)
+
+    def mark_sent(self):
+        self._commit_status(self.STATUS_SENT)
+
+    def mark_failed(self, error):
+        self._commit_status(self.STATUS_FAILED, error=error)

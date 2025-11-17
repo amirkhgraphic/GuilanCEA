@@ -11,16 +11,20 @@ from utils.admin import SoftDeleteListFilter, BaseModelAdmin
 class GalleryAdmin(BaseModelAdmin, ImportExportModelAdmin):
     resource_class = GalleryResource
     list_display = ('title', 'image_preview', 'uploaded_by', 'file_size_display', 'dimensions', 'is_public', 'created_at')
-    list_filter = ('is_public', 'uploaded_by', 'created_at', SoftDeleteListFilter)
+    list_filter = ('is_public', 'created_at', SoftDeleteListFilter)
     search_fields = ('title', 'description', 'alt_text')
-    readonly_fields = ('file_size', 'width', 'height', 'image_preview_large', 'markdown_url')
+    readonly_fields = ('uploaded_by', 'file_size', 'width', 'height', 'image_preview_large', 'markdown_url')
     
     fieldsets = (
         ('Image Info', {
             'fields': ('title', 'description', 'image', 'alt_text', 'is_public')
         }),
+        ('Uploader', {
+            'fields': ('uploaded_by',),
+            'classes': ('collapse',)
+        }),
         ('Metadata', {
-            'fields': ('uploaded_by', 'file_size', 'width', 'height'),
+            'fields': ('file_size', 'width', 'height'),
             'classes': ('collapse',)
         }),
         ('Preview & Usage', {
@@ -78,3 +82,8 @@ class GalleryAdmin(BaseModelAdmin, ImportExportModelAdmin):
             image.restore()
         self.message_user(request, f"Restored {queryset.count()} images.")
     restore_images.short_description = "Restore selected images"
+
+    def save_model(self, request, obj, form, change):
+        if not obj.uploaded_by_id:
+            obj.uploaded_by = request.user
+        super().save_model(request, obj, form, change)
