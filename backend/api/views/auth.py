@@ -259,7 +259,7 @@ def reset_password_confirm(request, data: PasswordResetConfirmSchema):
     except Exception as e:
         return 400, {"error": "تغییر رمز عبور انجام نشد.", "details": str(e)}
 
-@auth_router.get("/users/deleted", response=List[UserProfileSchema], auth=jwt_auth)
+@auth_router.get("/users/deleted", response={200: List[UserProfileSchema], 403: ErrorSchema}, auth=jwt_auth)
 def list_deleted_users(request):
     """List soft-deleted users via the dedicated manager (Admin/Committee only)."""
     if not (request.auth.is_staff or request.auth.is_superuser):
@@ -267,7 +267,7 @@ def list_deleted_users(request):
 
     return User.deleted_objects.all()
 
-@auth_router.post("/users/{user_id}/restore", response={200: MessageSchema, 400: ErrorSchema}, auth=jwt_auth)
+@auth_router.post("/users/{user_id}/restore", response={200: MessageSchema, 400: ErrorSchema, 403: ErrorSchema}, auth=jwt_auth)
 def restore_user(request, user_id: int):
     """Restore a soft-deleted user (Admin/Committee only)"""
     if not (request.auth.is_staff or request.auth.is_superuser):

@@ -1,0 +1,31 @@
+[run]
+branch = True
+source =
+    users
+    api
+    utils
+    payments
+    communications
+    gallery
+    events
+    blog
+    config
+omit =
+    */migrations/*
+    */tests/*
+    */__init__.py
+    config/settings/*
+    config/urls.py
+    config/wsgi.py
+    config/asgi.py
+
+[report]
+skip_empty = True
+show_missing = True
+precision = 2
+
+[html]
+directory = htmlcov
+
+[xml]
+output = coverage.xml
