@@ -43,6 +43,21 @@ export default function Profile() {
     staleTime: 7 * 24 * 60 * 60 * 1000,
   });
 
+  const confirmedRegistrations = useMemo(
+    () => myRegs?.filter((reg) => reg.status === 'confirmed') ?? [],
+    [myRegs]
+  );
+  const canceledRegistrations = useMemo(
+    () => myRegs?.filter((reg) => reg.status === 'cancelled') ?? [],
+    [myRegs]
+  );
+  const otherRegistrations = useMemo(
+    () =>
+      myRegs?.filter((reg) => !['confirmed', 'cancelled'].includes(reg.status)) ??
+      [],
+    [myRegs]
+  );
+
   const [me, setMe] = useState<Types.UserProfileSchema | null>(user as any);
   const [fetching, setFetching] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -67,6 +82,40 @@ export default function Profile() {
     const normalizedSite = siteUrl.endsWith('/') ? siteUrl.slice(0, -1) : siteUrl;
     const normalizedPath = url.startsWith('/') ? url.slice(1) : url;
     return `${normalizedSite}/${normalizedPath}`;
+  };
+
+  const statusLabels: Record<Types.MyEventRegistrationSchema['status'], string> = {
+    confirmed: 'تایید شده',
+    cancelled: 'لغو شده',
+    pending: 'در انتظار',
+    attended: 'حضور یافت',
+  };
+
+  const renderRegistrationRow = (registration: Types.MyEventRegistrationSchema) => {
+    const eventWithOptionalDate = registration.event as Types.EventListItemSchema & {
+      start_date?: string;
+    };
+    const rawDate = eventWithOptionalDate.start_date ?? eventWithOptionalDate.start_time;
+    const dateLabel = rawDate ? `تاریخ شروع: ${formatJalali(rawDate)}` : '';
+    const statusLabel = statusLabels[registration.status] ?? registration.status;
+
+    return (
+      <div
+        key={registration.id}
+        className="flex items-center justify-between rounded-lg border p-3"
+      >
+        <div>
+          <div className="font-medium">{registration.event.title}</div>
+          <div className="text-xs text-muted-foreground">
+            {statusLabel}
+            {dateLabel ? ` • ${dateLabel}` : ''}
+          </div>
+        </div>
+        <Link to={`/events/${registration.event.slug}`} className="text-primary text-sm">
+          مشاهده رویداد
+        </Link>
+      </div>
+    );
   };
 
   const { pageTitle, pageDescription, ogImage } = useMemo(() => {
@@ -502,20 +551,37 @@ export default function Profile() {
               <div className="text-sm text-muted-foreground">هنوز در رویدادی ثبت‌نام نکرده‌اید.</div>
             )}
             {!regsLoading && !regsError && myRegs && myRegs.length > 0 && (
-              <div className="space-y-3">
-                {myRegs.map((r) => (
-                  <div key={r.id} className="flex items-center justify-between rounded-lg border p-3">
-                    <div>
-                      <div className="font-medium">{r.event.title}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {r.status === 'confirmed' ? 'تایید شده' : r.status === 'pending' ? 'در انتظار' : 'لغو شده'}
-                        {' • '}
-                        {r.event.start_date ? `تاریخ شروع: ${formatJalali(r.event.start_date)}` : ''}
-                      </div>
+              <div className="space-y-6">
+                {confirmedRegistrations.length > 0 && (
+                  <section className="space-y-3">
+                    <div className="text-sm font-semibold text-muted-foreground">
+                      ثبت‌نام‌های تأیید شده
                     </div>
-                    <Link to={`/events/${r.event.slug}`} className="text-primary text-sm">مشاهده رویداد</Link>
-                  </div>
-                ))}
+                    <div className="space-y-3">
+                      {confirmedRegistrations.map(renderRegistrationRow)}
+                    </div>
+                  </section>
+                )}
+                {canceledRegistrations.length > 0 && (
+                  <section className="space-y-3">
+                    <div className="text-sm font-semibold text-muted-foreground">
+                      ثبت‌نام‌های لغو شده
+                    </div>
+                    <div className="space-y-3">
+                      {canceledRegistrations.map(renderRegistrationRow)}
+                    </div>
+                  </section>
+                )}
+                {otherRegistrations.length > 0 && (
+                  <section className="space-y-3">
+                    <div className="text-sm font-semibold text-muted-foreground">
+                      سایر ثبت‌نام‌ها
+                    </div>
+                    <div className="space-y-3">
+                      {otherRegistrations.map(renderRegistrationRow)}
+                    </div>
+                  </section>
+                )}
               </div>
             )}
           </CardContent>
