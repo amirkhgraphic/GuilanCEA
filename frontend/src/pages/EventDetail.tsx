@@ -119,7 +119,7 @@ export default function EventDetail() {
     try {
       setSubmitting(true);
 
-      const reg = await api.registerForEvent(event.id); // Ø§Ù†ØªØ¸Ø§Ø±: { ticket_id: string }
+      const reg = await api.registerForEvent(event.id, coupon);
       
       if (finalAmount === 0) {
         sessionStorage.setItem('payment:last', JSON.stringify({

@@ -6,6 +6,8 @@ import uuid
 from datetime import timedelta
 
 from utils.models import BaseModel
+
+
 class University(BaseModel):
     code = models.CharField(max_length=64, unique=True)
     name = models.CharField(max_length=255)

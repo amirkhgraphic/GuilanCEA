@@ -45,12 +45,12 @@ class UserProfileSchema(ModelSchema):
         ]
 
     @staticmethod
-    def resolve_major(obj, context):
-        return obj.get_major_display() if getattr(obj, "major", None) else None
-    
+    def resolve_major(obj):
+        return obj.get_major_display()
+
     @staticmethod
-    def resolve_university(obj, context):
-        return obj.get_university_display() if getattr(obj, "university", None) else None
+    def resolve_university(obj):
+        return obj.get_university_display()
 
     @staticmethod
     def resolve_profile_picture(obj, context):
