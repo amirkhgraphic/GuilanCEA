@@ -19,8 +19,12 @@ class GalleryAdmin(BaseModelAdmin, ImportExportModelAdmin):
         ('Image Info', {
             'fields': ('title', 'description', 'image', 'alt_text', 'is_public')
         }),
+        ('Uploader', {
+            'fields': ('uploaded_by',),
+            'classes': ('collapse',)
+        }),
         ('Metadata', {
-            'fields': ('uploaded_by', 'file_size', 'width', 'height'),
+            'fields': ('file_size', 'width', 'height'),
             'classes': ('collapse',)
         }),
         ('Preview & Usage', {
@@ -78,3 +82,8 @@ class GalleryAdmin(BaseModelAdmin, ImportExportModelAdmin):
             image.restore()
         self.message_user(request, f"Restored {queryset.count()} images.")
     restore_images.short_description = "Restore selected images"
+
+    def save_model(self, request, obj, form, change):
+        if not obj.uploaded_by_id:
+            obj.uploaded_by = request.user
+        super().save_model(request, obj, form, change)
