@@ -185,19 +185,58 @@ class EventAdmin(BaseModelAdmin, ImportExportModelAdmin):
 class RegistrationAdmin(BaseModelAdmin, ImportExportModelAdmin):
     resource_class = RegistrationResource
     list_display = (
-        'user', 'event', 'status', 'registered_at', 'ticket_id'
+        'user',
+        'event',
+        'status',
+        'registered_at',
+        'ticket_id',
+        'discount_code',
+        'discount_amount',
+        'final_price',
     )
     list_filter = (
-        'status', 'event', 'user', 'is_deleted', 'registered_at',
+        'status',
+        'event',
+        'user',
+        'discount_code',
+        'is_deleted',
+        'registered_at',
         SoftDeleteListFilter
     )
     search_fields = ('user__username', 'user__email', 'user__first_name', 'user__last_name', 'event__title', 'ticket_id')
-    readonly_fields = ('ticket_id', 'registered_at', 'confirmation_email_sent_at', 'cancellation_email_sent_at', 'deleted_at')
+    readonly_fields = (
+        'ticket_id',
+        'registered_at',
+        'confirmation_email_sent_at',
+        'cancellation_email_sent_at',
+        'discount_code',
+        'discount_amount',
+        'final_price',
+        'deleted_at',
+    )
 
     fieldsets = (
-        ('Registration Details', {
-            'fields': ('user', 'event', 'status', 'registered_at', 'ticket_id', 'confirmation_email_sent_at', 'cancellation_email_sent_at')
-        }),
+        (
+            'Registration Details',
+            {
+                'fields': (
+                    'user',
+                    'event',
+                    'status',
+                    'registered_at',
+                    'ticket_id',
+                    'confirmation_email_sent_at',
+                    'cancellation_email_sent_at',
+                )
+            },
+        ),
+        (
+            'Pricing & Discount',
+            {
+                'fields': ('discount_code', 'discount_amount', 'final_price'),
+                'classes': ('collapse',),
+            },
+        ),
         ('Soft Delete', {
             'fields': ('is_deleted', 'deleted_at'),
             'classes': ('collapse',)

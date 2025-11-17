@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from import_export.widgets import BooleanWidget
 
-from users.models import User
+from users.models import User, Major, University
 from users.resources import UserResource
 from users.signals import send_verification_email_on_registration
 from users.tasks import (
@@ -19,7 +19,35 @@ from users.tasks import (
 
 
 class UserFactoryMixin:
+    def _ensure_reference_objects(self):
+        if not hasattr(self, "_default_major"):
+            self._default_major, _ = Major.objects.get_or_create(
+                code="CS",
+                defaults={"name": "Computer Science"},
+            )
+            self._default_university, _ = University.objects.get_or_create(
+                code="UT",
+                defaults={"name": "University of Tehran"},
+            )
+
+    def _resolve_major(self, value):
+        if value is None:
+            return None
+        if isinstance(value, Major):
+            return value
+        obj, _ = Major.objects.get_or_create(code=value, defaults={"name": value})
+        return obj
+
+    def _resolve_university(self, value):
+        if value is None:
+            return None
+        if isinstance(value, University):
+            return value
+        obj, _ = University.objects.get_or_create(code=value, defaults={"name": value})
+        return obj
+
     def create_user(self, **extra_fields):
+        self._ensure_reference_objects()
         unique = uuid.uuid4().hex
         data = {
             "email": f"user_{unique}@example.com",
@@ -28,7 +56,15 @@ class UserFactoryMixin:
             "last_name": "User",
         }
         password = extra_fields.pop("password", "StrongPass!123")
+        major = extra_fields.pop("major", self._default_major)
+        university = extra_fields.pop("university", self._default_university)
+        if isinstance(major, str):
+            major = self._resolve_major(major)
+        if isinstance(university, str):
+            university = self._resolve_university(university)
         data.update(extra_fields)
+        data.setdefault("major", major)
+        data.setdefault("university", university)
         return User.objects.create_user(password=password, **data)
 
 

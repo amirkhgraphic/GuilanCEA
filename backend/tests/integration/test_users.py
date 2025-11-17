@@ -12,12 +12,27 @@ from django.utils import timezone
 
 import jwt
 
-from users.models import User
-from utils.choices import MajorChoices, UniversityChoices
+from users.models import User, Major, University
 
 
 class UsersAPIIntegrationTests(TestCase):
     password = "Sup3rSecure!123"
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.major_cs, _ = Major.objects.get_or_create(
+            code="CS", defaults={"name": "Computer Science"}
+        )
+        cls.major_gil, _ = Major.objects.get_or_create(
+            code="GIL_CS", defaults={"name": "Gilan Computer Science"}
+        )
+        cls.university_ut, _ = University.objects.get_or_create(
+            code="UT", defaults={"name": "University of Tehran"}
+        )
+        cls.university_gilan, _ = University.objects.get_or_create(
+            code="GILAN", defaults={"name": "Gilan University"}
+        )
 
     def setUp(self):
         super().setUp()
@@ -39,6 +54,20 @@ class UsersAPIIntegrationTests(TestCase):
     def _numeric_student_id(self) -> str:
         return str(uuid.uuid4().int)[-10:]
 
+    def _resolve_major(self, value):
+        if value is None:
+            return None
+        if isinstance(value, Major):
+            return value
+        return Major.objects.filter(code=value).first()
+
+    def _resolve_university(self, value):
+        if value is None:
+            return None
+        if isinstance(value, University):
+            return value
+        return University.objects.filter(code=value).first()
+
     def _create_user(self, **overrides) -> User:
         unique = uuid.uuid4().hex[:8]
         defaults = {
@@ -48,10 +77,14 @@ class UsersAPIIntegrationTests(TestCase):
             "first_name": "Test",
             "last_name": "User",
             "year_of_study": 2,
-            "major": MajorChoices.CS,
-            "university": UniversityChoices.UT,
+            "major": self.major_cs,
+            "university": self.university_ut,
         }
         defaults.update(overrides)
+        if isinstance(defaults.get("major"), str):
+            defaults["major"] = self._resolve_major(defaults["major"])
+        if isinstance(defaults.get("university"), str):
+            defaults["university"] = self._resolve_university(defaults["university"])
         password = defaults.pop("password", self.password)
         return User.objects.create_user(password=password, **defaults)
 
@@ -90,8 +123,8 @@ class UsersAPIIntegrationTests(TestCase):
             "student_id": "2023123456",
             "first_name": "Integration",
             "last_name": "Tester",
-            "university": UniversityChoices.UT,
-            "major": MajorChoices.CS,
+            "university": self.university_ut.code,
+            "major": self.major_cs.code,
             "year_of_study": 3,
         }
 
@@ -159,13 +192,13 @@ class UsersAPIIntegrationTests(TestCase):
     def test_register_rejects_duplicate_student_id_in_same_university(self):
         # Arrange
         student_id = "2023012345"
-        self._create_user(student_id=student_id, university=UniversityChoices.GILAN)
+        self._create_user(student_id=student_id, university=self.university_gilan)
         payload = {
             "username": "dupstudent",
             "email": "dupstudent@example.com",
             "password": "RegisterPass!9",
             "student_id": student_id,
-            "university": UniversityChoices.GILAN,
+            "university": self.university_gilan.code,
         }
 
         # Act
@@ -373,7 +406,7 @@ class UsersAPIIntegrationTests(TestCase):
 
     def test_get_profile_returns_schema_fields(self):
         # Arrange
-        user = self._create_user(major=MajorChoices.CS, university=UniversityChoices.GILAN)
+        user = self._create_user(major=self.major_cs, university=self.university_gilan)
         user.is_email_verified = True
         user.save(update_fields=["is_email_verified"])
         tokens = self._login_and_get_tokens(user)

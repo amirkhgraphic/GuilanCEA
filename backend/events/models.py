@@ -115,6 +115,15 @@ class Registration(BaseModel):
 
     confirmation_email_sent_at = models.DateTimeField(null=True, blank=True)
     cancellation_email_sent_at = models.DateTimeField(null=True, blank=True)
+    discount_code = models.ForeignKey(
+        "payments.DiscountCode",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="registrations",
+    )
+    discount_amount = models.PositiveIntegerField(default=0)
+    final_price = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ['-registered_at']
@@ -124,7 +133,7 @@ class Registration(BaseModel):
         ]
 
     def __str__(self):
-            return f"{self.user.username} registered for {self.event.title}"
+        return f"{self.user.username} registered for {self.event.title}"
 
     def save(self, *args, **kwargs):
             # detect create vs update

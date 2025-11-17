@@ -6,12 +6,16 @@ from typing import Optional
 from users.models import User
 
 
-class UserRegistrationSchema(ModelSchema):
-
-    class Config:
-        model = User
-        model_fields = ['username', 'email', 'first_name', 'last_name',  'university',
-                        'student_id',  'year_of_study', 'major', 'password']
+class UserRegistrationSchema(Schema):
+    username: str
+    email: str
+    password: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    university: Optional[str] = None
+    student_id: Optional[str] = None
+    year_of_study: Optional[int] = None
+    major: Optional[str] = None
 
 class UserLoginSchema(Schema):
     email: str
@@ -19,13 +23,27 @@ class UserLoginSchema(Schema):
 
 class UserProfileSchema(ModelSchema):
     profile_picture: Optional[str] = None
-    student_id: Optional[int] = None
+    student_id: Optional[str] = None
+    major: Optional[str] = None
+    university: Optional[str] = None
 
-    class Config:
+    class Meta:
         model = User
-        model_fields = ['id', 'username', 'email', 'first_name', 'last_name', 'student_id', 'university',
-                        'year_of_study', 'major', 'bio', 'date_joined', 'is_email_verified']
-    
+        fields = [
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'student_id',
+            'year_of_study',
+            'major',
+            'university',
+            'bio',
+            'date_joined',
+            'is_email_verified',
+        ]
+
     @staticmethod
     def resolve_major(obj, context):
         return obj.get_major_display() if getattr(obj, "major", None) else None
@@ -52,12 +70,7 @@ class UserUpdateSchema(Schema):
     year_of_study: Optional[int] = None
     major: Optional[str] = None
     university: Optional[str] = None
-    student_id: Optional[int] = None
-
-    class Config:
-        model = User
-        model_fields = ['first_name', 'last_name', 'major', 'bio', 
-                        'year_of_study', 'university', 'student_id']
+    student_id: Optional[str] = None
 
 class TokenSchema(Schema):
     access_token: str

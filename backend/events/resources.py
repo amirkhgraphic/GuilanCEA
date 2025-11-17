@@ -4,6 +4,7 @@ from import_export.widgets import ForeignKeyWidget, ManyToManyWidget
 from events.models import Event, Registration
 from users.models import User
 from gallery.models import Gallery
+from payments.models import DiscountCode
 
 class EventResource(resources.ModelResource):
     gallery_images = fields.Field(
@@ -51,6 +52,11 @@ class RegistrationResource(resources.ModelResource):
         attribute='user',
         widget=ForeignKeyWidget(User, 'last_name')
     )
+    discount_code = fields.Field(
+        column_name='discount_code',
+        attribute='discount_code',
+        widget=ForeignKeyWidget(DiscountCode, 'code')
+    )
 
     class Meta:
         model = Registration
@@ -64,6 +70,9 @@ class RegistrationResource(resources.ModelResource):
             'registered_at',
             'status',
             'ticket_id',
+            'discount_code',
+            'discount_amount',
+            'final_price',
             'created_at',
             'updated_at',
             'is_deleted',
