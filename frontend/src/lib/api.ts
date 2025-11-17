@@ -410,8 +410,14 @@ class ApiClient {
     return this.request<Types.EventDetailSchema>(`/api/events/slug/${encodeURIComponent(slug)}`, { method: 'GET' });
   }
 
-  async registerForEvent(eventId: number) {
-    return this.request<Types.EventRegistrationSchema>(`/api/events/${eventId}/register`, { method: 'POST' });
+  async registerForEvent(eventId: number, discountCode?: string | null) {
+    const payload = (discountCode ?? '').trim();
+    const init: RequestInit = { method: 'POST' };
+    if (payload) {
+      init.headers = { 'Content-Type': 'application/json' };
+      init.body = JSON.stringify({ discount_code: payload });
+    }
+    return this.request<Types.EventRegistrationSchema>(`/api/events/${eventId}/register`, init);
   }
 
   async ChangeRegistrationStatus(registrationId: number, status: string) {
