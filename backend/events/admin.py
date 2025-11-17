@@ -197,8 +197,6 @@ class RegistrationAdmin(BaseModelAdmin, ImportExportModelAdmin):
     list_filter = (
         'status',
         'event',
-        'user',
-        'discount_code',
         'is_deleted',
         'registered_at',
         SoftDeleteListFilter
