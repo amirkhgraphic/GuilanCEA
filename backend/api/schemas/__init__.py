@@ -9,6 +9,7 @@ from api.schemas.blog import *
 from api.schemas.gallery import *
 from api.schemas.events import *
 from api.schemas.communications import *
+from api.schemas.certificates import *
 
 
 class MessageSchema(Schema):
