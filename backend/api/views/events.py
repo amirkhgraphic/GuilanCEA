@@ -139,7 +139,7 @@ def list_event_registrations(request, event_id: int, limit: int = 20, offset: in
     return registrations
 
 
-@events_router.get("/{int:event_id}/admin-registrations", response=PaginatedRegistrationSchema, auth=jwt_auth)
+@events_router.get("/{int:event_id}/admin-registrations", response={200: PaginatedRegistrationSchema, 403: ErrorSchema}, auth=jwt_auth)
 def list_event_registrations_admin(
     request,
     event_id: int,
