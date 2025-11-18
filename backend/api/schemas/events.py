@@ -150,8 +150,16 @@ class RegistrationSchema(ModelSchema):
         return obj.discount_code.code if obj.discount_code else None
 
 
+class AdminUserSchema(Schema):
+    id: int
+    username: str
+    first_name: str
+    last_name: str
+    email: str
+
+
 class PaymentAdminSchema(ModelSchema):
-    user: AuthorSchema
+    user: AdminUserSchema
     status_label: str
     discount_code: Optional[str] = None
 
@@ -179,7 +187,7 @@ class PaymentAdminSchema(ModelSchema):
 
 
 class RegistrationAdminSchema(ModelSchema):
-    user: AuthorSchema
+    user: AdminUserSchema
     payments: List[PaymentAdminSchema] = []
     status_label: str
     final_price: Optional[int] = None
