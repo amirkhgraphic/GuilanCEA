@@ -9,6 +9,7 @@ from api.schemas.blog import AuthorSchema
 from events.models import Event, Registration
 from gallery.models import Gallery
 from payments.models import Payment
+from payments.models import Payment
 
 
 class EventGallerySchema(ModelSchema):
@@ -197,7 +198,14 @@ class RegistrationAdminSchema(ModelSchema):
 
     @staticmethod
     def resolve_payments(obj):
-        return obj.payments.select_related("discount_code").all()
+        payments = list(obj.payments.select_related("discount_code").all())
+        paid = [p for p in payments if p.status == Payment.OrderStatusChoices.PAID]
+        if paid:
+            return paid[:1]
+        canceled = [p for p in payments if p.status == Payment.OrderStatusChoices.CANCELED]
+        if canceled:
+            return canceled[:1]
+        return []
 
     @staticmethod
     def resolve_status_label(obj):
@@ -212,6 +220,12 @@ class EventAdminDetailSchema(EventSchema):
         return obj.registrations.select_related("user").prefetch_related(
             "payments__discount_code"
         ).order_by("-registered_at")
+
+class PaginatedRegistrationSchema(Schema):
+    count: int
+    next: Optional[str] = None
+    previous: Optional[str] = None
+    results: List[RegistrationAdminSchema]
 
 class RegistrationStatusUpdateSchema(Schema):
     status: str

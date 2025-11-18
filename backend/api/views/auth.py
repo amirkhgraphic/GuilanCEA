@@ -341,6 +341,10 @@ def list_users(
     request,
     search: str | None = Query(None),
     role: str | None = Query(None, description="staff or superuser"),
+    student_id: str | None = Query(None),
+    university: str | None = Query(None),
+    major: str | None = Query(None),
+    is_active: str | None = Query(None, description="true or false"),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
 ):
@@ -362,6 +366,25 @@ def list_users(
         queryset = queryset.filter(is_staff=True)
     elif role == "superuser":
         queryset = queryset.filter(is_superuser=True)
+
+    if student_id:
+        queryset = queryset.filter(student_id__icontains=student_id)
+
+    if university:
+        queryset = queryset.filter(
+            Q(university__code__icontains=university) | Q(university__name__icontains=university)
+        )
+
+    if major:
+        queryset = queryset.filter(
+            Q(major__code__icontains=major) | Q(major__name__icontains=major)
+        )
+
+    if is_active is not None:
+        if is_active.lower() in ("true", "1"):
+            queryset = queryset.filter(is_active=True)
+        elif is_active.lower() in ("false", "0"):
+            queryset = queryset.filter(is_active=False)
 
     return queryset[offset : offset + limit]
 

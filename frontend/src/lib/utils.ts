@@ -56,6 +56,27 @@ export const getThumbUrl = (e: Types.EventListItemSchema) =>
   e.featured_image ||
   DEFAULT_THUMB;
 
+const PERSIAN_DIGITS = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+
+export function toPersianDigits(value?: string | number | null) {
+  if (value == null) return '—';
+  return String(value).replace(/\d/g, (digit) => PERSIAN_DIGITS[Number(digit)] ?? digit);
+}
+
+export function formatNumberPersian(value?: number | string | null) {
+  if (value == null) return '—';
+  const num = Number(value);
+  if (!Number.isFinite(num)) return '—';
+  return toPersianDigits(num.toLocaleString('en-US'));
+}
+
+export function formatToman(value?: number | null) {
+  if (value == null) return '—';
+  const amount = Math.floor(Number(value) / 10);
+  if (!Number.isFinite(amount)) return '—';
+  return `${toPersianDigits(amount.toLocaleString('en-US'))} تومان`;
+}
+
 type ApiErrorLike = {
   error?: string;
   detail?: string;
