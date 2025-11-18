@@ -58,6 +58,7 @@ export default function PaymentResult() {
   const ok = status === 'success';
   const money = (n?: number) => typeof n === 'number' ? n.toLocaleString('fa-IR') : '—';
   const receiptRef = useRef<HTMLDivElement | null>(null);
+  const successMarkdown = data?.success_markdown ?? '';
 
   const siteUrl = 'https://east-guilan-ce.ir';
   const siteName = 'East Guilan CE';
@@ -225,7 +226,7 @@ export default function PaymentResult() {
             </div>
 
             <div className="mx-auto mt-6 flex max-w-xl items-center justify-end gap-2">
-              <Markdown content={data.success_markdown} justify size="base" />
+              <Markdown content={successMarkdown} justify size="base" />
             </div>
 
             {/* Invoice */}
