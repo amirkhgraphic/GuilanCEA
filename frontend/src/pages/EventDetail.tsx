@@ -21,6 +21,7 @@ export default function EventDetail() {
   const { toast } = useToast();
 
   const [event, setEvent] = useState<Types.EventDetailSchema | null>(null);
+  const [eventThumb, setEventThumb] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const basePrice = Number(event?.price ?? 0);
@@ -87,7 +88,6 @@ export default function EventDetail() {
       navigate('/auth');
       return;
     }
-    const eventThumb = getThumbUrl(event);
     if (isFree) {
       try {
         setSubmitting(true);
@@ -200,6 +200,7 @@ export default function EventDetail() {
         if (!slug) return;
         const data = await api.getEventBySlug(slug);
         setEvent(data);
+        setEventThumb(getThumbUrl(event));
       } catch (error: unknown) {
         toast({
           title: 'خطا در بارگذاری رویداد',
@@ -210,7 +211,7 @@ export default function EventDetail() {
         setLoading(false);
       }
     })();
-  }, [slug, toast]);
+  }, [slug]);
 
   
   const [nowTs, setNowTs] = useState(() => Date.now());
@@ -249,7 +250,8 @@ export default function EventDetail() {
     if (days === 0) return `${nf2.format(hours)} ساعت و ${nf2.format(minutes)} دقیقه و ${nf2.format(seconds)} ثانیه`;
     return `${nfd.format(days)} روز و ${nf2.format(hours)} ساعت و ${nf2.format(minutes)} دقیقه و ${nf2.format(seconds)} ثانیه`;
   };
-
+``
+  
   const meta = useMemo(() => {
     if (!event) return null;
     const rs = rsTs;
