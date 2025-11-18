@@ -38,6 +38,7 @@ LOCAL_APPS = [
     'blog',
     'gallery',
     'events',
+    'certificates',
     'communications',
     'payments',
     'utils',
