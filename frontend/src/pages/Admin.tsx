@@ -247,9 +247,11 @@ function AdminUsersPanel() {
                 {users.map((user) => (
                   <tr key={user.id} className="border-b last:border-0 hover:bg-muted/50">
                     <td className="px-3 py-2 text-right">
-                      {user.full_name ||
-                        `${user.first_name} ${user.last_name}`.trim() ||
-                        user.username}
+                      {(() => {
+                        const parts = [user.first_name, user.last_name].filter(Boolean);
+                        if (parts.length) return parts.join(' ');
+                        return user.username;
+                      })()}
                     </td>
                     <td className="px-3 py-2 text-right">{user.username}</td>
                     <td className="px-3 py-2 text-right">{user.email}</td>
