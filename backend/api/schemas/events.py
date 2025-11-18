@@ -158,68 +158,31 @@ class AdminUserSchema(Schema):
     email: str
 
 
-class PaymentAdminSchema(ModelSchema):
-    user: AdminUserSchema
+class PaymentAdminSchema(Schema):
+    id: int
+    authority: Optional[str]
+    ref_id: Optional[str]
+    status: int
     status_label: str
-    discount_code: Optional[str] = None
-
-    class Config:
-        model = Payment
-        model_fields = [
-            "id",
-            "user",
-            "authority",
-            "ref_id",
-            "status",
-            "base_amount",
-            "discount_amount",
-            "amount",
-            "verified_at",
-            "created_at",
-        ]
-
-    @staticmethod
-    def resolve_status_label(obj):
-        return obj.get_status_display()
-
-    @staticmethod
-    def resolve_discount_code(obj):
-        return obj.discount_code.code if obj.discount_code else None
-
-
-class RegistrationAdminSchema(ModelSchema):
+    base_amount: int
+    discount_amount: int
+    amount: int
+    verified_at: Optional[datetime]
+    created_at: datetime
+    discount_code: Optional[str]
     user: AdminUserSchema
-    payments: List[PaymentAdminSchema] = []
+
+
+class RegistrationAdminSchema(Schema):
+    id: int
+    ticket_id: UUID
+    status: str
     status_label: str
-    final_price: Optional[int] = None
-    discount_amount: Optional[int] = None
-
-    class Config:
-        model = Registration
-        model_fields = [
-            "id",
-            "user",
-            "ticket_id",
-            "status",
-            "registered_at",
-            "final_price",
-            "discount_amount",
-        ]
-
-    @staticmethod
-    def resolve_payments(obj):
-        payments = list(obj.payments.select_related("discount_code").all())
-        paid = [p for p in payments if p.status == Payment.OrderStatusChoices.PAID]
-        if paid:
-            return paid[:1]
-        canceled = [p for p in payments if p.status == Payment.OrderStatusChoices.CANCELED]
-        if canceled:
-            return canceled[:1]
-        return []
-
-    @staticmethod
-    def resolve_status_label(obj):
-        return obj.get_status_display()
+    registered_at: datetime
+    final_price: Optional[int]
+    discount_amount: Optional[int]
+    user: AdminUserSchema
+    payments: List[PaymentAdminSchema]
 
 
 class EventAdminDetailSchema(EventSchema):
