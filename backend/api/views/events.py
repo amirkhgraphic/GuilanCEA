@@ -163,8 +163,9 @@ def list_event_registrations_admin(
         .order_by("-registered_at")
     )
 
-    if status:
-        qs = qs.filter(status__in=status)
+    status_values = status or request.GET.getlist('status')
+    if status_values:
+        qs = qs.filter(status__in=status_values)
 
     if university:
         qs = qs.filter(
