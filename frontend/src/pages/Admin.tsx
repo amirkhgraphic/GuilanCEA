@@ -28,6 +28,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
+import { resolveErrorMessage } from '@/lib/utils';
 
 const formatDate = (value?: string | null) => {
   if (!value) {
@@ -38,13 +39,6 @@ const formatDate = (value?: string | null) => {
     return value;
   }
   return date.toLocaleString('fa-IR');
-};
-
-const getErrorMessage = (error: unknown) => {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return 'خطایی رخ داد. لطفاً دوباره تلاش کنید.';
 };
 
 const eventStatusConfig: Record<
@@ -90,7 +84,7 @@ function AdminUsersPanel() {
       toast({
         variant: 'destructive',
         title: 'خطا در بازیابی',
-        description: getErrorMessage(error),
+        description: resolveErrorMessage(error),
       });
     },
   });
@@ -117,7 +111,7 @@ function AdminUsersPanel() {
           <p className="text-sm text-muted-foreground">در حال بارگذاری کاربران...</p>
         ) : deletedUsersQuery.error ? (
           <p className="text-sm text-destructive">
-            {getErrorMessage(deletedUsersQuery.error)}
+            {resolveErrorMessage(deletedUsersQuery.error)}
           </p>
         ) : users.length === 0 ? (
           <p className="text-sm text-muted-foreground">هیچ کاربری برای بازگردانی وجود ندارد.</p>
@@ -189,7 +183,7 @@ function AdminPostsPanel() {
       toast({
         variant: 'destructive',
         title: 'خطا در حذف',
-        description: getErrorMessage(error),
+        description: resolveErrorMessage(error),
       });
     },
   });
@@ -207,7 +201,7 @@ function AdminPostsPanel() {
       toast({
         variant: 'destructive',
         title: 'خطا در بازیابی',
-        description: getErrorMessage(error),
+        description: resolveErrorMessage(error),
       });
     },
   });
@@ -240,7 +234,7 @@ function AdminPostsPanel() {
           {postsQuery.isLoading ? (
             <p className="text-sm text-muted-foreground">در حال بارگذاری مقالات...</p>
           ) : postsQuery.error ? (
-            <p className="text-sm text-destructive">{getErrorMessage(postsQuery.error)}</p>
+            <p className="text-sm text-destructive">{resolveErrorMessage(postsQuery.error)}</p>
           ) : activePosts.length === 0 ? (
             <p className="text-sm text-muted-foreground">هنوز مقاله‌ای منتشر نشده است.</p>
           ) : (
@@ -291,7 +285,7 @@ function AdminPostsPanel() {
             <p className="text-sm text-muted-foreground">در حال بارگذاری مقالات حذف شده...</p>
           ) : deletedPostsQuery.error ? (
             <p className="text-sm text-destructive">
-              {getErrorMessage(deletedPostsQuery.error)}
+              {resolveErrorMessage(deletedPostsQuery.error)}
             </p>
           ) : deletedPosts.length === 0 ? (
             <p className="text-sm text-muted-foreground">هیچ مقاله‌ای حذف نشده است.</p>
@@ -360,7 +354,7 @@ function AdminEventsPanel() {
       toast({
         variant: 'destructive',
         title: 'خطا در حذف رویداد',
-        description: getErrorMessage(error),
+        description: resolveErrorMessage(error),
       });
     },
   });
@@ -382,7 +376,7 @@ function AdminEventsPanel() {
         {eventsQuery.isLoading ? (
           <p className="text-sm text-muted-foreground">در حال بارگذاری رویدادها...</p>
         ) : eventsQuery.error ? (
-          <p className="text-sm text-destructive">{getErrorMessage(eventsQuery.error)}</p>
+          <p className="text-sm text-destructive">{resolveErrorMessage(eventsQuery.error)}</p>
         ) : eventsQuery.data?.length ? (
           <ScrollArea className="rounded-md border">
             <Table>
@@ -453,7 +447,7 @@ function AdminCommentsPanel() {
       toast({
         variant: 'destructive',
         title: 'خطا در بازیابی نظر',
-        description: getErrorMessage(error),
+        description: resolveErrorMessage(error),
       });
     },
   });
@@ -477,7 +471,7 @@ function AdminCommentsPanel() {
         {deletedCommentsQuery.isLoading ? (
           <p className="text-sm text-muted-foreground">در حال بارگذاری نظرات...</p>
         ) : deletedCommentsQuery.error ? (
-          <p className="text-sm text-destructive">{getErrorMessage(deletedCommentsQuery.error)}</p>
+          <p className="text-sm text-destructive">{resolveErrorMessage(deletedCommentsQuery.error)}</p>
         ) : comments.length === 0 ? (
           <p className="text-sm text-muted-foreground">هیچ نظر حذف‌شده‌ای وجود ندارد.</p>
         ) : (

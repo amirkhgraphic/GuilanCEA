@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import * as React from 'react';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -34,7 +35,11 @@ export function ThemeProvider({
   }, [theme]);
 
   React.useEffect(() => {
-    try { localStorage.setItem(storageKey, theme); } catch {}
+    try {
+      localStorage.setItem(storageKey, theme);
+    } catch (error) {
+      console.warn('Unable to persist theme preference', error);
+    }
   }, [theme, storageKey]);
 
   return (

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
+import { resolveErrorMessage } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -34,8 +35,12 @@ export default function ResetPasswordConfirm() {
       await api.resetPasswordConfirm(token, password);
       toast({ title: 'رمز عبور با موفقیت تغییر کرد', variant: 'success' });
       navigate('/auth');
-    } catch (e: any) {
-      toast({ title: 'خطا', description: e?.message || 'مشکلی رخ داد', variant: 'destructive' });
+    } catch (error: unknown) {
+      toast({
+        title: 'خطا',
+        description: resolveErrorMessage(error, 'مشکلی رخ داد'),
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }

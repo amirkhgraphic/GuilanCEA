@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
 import { Loader2, Upload, Trash2 } from 'lucide-react';
-import { formatJalali } from '@/lib/utils';
+import { formatJalali, resolveErrorMessage } from '@/lib/utils';
 import Markdown from '@/components/Markdown';
 import { useQuery } from '@tanstack/react-query';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -58,7 +58,7 @@ export default function Profile() {
     [myRegs]
   );
 
-  const [me, setMe] = useState<Types.UserProfileSchema | null>(user as any);
+  const [me, setMe] = useState<Types.UserProfileSchema | null>(user ?? null);
   const [fetching, setFetching] = useState(false);
   const [editing, setEditing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -158,13 +158,17 @@ export default function Profile() {
         last_name: profile.last_name ?? '',
         bio: profile.bio ?? '',
         year_of_study: typeof profile.year_of_study === 'number' ? profile.year_of_study : null,
-        major: (profile.major as any) ?? null,
-        university: (profile.university as any) ?? null,
+        major: profile.major ?? null,
+        university: profile.university ?? null,
         student_id: profile.student_id ?? null,
       });
 
-    } catch (e: any) {
-      toast({ title: 'خطا در دریافت پروفایل', description: e?.message || 'مشکلی پیش آمد', variant: 'destructive' });
+    } catch (error: unknown) {
+      toast({
+        title: 'خطا در دریافت پروفایل',
+        description: resolveErrorMessage(error, 'مشکلی پیش آمد'),
+        variant: 'destructive',
+      });
     } finally {
       setFetching(false);
     }
@@ -212,23 +216,6 @@ export default function Profile() {
     }
   }, [universities, me?.university]);
 
-
-  if (!loading && !isAuthenticated) {
-    return (
-      <>
-        {helmet}
-        <Navigate to="/auth" replace />
-      </>
-    );
-  }
-
-  const kv = (label: string, value: React.ReactNode) => (
-    <div className="grid grid-cols-3 gap-3 items-center py-2" dir="rtl">
-      <div className="text-sm text-muted-foreground text-right">{label}</div>
-      <div className="col-span-2 text-sm text-right">{value ?? '—'}</div>
-    </div>
-  );
-
   const [uploading, setUploading] = useState(false);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -257,8 +244,12 @@ export default function Profile() {
       setMe(updated);
       setEditing(false);
       toast({ title: 'پروفایل به‌روزرسانی شد', variant: 'success' });
-    } catch (e: any) {
-      toast({ title: 'خطا در ذخیره پروفایل', description: e?.message || 'مشکلی پیش آمد', variant: 'destructive' });
+    } catch (error: unknown) {
+      toast({
+        title: 'خطا در ذخیره پروفایل',
+        description: resolveErrorMessage(error, 'مشکلی پیش آمد'),
+        variant: 'destructive',
+      });
     }
   };
 
@@ -271,23 +262,47 @@ export default function Profile() {
       await api.uploadProfilePicture(file); // POST /api/auth/profile/picture
       await loadProfile();
       toast({ title: 'تصویر پروفایل به‌روزرسانی شد', variant: 'success' });
-    } catch (e: any) {
-      toast({ title: 'خطا در آپلود تصویر', description: e?.message || 'مشکلی پیش آمد', variant: 'destructive' });
+    } catch (error: unknown) {
+      toast({
+        title: 'خطا در آپلود تصویر',
+        description: resolveErrorMessage(error, 'مشکلی پیش آمد'),
+        variant: 'destructive',
+      });
     } finally {
       setUploading(false);
     }
   };
-
 
   const onDeletePicture = async () => {
     try {
       await api.deleteProfilePicture();
       await loadProfile();
       toast({ title: 'تصویر پروفایل حذف شد' });
-    } catch (e: any) {
-      toast({ title: 'خطا در حذف تصویر', description: e?.message || 'مشکلی پیش آمد', variant: 'destructive' });
+    } catch (error: unknown) {
+      toast({
+        title: 'خطا در حذف تصویر',
+        description: resolveErrorMessage(error, 'مشکلی پیش آمد'),
+        variant: 'destructive',
+      });
     }
   };
+
+
+  if (!loading && !isAuthenticated) {
+    return (
+      <>
+        {helmet}
+        <Navigate to="/auth" replace />
+      </>
+    );
+  }
+
+  const kv = (label: string, value: React.ReactNode) => (
+    <div className="grid grid-cols-3 gap-3 items-center py-2" dir="rtl">
+      <div className="text-sm text-muted-foreground text-right">{label}</div>
+      <div className="col-span-2 text-sm text-right">{value ?? '—'}</div>
+    </div>
+  );
 
   return (
     <>

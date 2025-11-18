@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { api } from '@/lib/api';
@@ -10,27 +10,27 @@ import type * as Types from '@/lib/types';
 import { formatJalali, getThumbUrl } from '@/lib/utils';
 
 
-function labelPrice(event: any) {
+function labelPrice(event: Types.EventListItemSchema) {
   const price = Number(event?.price ?? 0) / 10;
   return price <= 0 ? "رایگان" : `${price.toLocaleString("fa-IR")} تومان`;
 }
-function modeFa(event_type: any) {
+function modeFa(event_type: Types.EventListItemSchema["event_type"]) {
   return event_type === "online" ? "آنلاین" : "حضوری";
 }
-function spotsLeft(event: any) {
+function spotsLeft(event: Types.EventListItemSchema) {
   const cap = Number(event.capacity);
   const used = Number(event.registration_count);
   const left = cap - used;
   return left;
 }
-function isAvailable(event: any) {
+function isAvailable(event: Types.EventListItemSchema) {
   const now = new Date();
   const end = new Date(event.registration_end_date);
   const timeOk = end.getTime() > now.getTime();
   const left = spotsLeft(event);
   return timeOk && left > 0;
 }
-function notAvailableReasonFa(event: any) {
+function notAvailableReasonFa(event: Types.EventListItemSchema) {
   const now = new Date();
   const end = new Date(event.registration_end_date);
   if (end.getTime() <= now.getTime()) return "ثبت‌نام پایان‌یافته";
@@ -112,11 +112,7 @@ export default function Events() {
     };
   }, [events, canonicalUrl, pageDescription, pageTitle]);
 
-  useEffect(() => {
-    loadEvents();
-  }, [search]);
-
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     try {
       setLoading(true);
       const data = await api.getEvents({
@@ -130,7 +126,11 @@ export default function Events() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]);
+
+  useEffect(() => {
+    loadEvents();
+  }, [loadEvents]);
 
   return (
     <>

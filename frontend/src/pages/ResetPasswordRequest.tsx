@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
+import { resolveErrorMessage } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -21,9 +22,13 @@ export default function ResetPasswordRequest() {
         description: 'ایمیل خود را بررسی کنید.',
         variant: 'success'
       });
-    } catch (e: any) {
+    } catch (error: unknown) {
       // بک‌اند 200 می‌دهد حتی اگر ایمیل نباشد؛ اما اگر اروری بیاید، نشان بده
-      toast({ title: 'خطا', description: e?.message || 'مشکلی رخ داد', variant: 'destructive' });
+      toast({
+        title: 'خطا',
+        description: resolveErrorMessage(error, 'مشکلی رخ داد'),
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }

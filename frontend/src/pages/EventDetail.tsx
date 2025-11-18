@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import Markdown from '@/components/Markdown';
 import CouponDialogFa from '@/components/CouponDialogFa';
-import { formatJalali, getThumbUrl } from '@/lib/utils';
+import { formatJalali, getThumbUrl, resolveErrorMessage } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 
 const typeLabel: Record<string, string> = { online: 'آنلاین', on_site: 'حضوری', hybrid: 'آنلاین و حضوری' };
@@ -87,19 +87,20 @@ export default function EventDetail() {
       navigate('/auth');
       return;
     }
+    const eventThumb = getThumbUrl(event);
     if (isFree) {
       try {
         setSubmitting(true);
         const res = await api.registerForEvent(event.id);
         goSuccess(res.ticket_id);
-      } catch (e: any) {
-        const msg = e?.message || '';
+      } catch (error: unknown) {
+        const msg = resolveErrorMessage(error, '');
         if (msg.includes('already registered') || msg.includes('Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…')) {
           setAlreadyRegistered(true);
           toast({ title: 'شما قبلاً ثبت‌نام کرده‌اید', variant: 'destructive' });
           return;
         }
-        throw e;
+        throw error;
       } finally {
         setSubmitting(false);
       }
@@ -126,11 +127,7 @@ export default function EventDetail() {
           event_id: event.id,
           slug: event.slug,
           title: event.title,
-          thumb:
-            (event as any).absolute_thumbnail_url ||
-            (event as any).thumbnail_url ||
-            (event as any).absolute_featured_image_url ||
-            null,
+          thumb: eventThumb,
           base_amount: Number(event.price ?? 0),
           discount_amount: Number(event.price ?? 0),
           amount: 0,
@@ -140,7 +137,7 @@ export default function EventDetail() {
         }));
         api.ChangeRegistrationStatus(reg.id, 'confirmed')
         goSuccess(reg?.ticket_id);
-        return; // Ù…Ù‡Ù…: Ø§ÛŒÙ†Ø¬Ø§ Ø®Ø±ÙˆØ¬
+        return; 
       }
 
       const description = `پرداخت رویداد: ${event.title}`;
@@ -150,17 +147,13 @@ export default function EventDetail() {
         discount_code: (coupon ?? '').trim() || null,
       });
 
-      // Ø§Ú¯Ø± Ø³Ø±ÙˆØ± Ù‡Ù… Ú¯ÙØª Ù…Ø¨Ù„Øº Ù†Ù‡Ø§ÛŒÛŒ 0 Ø§Ø³Øª ÛŒØ§ Ù„ÛŒÙ†Ú© Ø¯Ø±Ú¯Ø§Ù‡ Ù†Ø¯Ø§Ø¯ØŒ Ø¨Ø§Ø² Ù‡Ù… Ø§Ø³Ú©ÛŒÙ¾ Ú©Ù†
+      
       if (!result?.start_pay_url || Number(result.amount) === 0) {
         sessionStorage.setItem('payment:last', JSON.stringify({
           event_id: event.id,
           slug: event.slug,
           title: event.title,
-          thumb:
-            (event as any).absolute_thumbnail_url ||
-            (event as any).thumbnail_url ||
-            (event as any).absolute_featured_image_url ||
-            null,
+          thumb: eventThumb,
           base_amount: result.base_amount,
           discount_amount: result.discount_amount ?? result.base_amount,
           amount: 0,
@@ -171,16 +164,12 @@ export default function EventDetail() {
         return;
       }
 
-      // 4) Ù…Ø³ÛŒØ± Ù…Ø¹Ù…ÙˆÙ„ Ù¾Ø±Ø¯Ø§Ø®Øª
+      
       sessionStorage.setItem('payment:last', JSON.stringify({
         event_id: event.id,
         slug: event.slug,
         title: event.title,
-        thumb:
-          (event as any).absolute_thumbnail_url ||
-          (event as any).thumbnail_url ||
-          (event as any).absolute_featured_image_url ||
-          null,
+        thumb: eventThumb,
         base_amount: result.base_amount,
         discount_amount: result.discount_amount,
         amount: result.amount,
@@ -189,9 +178,9 @@ export default function EventDetail() {
       }));
       window.location.href = result.start_pay_url;
 
-    } catch (e: any) {
-      // Ù‡Ù†Ø¯Ù„ Ø®Ø·Ø§ÛŒ Â«Ù‚Ø¨Ù„Ø§Ù‹ Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ú©Ø±Ø¯Ù‡â€ŒØ§ÛŒØ¯Â» Ø¨Ø±Ø§ÛŒ Ø­Ø§Ù„Øª Ù¾Ø±Ø¯Ø§Ø®Øª ØµÙØ± Ù‡Ù… Ù…ÙÛŒØ¯Ù‡
-      const msg = e?.message || '';
+    } catch (error: unknown) {
+      
+      const msg = resolveErrorMessage(error, '');
       if (msg.includes('already registered') || msg.includes('Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…')) {
         setAlreadyRegistered(true);
         toast({ title: 'شما قبلاً ثبت‌نام کرده‌اید', variant: 'destructive' });
@@ -204,22 +193,26 @@ export default function EventDetail() {
     }
   };
 
-  // -- Ø¯Ø±ÛŒØ§ÙØª Ø±ÙˆÛŒØ¯Ø§Ø¯
+  
   useEffect(() => {
     (async () => {
       try {
         if (!slug) return;
         const data = await api.getEventBySlug(slug);
         setEvent(data);
-      } catch (e: any) {
-        toast({ title: 'خطا در بارگذاری رویداد', description: e?.message || 'لطفاً دوباره تلاش کنید.', variant: 'destructive' });
+      } catch (error: unknown) {
+        toast({
+          title: 'خطا در بارگذاری رویداد',
+          description: resolveErrorMessage(error, 'لطفاً دوباره تلاش کنید.'),
+          variant: 'destructive',
+        });
       } finally {
         setLoading(false);
       }
     })();
-  }, [slug]);
+  }, [slug, toast]);
 
-  // -- ØªØ§ÛŒÙ…Ø± ÙÙ‚Ø· ØªØ§ Ù¾Ø§ÛŒØ§Ù† Ù…Ù‡Ù„Øª Ø«Ø¨Øªâ€ŒÙ†Ø§Ù…
+  
   const [nowTs, setNowTs] = useState(() => Date.now());
   useEffect(() => {
     const id = window.setInterval(() => setNowTs(Date.now()), 1000);
@@ -238,17 +231,15 @@ export default function EventDetail() {
     deadlineTs != null ? Math.max(0, deadlineTs - nowTs) : null
   ), [deadlineTs, nowTs]);
 
-  // Ø§Ø¹Ø¯Ø§Ø¯ ÙØ§Ø±Ø³ÛŒ
   const nfd = useMemo(
     () => new Intl.NumberFormat('fa-IR', { useGrouping: false }),
     []
   );
-  // Ø¯Ùˆ Ø±Ù‚Ù…ÛŒ Ø¨Ø±Ø§ÛŒ Ø³Ø§Ø¹Øª/Ø¯Ù‚ÛŒÙ‚Ù‡/Ø«Ø§Ù†ÛŒÙ‡
   const nf2 = useMemo(
     () => new Intl.NumberFormat('fa-IR', { minimumIntegerDigits: 2, useGrouping: false }),
     []
   );
-  // Ø®Ø±ÙˆØ¬ÛŒ: Û±Û² Ø±ÙˆØ² Ùˆ Û°Û³ Ø³Ø§Ø¹Øª Ùˆ Û°Û² Ø¯Ù‚ÛŒÙ‚Ù‡ Ùˆ Û°Û¸ Ø«Ø§Ù†ÛŒÙ‡
+
   const formatRemainingWords = (ms: number) => {
     const total = Math.max(0, Math.floor(ms / 1000));
     const days = Math.floor(total / 86400);
@@ -258,8 +249,7 @@ export default function EventDetail() {
     if (days === 0) return `${nf2.format(hours)} ساعت و ${nf2.format(minutes)} دقیقه و ${nf2.format(seconds)} ثانیه`;
     return `${nfd.format(days)} روز و ${nf2.format(hours)} ساعت و ${nf2.format(minutes)} دقیقه و ${nf2.format(seconds)} ثانیه`;
   };
-``
-  // -- Ù…Ù†Ø·Ù‚ Ø¨Ø§Ø²/Ø¨Ø³ØªÙ‡ Ø¨ÙˆØ¯Ù† Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… (Ø´Ø±ÙˆØ¹ Ùˆ Ù¾Ø§ÛŒØ§Ù† Ø±Ø§ Ù„Ø­Ø§Ø¸ Ù…ÛŒâ€ŒÚ©Ù†ÛŒÙ…Ø› UI Ø´Ø±ÙˆØ¹ Ø±Ø§ Ù†Ø´Ø§Ù† Ù†Ù…ÛŒâ€ŒØ¯Ù‡ÛŒÙ…)
+
   const meta = useMemo(() => {
     if (!event) return null;
     const rs = rsTs;
@@ -393,7 +383,7 @@ export default function EventDetail() {
     );
   }
 
-  // ÙˆØ¶Ø¹ÛŒØªâ€ŒÙ‡Ø§ÛŒ Ù†Ù…Ø§ÛŒØ´ Ù¾ÛŒØ§Ù… Ø¨Ø§Ù„Ø§ÛŒ ØµÙØ­Ù‡
+  
   const beforeStart = rsTs != null && nowTs < rsTs;
   const ended = deadlineTs !== null && remainingMs === 0;
   const showCountdown = !beforeStart && deadlineTs !== null && remainingMs! > 0;
@@ -518,7 +508,7 @@ export default function EventDetail() {
                     alreadyRegistered ||
                     event.status !== 'published' ||
                     meta?.full === true ||
-                    !meta?.registrationOpen // Ù‚Ø¨Ù„ Ø§Ø² Ø´Ø±ÙˆØ¹ ÛŒØ§ Ù¾Ø³ Ø§Ø² Ù¾Ø§ÛŒØ§Ù†
+                    !meta?.registrationOpen 
                   }
                 >
                   {event.status !== 'published'

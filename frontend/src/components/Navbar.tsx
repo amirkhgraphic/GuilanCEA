@@ -31,9 +31,8 @@ const NavItem = ({
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const { user, logout, isAuthenticated } = useAuth();
-  const isAdminUser =
-    isAuthenticated && ((user as any)?.is_staff || (user as any)?.is_superuser);
+  const { user, isAuthenticated } = useAuth();
+  const isAdminUser = isAuthenticated && ((user?.is_staff || user?.is_superuser) ?? false);
   const [open, setOpen] = useState(false);
 
   return (
@@ -110,7 +109,7 @@ export default function Navbar() {
                     {isAuthenticated ? (
                       <>
                         <div className="text-sm text-muted-foreground">
-                          {(user as any)?.username}
+                          {user?.username}
                         </div>
                         <Button
                           size="sm"

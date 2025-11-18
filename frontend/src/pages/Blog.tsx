@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '@/lib/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,11 +25,7 @@ export default function Blog() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadPosts();
-  }, [search]);
-
-  const loadPosts = async () => {
+  const loadPosts = useCallback(async () => {
     try {
       const data = await api.getPosts({ search: search || undefined });
       setPosts(data as Post[]);
@@ -38,7 +34,11 @@ export default function Blog() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]);
+
+  useEffect(() => {
+    loadPosts();
+  }, [loadPosts]);
 
   return (
     <div className="min-h-screen bg-background">

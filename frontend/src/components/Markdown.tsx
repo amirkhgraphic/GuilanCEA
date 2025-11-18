@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import type { PluggableList } from 'unified';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
@@ -23,7 +24,7 @@ export default function Markdown({
   justify = false,
   size = 'sm',
 }: MarkdownProps) {
-  const rehypePlugins = allowHtml ? [rehypeRaw, rehypeSanitize] : [];
+  const rehypePlugins: PluggableList | undefined = allowHtml ? [rehypeRaw, rehypeSanitize] : undefined;
 
   const baseSizeClass =
     size === 'sm' ? 'text-sm' : size === 'lg' ? 'text-lg' : 'text-base';
@@ -35,15 +36,19 @@ export default function Markdown({
       ? { h1: 'text-3xl', h2: 'text-2xl', h3: 'text-xl', h4: 'text-lg' }
       : { h1: 'text-4xl', h2: 'text-3xl', h3: 'text-2xl', h4: 'text-xl' };
 
-return (
+  const justifyStyle: React.CSSProperties | undefined = justify
+    ? { textAlign: 'justify', textJustify: 'inter-word' }
+    : undefined;
+
+  return (
     <div
       dir={dir}
       className={`markdown-body ${baseSizeClass} text-right leading-7 break-words ${className}`}
-      style={justify ? { textAlign: 'justify', textJustify: 'inter-word' as any } : undefined}
+      style={justifyStyle}
     >
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={rehypePlugins as any}
+        rehypePlugins={rehypePlugins}
         components={{
           h1: (p) => <h1 className={`mt-6 font-bold ${hScale.h1}`} {...p} />,
           h2: (p) => <h2 className={`mt-6 font-bold ${hScale.h2}`} {...p} />,
