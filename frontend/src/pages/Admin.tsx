@@ -392,15 +392,15 @@ function EventDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl">
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>جزئیات رویداد</DialogTitle>
           <DialogDescription>
             اطلاعات رویداد، ویرایش سریع و لیست ثبت‌نام‌ها را می‌توانید در این پنجره بررسی کنید.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-6 lg:grid-cols-[2fr_3fr]">
-          <div className="space-y-4">
+        <div className="grid gap-6 lg:grid-cols-[2fr_3fr] max-h-[78vh]">
+          <div className="space-y-4 overflow-auto">
             <Card>
               <CardHeader>
                 <CardTitle>{detailQuery.data?.title || 'در حال بارگذاری...'}</CardTitle>
@@ -466,7 +466,7 @@ function EventDetailDialog({
               </CardContent>
             </Card>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 overflow-auto">
             <Card>
               <CardHeader>
                 <CardTitle>ثبت‌نام‌ها</CardTitle>
@@ -474,7 +474,7 @@ function EventDetailDialog({
                   فیلترها: وضعیت، دانشگاه، گرایش، نام/نام‌کاربری/ایمیل
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-3 max-h-[52vh] overflow-auto">
                 <div className="flex flex-wrap gap-2">
                   {registrationStatusOptions.map((status) => (
                       <Button
