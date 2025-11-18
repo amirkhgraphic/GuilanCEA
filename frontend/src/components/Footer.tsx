@@ -133,11 +133,12 @@ export default function Footer() {
               referrerPolicy="origin"
             >
               <img
-              src="https://trustseal.enamad.ir/logo.aspx?id=649977&Code=m0wWM1DFYqd4fLEnjyMU3o2pupfuqDVW"
-              alt="نماد اعتماد الکترونیکی"
-              referrerPolicy="origin"
-              style={{ cursor: 'pointer' }}
-              data-code="m0wWM1DFYqd4fLEnjyMU3o2pupfuqDVW"
+                src="/enamad.png"
+                width="125px"
+                alt="نماد اعتماد الکترونیکی"
+                referrerPolicy="origin"
+                style={{ cursor: "pointer" }}
+                data-code="m0wWM1DFYqd4fLEnjyMU3o2pupfuqDVW"
               />
             </a>
           </div>
