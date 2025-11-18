@@ -656,24 +656,52 @@ function AdminEventsPanel({ onOpenDetail }: { onOpenDetail: (event: EventListIte
             onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))}
           />
           <Select value={filters.status} onValueChange={(value) => setFilters((prev) => ({ ...prev, status: value }))}>
-            {eventStatusOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
+            <SelectTrigger>
+              <SelectValue>
+                {eventStatusOptions.find((option) => option.value === filters.status)?.label ||
+                  'وضعیت'}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {eventStatusOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
           <Select value={filters.type} onValueChange={(value) => setFilters((prev) => ({ ...prev, type: value }))}>
-            <SelectItem value="all">تمام نوع‌ها</SelectItem>
-            <SelectItem value="online">آنلاین</SelectItem>
-            <SelectItem value="on_site">حضوری</SelectItem>
-            <SelectItem value="hybrid">ترکیبی</SelectItem>
+            <SelectTrigger>
+              <SelectValue>
+                {{
+                  all: 'تمام نوع‌ها',
+                  online: 'آنلاین',
+                  on_site: 'حضوری',
+                  hybrid: 'ترکیبی',
+                }[filters.type]}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">تمام نوع‌ها</SelectItem>
+              <SelectItem value="online">آنلاین</SelectItem>
+              <SelectItem value="on_site">حضوری</SelectItem>
+              <SelectItem value="hybrid">ترکیبی</SelectItem>
+            </SelectContent>
           </Select>
           <Select value={filters.sort} onValueChange={(value) => setFilters((prev) => ({ ...prev, sort: value }))}>
-            {eventSortOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
+            <SelectTrigger>
+              <SelectValue>
+                {eventSortOptions.find((option) => option.value === filters.sort)?.label ||
+                  'مرتب‌سازی'}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {eventSortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
 
