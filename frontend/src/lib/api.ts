@@ -410,6 +410,20 @@ class ApiClient {
     return this.request<Types.EventDetailSchema>(`/api/events/slug/${encodeURIComponent(slug)}`, { method: 'GET' });
   }
 
+  async updateEvent(eventId: number, data: Types.EventUpdateSchema) {
+    return this.request<Types.EventSchema>(`/api/events/${eventId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteEvent(eventId: number) {
+    return this.request<Types.MessageSchema>(`/api/events/${eventId}`, {
+      method: 'DELETE',
+    });
+  }
+
   async registerForEvent(eventId: number, discountCode?: string | null) {
     const payload = (discountCode ?? '').trim();
     const init: RequestInit = { method: 'POST' };

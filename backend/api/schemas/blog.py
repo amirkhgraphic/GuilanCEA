@@ -62,10 +62,25 @@ class PostCreateSchema(Schema):
 class CommentSchema(ModelSchema):
     author: AuthorSchema
     replies: List['CommentSchema'] = []
+    post_id: int
+    post_title: str
+    post_slug: str
 
     class Config:
         model = Comment
         model_fields = ['id', 'content', 'created_at', 'is_approved']
+
+    @staticmethod
+    def resolve_post_id(obj):
+        return obj.post_id
+
+    @staticmethod
+    def resolve_post_title(obj):
+        return obj.post.title
+
+    @staticmethod
+    def resolve_post_slug(obj):
+        return obj.post.slug
 
 class CommentCreateSchema(Schema):
     content: str
