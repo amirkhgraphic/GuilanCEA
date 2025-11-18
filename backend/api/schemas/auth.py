@@ -71,6 +71,8 @@ class UserProfileSchema(ModelSchema):
 
 class UserListSchema(ModelSchema):
     full_name: Optional[str] = None
+    major_name: Optional[str] = None
+    university_name: Optional[str] = None
 
     class Meta:
         model = User
@@ -84,11 +86,21 @@ class UserListSchema(ModelSchema):
             'is_staff',
             'is_superuser',
             'date_joined',
+            'major_name',
+            'university_name',
         ]
 
     @staticmethod
     def resolve_full_name(obj):
         return obj.get_full_name()
+
+    @staticmethod
+    def resolve_major_name(obj):
+        return obj.get_major_display()
+
+    @staticmethod
+    def resolve_university_name(obj):
+        return obj.get_university_display()
 
 class UserUpdateSchema(Schema):
     first_name: Optional[str] = None
