@@ -8,6 +8,7 @@ from datetime import datetime
 from api.schemas.blog import AuthorSchema
 from events.models import Event, Registration
 from gallery.models import Gallery
+from payments.models import Payment
 
 
 class EventGallerySchema(ModelSchema):
@@ -146,6 +147,71 @@ class RegistrationSchema(ModelSchema):
     @staticmethod
     def resolve_discount_code(obj):
         return obj.discount_code.code if obj.discount_code else None
+
+
+class PaymentAdminSchema(ModelSchema):
+    user: AuthorSchema
+    status_label: str
+    discount_code: Optional[str] = None
+
+    class Config:
+        model = Payment
+        model_fields = [
+            "id",
+            "authority",
+            "ref_id",
+            "status",
+            "base_amount",
+            "discount_amount",
+            "amount",
+            "verified_at",
+            "created_at",
+        ]
+
+    @staticmethod
+    def resolve_status_label(obj):
+        return obj.get_status_display()
+
+    @staticmethod
+    def resolve_discount_code(obj):
+        return obj.discount_code.code if obj.discount_code else None
+
+
+class RegistrationAdminSchema(ModelSchema):
+    user: AuthorSchema
+    payments: List[PaymentAdminSchema] = []
+    status_label: str
+    final_price: Optional[int] = None
+    discount_amount: Optional[int] = None
+
+    class Config:
+        model = Registration
+        model_fields = [
+            "id",
+            "ticket_id",
+            "status",
+            "registered_at",
+            "final_price",
+            "discount_amount",
+        ]
+
+    @staticmethod
+    def resolve_payments(obj):
+        return obj.payments.select_related("discount_code").all()
+
+    @staticmethod
+    def resolve_status_label(obj):
+        return obj.get_status_display()
+
+
+class EventAdminDetailSchema(EventSchema):
+    registrations: List[RegistrationAdminSchema] = []
+
+    @staticmethod
+    def resolve_registrations(obj):
+        return obj.registrations.select_related("user").prefetch_related(
+            "payments__discount_code"
+        ).order_by("-registered_at")
 
 class RegistrationStatusUpdateSchema(Schema):
     status: str

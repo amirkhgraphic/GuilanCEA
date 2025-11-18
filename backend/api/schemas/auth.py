@@ -41,12 +41,12 @@ class UserProfileSchema(ModelSchema):
             'university',
             'bio',
             'date_joined',
-            'is_email_verified',
-            'is_active',
-            'is_staff',
-            'is_superuser',
-            'is_deleted',
-            'deleted_at',
+        'is_email_verified',
+        'is_active',
+        'is_staff',
+        'is_superuser',
+        'is_deleted',
+        'deleted_at',
         ]
 
     @staticmethod
@@ -67,6 +67,29 @@ class UserProfileSchema(ModelSchema):
         if obj.profile_picture and hasattr(obj.profile_picture, 'url'):
             return request.build_absolute_uri(obj.profile_picture.url)
         return None
+
+
+class UserListSchema(ModelSchema):
+    full_name: Optional[str] = None
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'full_name',
+            'is_active',
+            'is_staff',
+            'is_superuser',
+            'date_joined',
+        ]
+
+    @staticmethod
+    def resolve_full_name(obj):
+        return obj.get_full_name()
 
 class UserUpdateSchema(Schema):
     first_name: Optional[str] = None

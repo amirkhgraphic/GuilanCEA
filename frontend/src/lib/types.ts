@@ -42,6 +42,19 @@ export interface UserProfileSchema {
   deleted_at?: string | null;
 }
 
+export interface UserListSchema {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  full_name?: string | null;
+  is_active: boolean;
+  is_staff: boolean;
+  is_superuser: boolean;
+  date_joined: string;
+}
+
 export interface UserRegistrationSchema {
   email: string;
   password: string;
@@ -224,6 +237,41 @@ export interface EventCreateSchema {
   is_registration_open?: boolean;
 }
 
+export interface PaymentAdminSchema {
+  id: number;
+  authority?: string | null;
+  ref_id?: string | null;
+  status: number;
+  status_label: string;
+  base_amount: number;
+  discount_amount: number;
+  amount: number;
+  verified_at?: string | null;
+  created_at: string;
+  discount_code?: string | null;
+}
+
+export interface RegistrationAdminSchema {
+  id: number;
+  ticket_id: string;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'attended';
+  status_label: string;
+  registered_at: string;
+  final_price?: number | null;
+  discount_amount?: number | null;
+  user: {
+    id: number;
+    username: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+  };
+  payments: PaymentAdminSchema[];
+}
+
+export interface EventAdminDetailSchema extends EventDetailSchema {
+  registrations: RegistrationAdminSchema[];
+}
 export interface EventUpdateSchema {
   title?: string;
   description?: string;
