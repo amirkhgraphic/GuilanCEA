@@ -435,14 +435,24 @@ function EventDetailDialog({
                     value={editValues.title}
                     onChange={(event) => setEditValues((prev) => ({ ...prev, title: event.target.value }))}
                   />
-                  <Select value={editValues.status} onValueChange={(value) => setEditValues((prev) => ({ ...prev, status: value }))}>
-                    {eventStatusOptions
-                      .filter((option) => option.value !== 'all')
-                      .map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
+                  <Select
+                    value={editValues.status}
+                    onValueChange={(value) => setEditValues((prev) => ({ ...prev, status: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue>
+                        {eventStatusOptions.find((option) => option.value === editValues.status)?.label || 'وضعیت'}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {eventStatusOptions
+                        .filter((option) => option.value !== 'all')
+                        .map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
                   </Select>
                   <Input
                     placeholder="قیمت (تومان)"
