@@ -164,11 +164,7 @@ def list_event_registrations_admin(
     )
 
     if status:
-        if "," in status:
-            status_values = [s.strip() for s in status.split(",") if s.strip()]
-        else:
-            status_values = status
-        qs = qs.filter(status__in=status_values)
+        qs = qs.filter(status__in=status)
 
     if university:
         qs = qs.filter(
