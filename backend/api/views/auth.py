@@ -18,7 +18,8 @@ from api.authentication import create_jwt_token, create_refresh_token, jwt_auth
 from api.schemas import (
     UserRegistrationSchema, UserLoginSchema, UserProfileSchema,
     UserUpdateSchema, TokenSchema, TokenRefreshIn, MessageSchema, ErrorSchema,
-    PasswordResetRequestSchema, PasswordResetConfirmSchema, UsernameCheckSchema
+    PasswordResetRequestSchema, PasswordResetConfirmSchema, UsernameCheckSchema,
+    UserListSchema
 )
 
 auth_router = Router()

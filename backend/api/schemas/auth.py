@@ -80,7 +80,6 @@ class UserListSchema(ModelSchema):
             'email',
             'first_name',
             'last_name',
-            'full_name',
             'is_active',
             'is_staff',
             'is_superuser',
