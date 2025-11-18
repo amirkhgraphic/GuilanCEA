@@ -22,6 +22,7 @@ from api.schemas import (
     MyEventRegistrationOut,
     RegistrationStatusOut,
     EventBriefSchema,
+    EventAdminDetailSchema,
     MessageSchema,
     ErrorSchema,
     RegistrationCreateSchema,
@@ -297,3 +298,19 @@ def is_registered(request, event_id: int):
         status=Registration.StatusChoices.CONFIRMED
     ).exists()
     return {"is_registered": exists}
+@events_router.get("/{int:event_id}/admin-detail", response=EventAdminDetailSchema, auth=jwt_auth)
+def event_admin_detail(request, event_id: int):
+    user = request.auth
+    if not (user.is_staff or user.is_superuser):
+        return 403, {"error": "اجازه دسترسی ندارید."}
+
+    event = get_object_or_404(
+        Event.objects.prefetch_related(
+            'gallery_images',
+            'registrations__user',
+            'registrations__payments__discount_code'
+        ),
+        id=event_id,
+        is_deleted=False,
+    )
+    return event

@@ -258,6 +258,20 @@ class ApiClient {
     });
   }
 
+  async listUsers(params?: {
+    search?: string;
+    role?: 'staff' | 'superuser';
+    limit?: number;
+    offset?: number;
+  }) {
+    const query = new URLSearchParams();
+    if (params?.search) query.set('search', params.search);
+    if (params?.role) query.set('role', params.role);
+    if (params?.limit != null) query.set('limit', String(params.limit));
+    if (params?.offset != null) query.set('offset', String(params.offset));
+    return this.request<Types.UserListSchema[]>(`/api/auth/users${query.toString() ? `?${query.toString()}` : ''}`);
+  }
+
   // ============= Blog Endpoints =============
   
   async getPosts(params?: {
@@ -414,6 +428,10 @@ class ApiClient {
 
   async getEventBySlug(slug: string) {
     return this.request<Types.EventDetailSchema>(`/api/events/slug/${encodeURIComponent(slug)}`, { method: 'GET' });
+  }
+
+  async getEventAdminDetail(eventId: number) {
+    return this.request<Types.EventAdminDetailSchema>(`/api/events/${eventId}/admin-detail`);
   }
 
   async updateEvent(eventId: number, data: Types.EventUpdateSchema) {

@@ -2,6 +2,7 @@ from typing import List
 
 from django.conf import settings
 from django.contrib.auth import authenticate
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.core.files.storage import default_storage
@@ -9,7 +10,7 @@ from django.core.files.base import ContentFile
 
 import uuid
 import jwt
-from ninja import Router
+from ninja import Query, Router
 
 from users.models import User, Major, University
 from users.tasks import send_verification_email, send_password_reset_email
@@ -17,7 +18,8 @@ from api.authentication import create_jwt_token, create_refresh_token, jwt_auth
 from api.schemas import (
     UserRegistrationSchema, UserLoginSchema, UserProfileSchema,
     UserUpdateSchema, TokenSchema, TokenRefreshIn, MessageSchema, ErrorSchema,
-    PasswordResetRequestSchema, PasswordResetConfirmSchema, UsernameCheckSchema
+    PasswordResetRequestSchema, PasswordResetConfirmSchema, UsernameCheckSchema,
+    UserListSchema
 )
 
 auth_router = Router()
@@ -333,6 +335,35 @@ def restore_user(request, user_id: int):
         return 400, {"error": "کاربر یافت نشد یا حذف نرم نشده است."}
     except Exception as e:
         return 400, {"error": "بازیابی کاربر انجام نشد.", "details": str(e)}
+
+@auth_router.get("/users", response={200: List[UserListSchema], 403: ErrorSchema}, auth=jwt_auth)
+def list_users(
+    request,
+    search: str | None = Query(None),
+    role: str | None = Query(None, description="staff or superuser"),
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+):
+    user = request.auth
+    if not (user.is_staff or user.is_superuser):
+        return 403, {"error": "اجازه دسترسی ندارید."}
+
+    queryset = User.objects.order_by("-date_joined")
+
+    if search:
+        queryset = queryset.filter(
+            Q(username__icontains=search)
+            | Q(email__icontains=search)
+            | Q(first_name__icontains=search)
+            | Q(last_name__icontains=search)
+        )
+
+    if role == "staff":
+        queryset = queryset.filter(is_staff=True)
+    elif role == "superuser":
+        queryset = queryset.filter(is_superuser=True)
+
+    return queryset[offset : offset + limit]
 
 @auth_router.get("/check-username", response=UsernameCheckSchema)
 def check_username_availability(request, username: str):
