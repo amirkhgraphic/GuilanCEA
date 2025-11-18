@@ -167,6 +167,7 @@ class PaymentAdminSchema(ModelSchema):
         model = Payment
         model_fields = [
             "id",
+            "user",
             "authority",
             "ref_id",
             "status",
@@ -197,6 +198,7 @@ class RegistrationAdminSchema(ModelSchema):
         model = Registration
         model_fields = [
             "id",
+            "user",
             "ticket_id",
             "status",
             "registered_at",
