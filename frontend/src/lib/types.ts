@@ -27,7 +27,7 @@ export interface UserProfileSchema {
   last_name: string;
   profile_picture?: string;
   bio?: string;
-  student_id: number;
+  student_id?: string | null;
   year_of_study?: number;
   university?: string;
   major?: string;
@@ -36,7 +36,10 @@ export interface UserProfileSchema {
   is_email_verified?: boolean;
   is_active?: boolean;
   is_staff?: boolean;
+  is_superuser?: boolean;
   is_committee?: boolean;
+  is_deleted?: boolean;
+  deleted_at?: string | null;
 }
 
 export interface UserRegistrationSchema {
@@ -143,6 +146,8 @@ export interface CommentSchema {
     last_name: string;
   };
   post_id: number;
+  post_title: string;
+  post_slug: string;
   parent_id?: number;
   created_at: string;
   is_approved: boolean;
@@ -219,6 +224,23 @@ export interface EventCreateSchema {
   is_registration_open?: boolean;
 }
 
+export interface EventUpdateSchema {
+  title?: string;
+  description?: string;
+  event_type?: 'online' | 'on_site' | 'hybrid';
+  address?: string | null;
+  location?: string | null;
+  online_link?: string | null;
+  start_time?: string;
+  end_time?: string | null;
+  registration_start_date?: string | null;
+  registration_end_date?: string | null;
+  capacity?: number | null;
+  price?: number | null;
+  status?: 'draft' | 'published' | 'cancelled' | 'completed';
+  gallery_image_ids?: number[] | null;
+}
+
 export interface EventRegistrationSchema {
   id: number;
   status: 'pending' | 'confirmed' | 'cancelled' | 'attended';
@@ -282,4 +304,3 @@ export interface CreatePaymentOut {
   discount_amount: number;
   amount: number;
 }
-

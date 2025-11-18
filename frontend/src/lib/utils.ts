@@ -55,3 +55,39 @@ export const getThumbUrl = (e: Types.EventListItemSchema) =>
   e.absolute_featured_image_url ||
   e.featured_image ||
   DEFAULT_THUMB;
+
+type ApiErrorLike = {
+  error?: string;
+  detail?: string;
+  message?: string;
+};
+
+const resolveMessageFromRecord = (record?: ApiErrorLike) => {
+  if (!record) return undefined;
+  return record.error || record.detail || record.message;
+};
+
+export function resolveErrorMessage(error: unknown, fallback = 'خطایی رخ داد. لطفاً دوباره تلاش کنید.') {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  if (typeof error === 'string' && error.trim()) {
+    return error;
+  }
+  if (typeof error === 'object' && error !== null) {
+    const err = error as {
+      response?: { data?: ApiErrorLike };
+      data?: ApiErrorLike;
+      error?: string;
+      detail?: string;
+      message?: string;
+    };
+    return (
+      resolveMessageFromRecord(err.response?.data) ||
+      resolveMessageFromRecord(err.data) ||
+      resolveMessageFromRecord(err) ||
+      fallback
+    );
+  }
+  return fallback;
+}

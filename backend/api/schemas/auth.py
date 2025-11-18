@@ -42,6 +42,11 @@ class UserProfileSchema(ModelSchema):
             'bio',
             'date_joined',
             'is_email_verified',
+            'is_active',
+            'is_staff',
+            'is_superuser',
+            'is_deleted',
+            'deleted_at',
         ]
 
     @staticmethod

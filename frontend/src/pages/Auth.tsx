@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SearchableCombobox from '@/components/SearchableCombobox'
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
+import { resolveErrorMessage } from '@/lib/utils';
 
 type RegisterErrors = {
   email?: string;
@@ -87,11 +88,11 @@ export default function Auth() {
   });
 
     const majorItems = useMemo(
-    () => (majors ?? []).map((m: any) => ({ value: String(m.code), label: m.label })),
+    () => (majors ?? []).map((m) => ({ value: String(m.code), label: m.label })),
     [majors]
   );
   const universityItems = useMemo(
-    () => (universities ?? []).map((u: any) => ({ value: String(u.code), label: u.label })),
+    () => (universities ?? []).map((u) => ({ value: String(u.code), label: u.label })),
     [universities]
   );
 
@@ -125,10 +126,10 @@ export default function Auth() {
         description: 'اگر در صندوق ورودی نیست، پوشهٔ هرزنامه (اسپم) را بررسی کنید.',
         variant: 'success',
       });
-    } catch (e: any) {
+    } catch (error: unknown) {
       toast({
         title: 'خطا در ارسال',
-        description: e?.message || 'مشکلی رخ داد',
+        description: resolveErrorMessage(error, 'مشکلی رخ داد'),
         variant: 'destructive',
       });
     } finally {

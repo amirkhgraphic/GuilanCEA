@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { cn, resolveErrorMessage } from "@/lib/utils";
 
 type RawVerifyResult = {
   discount_amount: number;
@@ -54,20 +54,12 @@ export default function CouponDialogFa({
         final_price: (raw.final_price ?? basePrice) / 10,
         message_fa: "کد تخفیف با موفقیت اعمال شد",
       });
-    } catch (e: any) {
-      // تلاش برای گرفتن پیام فارسی از پاسخ خطا (Django Ninja معمولاً در detail می‌گذارد)
-      const apiMsg =
-        e?.response?.data?.detail ||
-        e?.response?.data?.message ||
-        e?.data?.detail ||
-        e?.message ||
-        "کد تخفیف معتبر نیست";
-
+    } catch (error) {
       setRes({
         valid: false,
         discount_amount: 0,
         final_price: basePrice / 10, // برگرداندن قیمت به حالت اولیه
-        message_fa: String(apiMsg),
+        message_fa: resolveErrorMessage(error, "کد تخفیف معتبر نیست"),
       });
     } finally {
       setVerifying(false);

@@ -31,7 +31,8 @@ const NavItem = ({
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+  const isAdminUser = isAuthenticated && ((user?.is_staff || user?.is_superuser) ?? false);
   const [open, setOpen] = useState(false);
 
   return (
@@ -50,7 +51,7 @@ export default function Navbar() {
             <NavItem to="/">خانه</NavItem>
             <NavItem to="/blog">بلاگ</NavItem>
             <NavItem to="/events">رویدادها</NavItem>
-            {isAuthenticated && (user as any)?.is_staff && <NavItem to="/admin">ادمین</NavItem>}
+            {isAdminUser && <NavItem to="/admin">ادمین</NavItem>}
             {isAuthenticated ? (
               <>
                 <NavItem to="/profile">پروفایل</NavItem>
@@ -95,7 +96,7 @@ export default function Navbar() {
                     {isAuthenticated && <NavItem to="/profile" onClick={() => setOpen(false)}>پروفایل</NavItem>}
                     <NavItem to="/blog"    onClick={() => setOpen(false)}>بلاگ</NavItem>
                     <NavItem to="/events"  onClick={() => setOpen(false)}>رویدادها</NavItem>
-                    {isAuthenticated && (user as any)?.is_staff &&
+                    {isAdminUser &&
                       <NavItem to="/admin" onClick={() => setOpen(false)}>ادمین</NavItem>}
                   </div>
 
@@ -108,7 +109,7 @@ export default function Navbar() {
                     {isAuthenticated ? (
                       <>
                         <div className="text-sm text-muted-foreground">
-                          {(user as any)?.username}
+                          {user?.username}
                         </div>
                         <Button
                           size="sm"

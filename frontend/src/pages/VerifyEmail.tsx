@@ -12,6 +12,7 @@ import {
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle2, Info, XCircle } from "lucide-react";
+import { resolveErrorMessage } from "@/lib/utils";
 
 type State =
   | { kind: "loading" }
@@ -29,8 +30,8 @@ export default function VerifyEmail() {
       try {
         const res = await api.verifyEmail(token);
         return { kind: "success", message: "ایمیل شما با موفقیت تأیید شد." };
-      } catch (e: any) {
-        const msg: string = (e?.message || "").toLowerCase();
+      } catch (error: unknown) {
+        const msg: string = resolveErrorMessage(error, "").toLowerCase();
         if (msg.includes("already verified")) {
           return { kind: "already", message: "ایمیل شما قبلاً تأیید شده است." };
         }

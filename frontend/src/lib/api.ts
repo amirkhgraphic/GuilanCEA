@@ -2,6 +2,12 @@ import type * as Types from './types';
 
 const API_BASE_URL = 'https://api.east-guilan-ce.ir';
 
+type ApiErrorBody = {
+  error?: string;
+  detail?: string;
+  message?: string;
+};
+
 class ApiClient {
   private baseUrl: string;
   private isRefreshing = false;
@@ -108,7 +114,7 @@ class ApiClient {
               };
               const retryResponse = await fetch(url, retryConfig);
               if (!retryResponse.ok) {
-                const err = await retryResponse.json().catch(() => ({}));
+                const err = (await retryResponse.json().catch(() => ({}))) as ApiErrorBody;
                 reject(new Error(err.error || err.detail || 'Request failed after refresh'));
               } else {
                 resolve(retryResponse.json());
@@ -122,7 +128,7 @@ class ApiClient {
     }
 
     if (!response.ok) {
-      const body = await response.json().catch(() => ({} as any));
+      const body = (await response.json().catch(() => ({}))) as ApiErrorBody;
       const message =
         body?.error || body?.detail || body?.message || 'خطای ناشناخته رخ داد';
       throw new Error(message);
@@ -162,7 +168,7 @@ class ApiClient {
       return response.json() as Promise<Types.MessageSchema>;
     }
 
-    const data = await response.json().catch(() => ({} as any));
+    const data = (await response.json().catch(() => ({}))) as ApiErrorBody;
     const errMsg: string =
       (data && (data.error || data.detail)) || 'خطای ناشناخته رخ داد';
     throw new Error(errMsg);
@@ -408,6 +414,20 @@ class ApiClient {
 
   async getEventBySlug(slug: string) {
     return this.request<Types.EventDetailSchema>(`/api/events/slug/${encodeURIComponent(slug)}`, { method: 'GET' });
+  }
+
+  async updateEvent(eventId: number, data: Types.EventUpdateSchema) {
+    return this.request<Types.EventSchema>(`/api/events/${eventId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteEvent(eventId: number) {
+    return this.request<Types.MessageSchema>(`/api/events/${eventId}`, {
+      method: 'DELETE',
+    });
   }
 
   async registerForEvent(eventId: number, discountCode?: string | null) {
