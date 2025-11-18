@@ -23,7 +23,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -91,8 +98,8 @@ function AdminUsersPanel() {
   const [filters, setFilters] = React.useState({
     search: '',
     studentId: '',
-    university: '',
-    major: '',
+    university: 'all',
+    major: 'all',
     isActive: 'all',
   });
   const [page, setPage] = React.useState(1);
@@ -112,8 +119,8 @@ function AdminUsersPanel() {
       api.listUsers({
         search: filters.search || undefined,
         student_id: filters.studentId || undefined,
-        university: filters.university || undefined,
-        major: filters.major || undefined,
+        university: filters.university === 'all' ? undefined : filters.university,
+        major: filters.major === 'all' ? undefined : filters.major,
         is_active:
           filters.isActive === 'all'
             ? undefined
@@ -180,43 +187,43 @@ function AdminUsersPanel() {
         </div>
 
         <div className="grid gap-3 md:grid-cols-2">
-          <Select
-            value={filters.university}
-            onValueChange={(value) => handleFilterChange('university', value)}
-          >
-            <SelectTrigger>
-              <SelectValue>
-                {filters.university
-                  ? universitiesQuery.data?.find((item) => item.code === filters.university)?.label
-                  : 'دانشگاه'}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">همه</SelectItem>
-              {universitiesQuery.data?.map((item) => (
-                <SelectItem key={item.code} value={item.code}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={filters.major} onValueChange={(value) => handleFilterChange('major', value)}>
-            <SelectTrigger>
-              <SelectValue>
-                {filters.major
-                  ? majorsQuery.data?.find((item) => item.code === filters.major)?.label
-                  : 'گرایش'}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">همه</SelectItem>
-              {majorsQuery.data?.map((item) => (
-                <SelectItem key={item.code} value={item.code}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              <Select
+                value={filters.university}
+                onValueChange={(value) => handleFilterChange('university', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue>
+                    {filters.university === 'all'
+                      ? 'دانشگاه'
+                      : universitiesQuery.data?.find((item) => item.code === filters.university)?.label}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">همه</SelectItem>
+                  {universitiesQuery.data?.map((item) => (
+                    <SelectItem key={item.code} value={item.code}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={filters.major} onValueChange={(value) => handleFilterChange('major', value)}>
+                <SelectTrigger>
+                  <SelectValue>
+                    {filters.major === 'all'
+                      ? 'گرایش'
+                      : majorsQuery.data?.find((item) => item.code === filters.major)?.label}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">همه</SelectItem>
+                  {majorsQuery.data?.map((item) => (
+                    <SelectItem key={item.code} value={item.code}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
         </div>
 
         {usersQuery.isLoading ? (
@@ -386,6 +393,9 @@ function EventDetailDialog({
       <DialogContent className="max-w-5xl">
         <DialogHeader>
           <DialogTitle>جزئیات رویداد</DialogTitle>
+          <DialogDescription>
+            اطلاعات رویداد، ویرایش سریع و لیست ثبت‌نام‌ها را می‌توانید در این پنجره بررسی کنید.
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-6 lg:grid-cols-[2fr_3fr]">
           <div className="space-y-4">
