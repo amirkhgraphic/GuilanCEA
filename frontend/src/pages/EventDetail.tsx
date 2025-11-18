@@ -200,7 +200,7 @@ export default function EventDetail() {
         if (!slug) return;
         const data = await api.getEventBySlug(slug);
         setEvent(data);
-        setEventThumb(getThumbUrl(event));
+        setEventThumb(getThumbUrl(data));
       } catch (error: unknown) {
         toast({
           title: 'خطا در بارگذاری رویداد',
