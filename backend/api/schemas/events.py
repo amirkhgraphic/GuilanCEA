@@ -2,13 +2,13 @@
 
 from uuid import UUID
 from ninja import ModelSchema, Schema
+from pydantic import field_validator
 from typing import Literal, Optional, List
 from datetime import datetime
 
 from api.schemas.blog import AuthorSchema
 from events.models import Event, Registration
 from gallery.models import Gallery
-from payments.models import Payment
 from payments.models import Payment
 
 
@@ -171,6 +171,14 @@ class PaymentAdminSchema(Schema):
     created_at: datetime
     discount_code: Optional[str]
     user: AdminUserSchema
+
+    @field_validator("discount_code", mode="before")
+    def normalize_discount_code(cls, value):
+        if value is None:
+            return None
+        if hasattr(value, "code"):
+            return value.code
+        return str(value)
 
 
 class RegistrationAdminSchema(Schema):
