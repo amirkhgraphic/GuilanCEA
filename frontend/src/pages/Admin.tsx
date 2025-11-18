@@ -1,9 +1,19 @@
 import * as React from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
-import type { EventListItemSchema, EventAdminDetailSchema, UserListSchema } from '@/lib/types';
+import type {
+  EventAdminDetailSchema,
+  EventListItemSchema,
+  PaginatedResponse,
+  RegistrationAdminSchema,
+  UserListSchema,
+} from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,6 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -22,14 +33,36 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { getThumbUrl, resolveErrorMessage } from '@/lib/utils';
+import {
+  formatJalali,
+  formatNumberPersian,
+  formatToman,
+  getThumbUrl,
+  resolveErrorMessage,
+  toPersianDigits,
+} from '@/lib/utils';
 import Markdown from '@/components/Markdown';
 
-const USERS_PAGE_SIZE = 30;
+const USERS_PAGE_SIZE = 25;
+const EVENTS_PAGE_SIZE = 50;
+const REGISTRATIONS_PAGE_SIZE = 8;
 
-const eventStatusConfig: Record<
+const eventStatusOptions = [
+  { value: 'all', label: 'همه وضعیت‌ها' },
+  { value: 'draft', label: 'پیش‌نویس' },
+  { value: 'published', label: 'منتشر شده' },
+  { value: 'cancelled', label: 'لغو شده' },
+  { value: 'completed', label: 'به پایان رسیده' },
+];
+
+const statusConfig: Record<
   EventListItemSchema['status'],
   { label: string; variant: 'outline' | 'default' | 'destructive' | 'secondary' }
 > = {
@@ -39,54 +72,74 @@ const eventStatusConfig: Record<
   completed: { label: 'به پایان رسیده', variant: 'secondary' },
 };
 
-const formatDate = (value?: string | null) => {
-  if (!value) return '—';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString('fa-IR');
-};
+const registrationStatusOptions = ['confirmed', 'pending', 'cancelled'] as const;
 
-const getPriceLabel = (value?: number | null) => {
-  if (value == null || Number.isNaN(Number(value))) {
-    return '—';
-  }
-  const amount = Number(value);
-  return `${amount.toLocaleString('fa-IR')} تومان`;
+const eventSortOptions = [
+  { value: 'newest', label: 'جدیدترین شروع' },
+  { value: 'oldest', label: 'قدیمی‌ترین شروع' },
+  { value: 'priceAsc', label: 'ارزان‌ترین' },
+  { value: 'priceDesc', label: 'گران‌ترین' },
+];
+
+const formatDatePersian = (value?: string | null) => {
+  if (!value) return '—';
+  return new Date(value).toLocaleString('fa-IR');
 };
 
 function AdminUsersPanel() {
   const { toast } = useToast();
-  const [search, setSearch] = React.useState('');
-  const [role, setRole] = React.useState<'all' | 'staff' | 'superuser'>('all');
+  const [filters, setFilters] = React.useState({
+    search: '',
+    studentId: '',
+    university: '',
+    major: '',
+    isActive: 'all',
+  });
   const [page, setPage] = React.useState(1);
 
+  const majorsQuery = useQuery({
+    queryKey: ['majors'],
+    queryFn: () => api.getMajors(),
+  });
+  const universitiesQuery = useQuery({
+    queryKey: ['universities'],
+    queryFn: () => api.getUniversities(),
+  });
+
   const usersQuery = useQuery({
-    queryKey: ['admin', 'users', search, role, page],
+    queryKey: ['admin', 'users', filters, page],
     queryFn: () =>
       api.listUsers({
-        search: search.trim() || undefined,
-        role: role === 'all' ? undefined : role,
+        search: filters.search || undefined,
+        student_id: filters.studentId || undefined,
+        university: filters.university || undefined,
+        major: filters.major || undefined,
+        is_active:
+          filters.isActive === 'all'
+            ? undefined
+            : filters.isActive === 'active'
+            ? 'true'
+            : 'false',
         limit: USERS_PAGE_SIZE,
         offset: (page - 1) * USERS_PAGE_SIZE,
       }),
   });
 
   const users = usersQuery.data ?? [];
-  const isFirstPage = page <= 1;
   const hasMore = users.length === USERS_PAGE_SIZE;
 
   React.useEffect(() => {
     if (usersQuery.error) {
       toast({
-        variant: 'destructive',
         title: 'خطا در بارگذاری کاربران',
         description: resolveErrorMessage(usersQuery.error),
+        variant: 'destructive',
       });
     }
   }, [usersQuery.error, toast]);
 
-  const handleSearchChange = (value: string) => {
-    setSearch(value);
+  const handleFilterChange = (field: keyof typeof filters, value: string) => {
+    setFilters((prev) => ({ ...prev, [field]: value }));
     setPage(1);
   };
 
@@ -94,44 +147,91 @@ function AdminUsersPanel() {
     <Card>
       <CardHeader>
         <CardTitle>کاربران</CardTitle>
-        <CardDescription>نمایش و فیلتر کاربران عضو سایت</CardDescription>
+        <CardDescription>فیلتر، جستجو و مرور کاربران</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           <Input
-            placeholder="جستجو بر اساس نام، نام کاربری یا ایمیل"
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
+            placeholder="جستجو بر اساس نام / کاربری / ایمیل"
+            value={filters.search}
+            onChange={(event) => handleFilterChange('search', event.target.value)}
           />
-          <Select value={role} onValueChange={(value) => { setRole(value as typeof role); setPage(1); }}>
+          <Input
+            placeholder="کد دانشجویی"
+            value={filters.studentId}
+            onChange={(event) => handleFilterChange('studentId', event.target.value)}
+          />
+          <Select value={filters.isActive} onValueChange={(value) => handleFilterChange('isActive', value)}>
             <SelectTrigger>
               <SelectValue>
-                {role === 'all' && 'همه کاربران'}
-                {role === 'staff' && 'کارمندان'}
-                {role === 'superuser' && 'سوپر یوزرها'}
+                {{
+                  all: 'همه وضعیت‌ها',
+                  active: 'فعال',
+                  inactive: 'غیرفعال',
+                }[filters.isActive]}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">همه کاربران</SelectItem>
-              <SelectItem value="staff">کارمندان</SelectItem>
-              <SelectItem value="superuser">سوپر یوزر</SelectItem>
+              <SelectItem value="all">همه وضعیت‌ها</SelectItem>
+              <SelectItem value="active">فعال</SelectItem>
+              <SelectItem value="inactive">غیرفعال</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <Select
+            value={filters.university}
+            onValueChange={(value) => handleFilterChange('university', value)}
+          >
+            <SelectTrigger>
+              <SelectValue>
+                {filters.university
+                  ? universitiesQuery.data?.find((item) => item.code === filters.university)?.label
+                  : 'دانشگاه'}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">همه</SelectItem>
+              {universitiesQuery.data?.map((item) => (
+                <SelectItem key={item.code} value={item.code}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={filters.major} onValueChange={(value) => handleFilterChange('major', value)}>
+            <SelectTrigger>
+              <SelectValue>
+                {filters.major
+                  ? majorsQuery.data?.find((item) => item.code === filters.major)?.label
+                  : 'گرایش'}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">همه</SelectItem>
+              {majorsQuery.data?.map((item) => (
+                <SelectItem key={item.code} value={item.code}>
+                  {item.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
 
         {usersQuery.isLoading ? (
-          <p className="text-sm text-muted-foreground">در حال بارگذاری کاربران...</p>
+          <p className="text-sm text-muted-foreground">در حال بارگذاری...</p>
         ) : users.length === 0 ? (
-          <p className="text-sm text-muted-foreground">هیچ کاربری مطابق نتایج جستجو یافت نشد.</p>
+          <p className="text-sm text-muted-foreground">هیچ کاربری مطابق فیلترها یافت نشد.</p>
         ) : (
           <ScrollArea className="rounded-md border">
-            <table dir="rtl" className="w-full min-w-[560px] text-sm">
+            <table dir="rtl" className="w-full min-w-[700px] text-sm">
               <thead className="text-xs uppercase text-muted-foreground">
                 <tr>
-                  <th className="px-3 py-2 text-right">نام و نام خانوادگی</th>
+                  <th className="px-3 py-2 text-right">نام کامل</th>
                   <th className="px-3 py-2 text-right">نام کاربری</th>
                   <th className="px-3 py-2 text-right">ایمیل</th>
-                  <th className="px-3 py-2 text-right">نقش</th>
+                  <th className="px-3 py-2 text-right">دانشگاه / گرایش</th>
                   <th className="px-3 py-2 text-right">وضعیت</th>
                   <th className="px-3 py-2 text-right">تاریخ عضویت</th>
                 </tr>
@@ -140,18 +240,14 @@ function AdminUsersPanel() {
                 {users.map((user) => (
                   <tr key={user.id} className="border-b last:border-0 hover:bg-muted/50">
                     <td className="px-3 py-2 text-right">
-                      {user.full_name || `${user.first_name} ${user.last_name}`.trim() || '—'}
+                      {user.full_name ||
+                        `${user.first_name} ${user.last_name}`.trim() ||
+                        user.username}
                     </td>
                     <td className="px-3 py-2 text-right">{user.username}</td>
                     <td className="px-3 py-2 text-right">{user.email}</td>
                     <td className="px-3 py-2 text-right">
-                      {user.is_superuser ? (
-                        <Badge variant="destructive">سوپر یوزر</Badge>
-                      ) : user.is_staff ? (
-                        <Badge variant="secondary">استاف</Badge>
-                      ) : (
-                        <Badge variant="outline">کاربر عادی</Badge>
-                      )}
+                      {user.major || '—'} • {user.university || '—'}
                     </td>
                     <td className="px-3 py-2 text-right">
                       <Badge variant={user.is_active ? 'default' : 'outline'}>
@@ -159,19 +255,18 @@ function AdminUsersPanel() {
                       </Badge>
                     </td>
                     <td className="px-3 py-2 text-right">
-                      {formatDate(user.date_joined)}
+                      {formatJalali(user.date_joined)}
                     </td>
-                  </tr>
-                ))}
-              </tbody>
+                </tr>
+              ))}
+            </tbody>
             </table>
           </ScrollArea>
         )}
-
-        <div className="flex items-center justify-between text-xs tracking-wide text-muted-foreground">
-          <span>صفحه {page}</span>
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>صفحه {formatNumberPersian(page)}</span>
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" disabled={isFirstPage} onClick={() => setPage((prev) => Math.max(1, prev - 1))}>
+            <Button size="sm" variant="outline" disabled={page === 1} onClick={() => setPage((prev) => Math.max(1, prev - 1))}>
               قبلی
             </Button>
             <Button size="sm" variant="outline" disabled={!hasMore} onClick={() => setPage((prev) => prev + 1)}>
@@ -184,69 +279,413 @@ function AdminUsersPanel() {
   );
 }
 
-function AdminEventsPanel() {
+function EventDetailDialog({
+  eventId,
+  open,
+  onOpenChange,
+  onRefresh,
+}: {
+  eventId: number | null;
+  open: boolean;
+  onOpenChange: (value: boolean) => void;
+  onRefresh: () => void;
+}) {
   const { toast } = useToast();
-  const eventsQuery = useQuery({
-    queryKey: ['admin', 'events'],
-    queryFn: () =>
-      api.getEvents({
-        statuses: ['draft', 'published', 'cancelled', 'completed'],
-        limit: 50,
-      }),
+  const queryClient = useQueryClient();
+  const [editValues, setEditValues] = React.useState({
+    title: '',
+    status: 'draft',
+    price: '',
   });
-  const [selectedEventId, setSelectedEventId] = React.useState<number | null>(null);
+  const [regFilters, setRegFilters] = React.useState({
+    statuses: registrationStatusOptions,
+    university: '',
+    major: '',
+    search: '',
+  });
+  const [regPage, setRegPage] = React.useState(1);
 
-  React.useEffect(() => {
-    if (!selectedEventId && eventsQuery.data?.length) {
-      setSelectedEventId(eventsQuery.data[0].id);
-    }
-  }, [eventsQuery.data, selectedEventId]);
-
-  const eventDetailQuery = useQuery({
-    queryKey: ['admin', 'events', 'detail', selectedEventId],
-    queryFn: () => api.getEventAdminDetail(selectedEventId!),
-    enabled: Boolean(selectedEventId),
+  const detailQuery = useQuery({
+    queryKey: ['admin', 'event-detail', eventId],
+    queryFn: () => api.getEventAdminDetail(eventId!),
+    enabled: Boolean(eventId) && open,
   });
 
   React.useEffect(() => {
-    if (eventDetailQuery.error) {
-      toast({
-        variant: 'destructive',
-        title: 'خطا در بارگذاری جزئیات رویداد',
-        description: resolveErrorMessage(eventDetailQuery.error),
+    if (detailQuery.data) {
+      setEditValues({
+        title: detailQuery.data.title,
+        status: detailQuery.data.status,
+        price: Math.floor(detailQuery.data.price / 10).toString(),
       });
     }
-  }, [eventDetailQuery.error, toast]);
+  }, [detailQuery.data]);
+
+  const registrationsQuery = useQuery({
+    queryKey: ['admin', 'event', eventId, 'registrations', regFilters, regPage],
+    enabled: Boolean(eventId) && Boolean(regFilters.statuses.length),
+    queryFn: () =>
+      api.listEventRegistrationsAdmin(eventId!, {
+        statuses: regFilters.statuses,
+        university: regFilters.university || undefined,
+        major: regFilters.major || undefined,
+        search: regFilters.search || undefined,
+        limit: REGISTRATIONS_PAGE_SIZE,
+        offset: (regPage - 1) * REGISTRATIONS_PAGE_SIZE,
+      }),
+  });
+
+  React.useEffect(() => {
+    if (detailQuery.error) {
+      toast({
+        title: 'خطا',
+        description: resolveErrorMessage(detailQuery.error),
+        variant: 'destructive',
+      });
+    }
+  }, [detailQuery.error, toast]);
+
+  const editMutation = useMutation({
+    mutationFn: (data: { title: string; status: string; price: number }) =>
+      api.updateEvent(eventId!, data),
+    onSuccess: () => {
+      toast({ title: 'رویداد به‌روزرسانی شد', variant: 'success' });
+      onRefresh();
+      queryClient.invalidateQueries({ queryKey: ['admin', 'event-detail', eventId] });
+    },
+    onError: (error) => {
+      toast({
+        title: 'خطا',
+        description: resolveErrorMessage(error),
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleEditSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const priceValue = Number(editValues.price);
+    if (Number.isNaN(priceValue)) {
+      toast({ title: 'قیمت نامعتبر است', variant: 'destructive' });
+      return;
+    }
+    editMutation.mutate({
+      title: editValues.title,
+      status: editValues.status,
+      price: priceValue * 10,
+    });
+  };
+
+  const registrationPageCount = React.useMemo(() => {
+    if (!registrationsQuery.data) return 1;
+    return Math.max(1, Math.ceil(registrationsQuery.data.count / REGISTRATIONS_PAGE_SIZE));
+  }, [registrationsQuery.data]);
 
   return (
-    <Card className="space-y-6">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-5xl">
+        <DialogHeader>
+          <DialogTitle>جزئیات رویداد</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-6 lg:grid-cols-[2fr_3fr]">
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>{detailQuery.data?.title || 'در حال بارگذاری...'}</CardTitle>
+                <CardDescription>
+                  وضعیت:{' '}
+                  <Badge variant={statusConfig[detailQuery.data?.status ?? 'draft'].variant}>
+                    {statusConfig[detailQuery.data?.status ?? 'draft'].label}
+                  </Badge>
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="text-sm text-muted-foreground">
+                  تاریخ شروع: {formatDatePersian(detailQuery.data?.start_time)}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  ظرفیت: {detailQuery.data?.capacity ?? 'نامحدود'}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  تعداد ثبت‌نام: {registrationsQuery.data?.count ?? '—'}
+                </div>
+                <Markdown content={detailQuery.data?.description} size="base" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>ویرایش خلاصه</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form className="space-y-3" onSubmit={handleEditSubmit}>
+                  <Input
+                    placeholder="عنوان جدید"
+                    value={editValues.title}
+                    onChange={(event) => setEditValues((prev) => ({ ...prev, title: event.target.value }))}
+                  />
+                  <Select value={editValues.status} onValueChange={(value) => setEditValues((prev) => ({ ...prev, status: value }))}>
+                    {eventStatusOptions
+                      .filter((option) => option.value !== 'all')
+                      .map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                  </Select>
+                  <Input
+                    placeholder="قیمت (تومان)"
+                    value={editValues.price}
+                    onChange={(event) => setEditValues((prev) => ({ ...prev, price: event.target.value }))}
+                  />
+                  <Button type="submit" disabled={editMutation.isLoading}>
+                    ذخیره
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+          <div className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>ثبت‌نام‌ها</CardTitle>
+                <CardDescription>
+                  فیلترها: وضعیت، دانشگاه، گرایش، نام/نام‌کاربری/ایمیل
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex flex-wrap gap-2">
+                  {registrationStatusOptions.map((status) => (
+                      <Button
+                        key={status}
+                        size="sm"
+                        variant={regFilters.statuses.includes(status) ? 'default' : 'outline'}
+                        onClick={() => {
+                          setRegFilters((prev) => {
+                            const exists = prev.statuses.includes(status);
+                            let next = exists
+                              ? prev.statuses.filter((item) => item !== status)
+                              : [...prev.statuses, status];
+                            if (next.length === 0) {
+                              next = registrationStatusOptions;
+                            }
+                            return { ...prev, statuses: next };
+                          });
+                          setRegPage(1);
+                        }}
+                      >
+                        {status}
+                      </Button>
+                  ))}
+                </div>
+                <Input
+                  placeholder="جستجو نام / ایمیل / نام کاربری"
+                  value={regFilters.search}
+                  onChange={(event) => {
+                    setRegFilters((prev) => ({ ...prev, search: event.target.value }));
+                    setRegPage(1);
+                  }}
+                />
+                <div className="grid gap-2 md:grid-cols-2">
+                  <Input
+                    placeholder="دانشگاه"
+                    value={regFilters.university}
+                    onChange={(event) => {
+                      setRegFilters((prev) => ({ ...prev, university: event.target.value }));
+                      setRegPage(1);
+                    }}
+                  />
+                  <Input
+                    placeholder="گرایش"
+                    value={regFilters.major}
+                    onChange={(event) => {
+                      setRegFilters((prev) => ({ ...prev, major: event.target.value }));
+                      setRegPage(1);
+                    }}
+                  />
+                </div>
+                <div className="space-y-2">
+                  {registrationsQuery.data?.results.map((registration) => (
+                    <Card key={registration.id} className="bg-muted/20">
+                      <CardHeader className="flex flex-col gap-1 text-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">{registration.user.first_name} {registration.user.last_name}</span>
+                          <Badge
+                            variant={registration.status === 'confirmed' ? 'default' : 'outline'}
+                          >
+                            {registration.status_label}
+                          </Badge>
+                        </div>
+                        <div className="text-muted-foreground">{registration.user.email}</div>
+                      </CardHeader>
+                      <CardContent className="text-xs text-muted-foreground space-y-1">
+                        <div>
+                          نام‌کاربری: {registration.user.username} • کد بلیت: {registration.ticket_id}
+                        </div>
+                        <div>تاریخ ثبت‌نام: {formatDatePersian(registration.registered_at)}</div>
+                        <div>قیمت نهایی: {formatToman(registration.final_price ?? 0)}</div>
+                        <div>تخفیف: {formatToman(registration.discount_amount ?? 0)}</div>
+                        {registration.payments.length > 0 && (
+                          <div className="space-y-1">
+                            پرداخت:
+                            {registration.payments.map((payment) => (
+                              <div key={payment.id} className="flex items-center justify-between gap-2">
+                                <span>{payment.status_label}</span>
+                                <span>{formatToman(payment.amount)}</span>
+                                <span>Ref: {payment.ref_id ?? '—'}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>
+                    صفحه {formatNumberPersian(regPage)} از{' '}
+                    {formatNumberPersian(registrationPageCount)}
+                  </span>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={regPage <= 1}
+                      onClick={() => setRegPage((prev) => Math.max(1, prev - 1))}
+                    >
+                      قبلی
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={regPage >= registrationPageCount}
+                      onClick={() => setRegPage((prev) => prev + 1)}
+                    >
+                      بعدی
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            بستن
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function AdminEventsPanel({ onOpenDetail }: { onOpenDetail: (event: EventListItemSchema) => void }) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [filters, setFilters] = React.useState({
+    search: '',
+    status: 'all',
+    type: 'all',
+    sort: 'newest',
+  });
+
+  const eventsQuery = useQuery({
+    queryKey: ['admin', 'events', filters],
+    queryFn: () =>
+      api.getEvents({
+        statuses: filters.status === 'all' ? undefined : [filters.status],
+        event_type: filters.type === 'all' ? undefined : filters.type,
+        search: filters.search || undefined,
+        limit: EVENTS_PAGE_SIZE,
+      }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (eventId: number) => api.deleteEvent(eventId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'events'] });
+      toast({ title: 'رویداد حذف شد', variant: 'success' });
+    },
+    onError: (error) => {
+      toast({
+        title: 'خطا',
+        description: resolveErrorMessage(error),
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const sortedEvents = React.useMemo(() => {
+    const list = (eventsQuery.data ?? []).slice();
+    switch (filters.sort) {
+      case 'newest':
+        return list.sort((a, b) => (new Date(b.start_time).getTime() - new Date(a.start_time).getTime()));
+      case 'oldest':
+        return list.sort((a, b) => (new Date(a.start_time).getTime() - new Date(b.start_time).getTime()));
+      case 'priceAsc':
+        return list.sort((a, b) => Number(a.price) - Number(b.price));
+      case 'priceDesc':
+        return list.sort((a, b) => Number(b.price) - Number(a.price));
+      default:
+        return list;
+    }
+  }, [eventsQuery.data, filters.sort]);
+
+  return (
+    <Card>
       <CardHeader>
         <CardTitle>رویدادها</CardTitle>
-        <CardDescription>مدیریت رویدادها و مشاهده جزئیات ثبت‌نام</CardDescription>
+        <CardDescription>جستجو، فیلتر و مدیریت رویدادها</CardDescription>
       </CardHeader>
-      <CardContent>
-        <ScrollArea className="rounded-md border">
-          <table dir="rtl" className="w-full min-w-[720px] text-sm">
-            <thead className="text-xs uppercase text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2 text-right">پوستر</th>
-                <th className="px-3 py-2 text-right">عنوان</th>
-                <th className="px-3 py-2 text-right">وضعیت</th>
-                <th className="px-3 py-2 text-right">تاریخ شروع</th>
-                <th className="px-3 py-2 text-right">تعداد ثبت‌نام</th>
-                <th className="px-3 py-2 text-right">قیمت</th>
-                <th className="px-3 py-2 text-right">عملیات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {eventsQuery.data?.map((event) => {
-                const isSelected = selectedEventId === event.id;
-                return (
-                  <tr
-                    key={event.id}
-                    className={`border-b last:border-0 hover:bg-muted/60 ${isSelected ? 'bg-muted/50' : ''}`}
-                    onClick={() => setSelectedEventId(event.id)}
-                  >
+      <CardContent className="space-y-4">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <Input
+            placeholder="جستجوی رویداد..."
+            value={filters.search}
+            onChange={(event) => setFilters((prev) => ({ ...prev, search: event.target.value }))}
+          />
+          <Select value={filters.status} onValueChange={(value) => setFilters((prev) => ({ ...prev, status: value }))}>
+            {eventStatusOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </Select>
+          <Select value={filters.type} onValueChange={(value) => setFilters((prev) => ({ ...prev, type: value }))}>
+            <SelectItem value="all">تمام نوع‌ها</SelectItem>
+            <SelectItem value="online">آنلاین</SelectItem>
+            <SelectItem value="on_site">حضوری</SelectItem>
+            <SelectItem value="hybrid">ترکیبی</SelectItem>
+          </Select>
+          <Select value={filters.sort} onValueChange={(value) => setFilters((prev) => ({ ...prev, sort: value }))}>
+            {eventSortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
+
+        {eventsQuery.isLoading ? (
+          <p className="text-sm text-muted-foreground">در حال بارگذاری رویدادها...</p>
+        ) : sortedEvents.length === 0 ? (
+          <p className="text-sm text-muted-foreground">رویدادی مطابق فیلترها نیست.</p>
+        ) : (
+          <ScrollArea className="rounded-md border">
+            <table dir="rtl" className="w-full min-w-[780px] text-sm">
+              <thead className="text-xs uppercase text-muted-foreground">
+                <tr>
+                  <th className="px-3 py-2 text-right">پوستر</th>
+                  <th className="px-3 py-2 text-right">عنوان</th>
+                  <th className="px-3 py-2 text-right">وضعیت</th>
+                  <th className="px-3 py-2 text-right">تاریخ شروع</th>
+                  <th className="px-3 py-2 text-right">ثبت‌نام‌ها</th>
+                  <th className="px-3 py-2 text-right">قیمت (تومان)</th>
+                  <th className="px-3 py-2 text-right">عملیات</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedEvents.map((event) => (
+                  <tr key={event.id} className="border-b last:border-0 hover:bg-muted/50">
                     <td className="px-3 py-2 text-right">
                       <img
                         src={getThumbUrl(event)}
@@ -255,101 +694,35 @@ function AdminEventsPanel() {
                         loading="lazy"
                       />
                     </td>
-                    <td className="px-3 py-2 text-right">{event.title}</td>
-                    <td className="px-3 py-2 text-right">
-                      <Badge variant={eventStatusConfig[event.status].variant}>
-                        {eventStatusConfig[event.status].label}
+                    <td className="px-3 py-2 text-right cursor-pointer" onClick={() => onOpenDetail(event)}>
+                      {event.title}
+                    </td>
+                    <td className="px-3 py-2 text-center">
+                      <Badge variant={statusConfig[event.status].variant}>
+                        {statusConfig[event.status].label}
                       </Badge>
                     </td>
-                    <td className="px-3 py-2 text-right">{formatDate(event.start_time)}</td>
-                    <td className="px-3 py-2 text-right">{event.registration_count}</td>
-                    <td className="px-3 py-2 text-right">{getPriceLabel(event.price)}</td>
-                    <td className="px-3 py-2 text-right">
-                      <Button size="sm" variant="outline" asChild>
-                        <Link to={`/admin/events/${event.id}/edit`}>ویرایش</Link>
+                    <td className="px-3 py-2 text-right">{formatDatePersian(event.start_time)}</td>
+                    <td className="px-3 py-2 text-right">{toPersianDigits(event.registration_count)}</td>
+                    <td className="px-3 py-2 text-right">{formatToman(event.price)}</td>
+                    <td className="px-3 py-2 text-left space-x-2">
+                      <Button size="sm" variant="outline" onClick={() => onOpenDetail(event)}>
+                        جزئیات
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => deleteMutation.mutate(event.id)}
+                      >
+                        حذف
                       </Button>
                     </td>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </ScrollArea>
-
-        <div className="space-y-4">
-          {selectedEventId ? (
-            eventDetailQuery.isLoading ? (
-              <p className="text-sm text-muted-foreground">در حال بارگذاری جزئیات...</p>
-            ) : eventDetailQuery.data ? (
-              <EventDetailPanel event={eventDetailQuery.data} />
-            ) : (
-              <p className="text-sm text-destructive">جزئیات رویداد پیدا نشد.</p>
-            )
-          ) : (
-            <p className="text-sm text-muted-foreground">لطفاً یک رویداد انتخاب کنید.</p>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function EventDetailPanel({ event }: { event: EventAdminDetailSchema }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{event.title}</CardTitle>
-        <CardDescription className="space-y-1">
-          <div>وضعیت: <strong>{eventStatusConfig[event.status].label}</strong></div>
-          <div>تاریخ شروع: {formatDate(event.start_time)}</div>
-          <div>ظرفیت: {event.capacity ?? 'نامحدود'}</div>
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Markdown content={event.description} justify={true} />
-        <div className="space-y-3">
-          <h3 className="text-lg font-semibold">ثبت‌نام‌ها ({event.registrations.length})</h3>
-          <div className="space-y-3">
-            {event.registrations.map((reg) => (
-              <Card key={reg.id} className="bg-background">
-                <CardHeader className="flex flex-col gap-1 text-right">
-                  <div className="flex items-center justify-between gap-3">
-                    <CardTitle className="text-base">
-                      {reg.user.first_name} {reg.user.last_name} ({reg.user.username})
-                    </CardTitle>
-                    <Badge variant={reg.status === 'confirmed' ? 'default' : 'outline'}>
-                      {reg.status_label}
-                    </Badge>
-                  </div>
-                  <CardDescription>
-                    ایمیل: {reg.user.email} • ثبت‌نام در {formatDate(reg.registered_at)}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2 text-right text-sm text-muted-foreground">
-                  <div>کد بلیت: {reg.ticket_id}</div>
-                  <div>قیمت نهایی: {getPriceLabel(reg.final_price ?? 0)}</div>
-                  <div>تخفیف: {getPriceLabel(reg.discount_amount ?? 0)}</div>
-                  <div>
-                    پرداخت‌ها:
-                    {reg.payments.length === 0 ? (
-                      <span className="mr-2 text-destructive">ثبت نشده</span>
-                    ) : (
-                      <div className="space-y-1 text-xs text-muted-foreground">
-                        {reg.payments.map((payment) => (
-                          <div key={payment.id} className="flex items-center justify-between gap-2">
-                            <span>{payment.status_label}</span>
-                            <span>{getPriceLabel(payment.amount)}</span>
-                            <span>Ref: {payment.ref_id ?? '—'}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </ScrollArea>
+        )}
       </CardContent>
     </Card>
   );
@@ -357,6 +730,18 @@ function EventDetailPanel({ event }: { event: EventAdminDetailSchema }) {
 
 export default function Admin() {
   const { user, isAuthenticated, loading } = useAuth();
+  const [detailEvent, setDetailEvent] = React.useState<EventListItemSchema | null>(null);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
+  const handleOpenDetail = (event: EventListItemSchema) => {
+    setDetailEvent(event);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDetail = () => {
+    setDialogOpen(false);
+    setTimeout(() => setDetailEvent(null), 200);
+  };
 
   if (loading) {
     return (
@@ -371,12 +756,12 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8" dir="rtl">
+    <div className="min-h-screen bg-background" dir="rtl">
+      <div className="container mx-auto px-4 py-8">
         <h1 className="text-4xl font-bold mb-8">پنل مدیریت</h1>
-        <Tabs defaultValue="users" dir="rtl">
+        <Tabs defaultValue="users">
           <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-            <TabsList orientation="vertical" className="shadow">
+            <TabsList orientation="vertical" className="shadow-lg">
               <TabsTrigger value="users">کاربران</TabsTrigger>
               <TabsTrigger value="events">رویدادها</TabsTrigger>
             </TabsList>
@@ -385,12 +770,22 @@ export default function Admin() {
                 <AdminUsersPanel />
               </TabsContent>
               <TabsContent value="events">
-                <AdminEventsPanel />
+                <AdminEventsPanel onOpenDetail={handleOpenDetail} />
               </TabsContent>
             </div>
           </div>
         </Tabs>
       </div>
+
+      <EventDetailDialog
+        eventId={detailEvent?.id ?? null}
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          if (!open) handleCloseDetail();
+          else setDialogOpen(true);
+        }}
+        onRefresh={() => {}}
+      />
     </div>
   );
 }

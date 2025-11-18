@@ -23,6 +23,7 @@ from api.schemas import (
     RegistrationStatusOut,
     EventBriefSchema,
     EventAdminDetailSchema,
+    PaginatedRegistrationSchema,
     MessageSchema,
     ErrorSchema,
     RegistrationCreateSchema,
@@ -136,6 +137,63 @@ def list_event_registrations(request, event_id: int, limit: int = 20, offset: in
 
     registrations = queryset[offset:offset + limit]
     return registrations
+
+
+@events_router.get("/{int:event_id}/admin-registrations", response=PaginatedRegistrationSchema, auth=jwt_auth)
+def list_event_registrations_admin(
+    request,
+    event_id: int,
+    status: Optional[List[str]] = Query(None),
+    university: Optional[str] = Query(None),
+    major: Optional[str] = Query(None),
+    search: Optional[str] = Query(None),
+    limit: int = Query(20, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+):
+    """List registrations with filters for admin dashboard"""
+    user = request.auth
+    if not (user.is_staff or user.is_superuser):
+        return 403, {"error": "اجازه دسترسی ندارید."}
+
+    event = get_object_or_404(Event, id=event_id, is_deleted=False)
+    qs = (
+        event.registrations.filter(is_deleted=False)
+        .select_related("user")
+        .prefetch_related("payments__discount_code")
+        .order_by("-registered_at")
+    )
+
+    if status:
+        if "," in status:
+            status_values = [s.strip() for s in status.split(",") if s.strip()]
+        else:
+            status_values = status
+        qs = qs.filter(status__in=status_values)
+
+    if university:
+        qs = qs.filter(
+            Q(user__university__code__icontains=university)
+            | Q(user__university__name__icontains=university)
+        )
+
+    if major:
+        qs = qs.filter(
+            Q(user__major__code__icontains=major)
+            | Q(user__major__name__icontains=major)
+        )
+
+    if search:
+        qs = qs.filter(
+            Q(user__username__icontains=search)
+            | Q(user__email__icontains=search)
+            | Q(user__first_name__icontains=search)
+            | Q(user__last_name__icontains=search)
+        )
+
+    total = qs.count()
+    results = qs[offset : offset + limit]
+
+    return PaginatedRegistrationSchema(count=total, next=None, previous=None, results=list(results))
 
 @events_router.post(
     "/{int:event_id}/register",

@@ -261,12 +261,20 @@ class ApiClient {
   async listUsers(params?: {
     search?: string;
     role?: 'staff' | 'superuser';
+    student_id?: string;
+    university?: string;
+    major?: string;
+    is_active?: 'true' | 'false';
     limit?: number;
     offset?: number;
   }) {
     const query = new URLSearchParams();
     if (params?.search) query.set('search', params.search);
     if (params?.role) query.set('role', params.role);
+    if (params?.student_id) query.set('student_id', params.student_id);
+    if (params?.university) query.set('university', params.university);
+    if (params?.major) query.set('major', params.major);
+    if (params?.is_active) query.set('is_active', params.is_active);
     if (params?.limit != null) query.set('limit', String(params.limit));
     if (params?.offset != null) query.set('offset', String(params.offset));
     return this.request<Types.UserListSchema[]>(`/api/auth/users${query.toString() ? `?${query.toString()}` : ''}`);
@@ -432,6 +440,31 @@ class ApiClient {
 
   async getEventAdminDetail(eventId: number) {
     return this.request<Types.EventAdminDetailSchema>(`/api/events/${eventId}/admin-detail`);
+  }
+
+  async listEventRegistrationsAdmin(
+    eventId: number,
+    params?: {
+      statuses?: string[];
+      university?: string;
+      major?: string;
+      search?: string;
+      limit?: number;
+      offset?: number;
+    }
+  ) {
+    const query = new URLSearchParams();
+    if (params?.statuses?.length) {
+      params.statuses.forEach((status) => query.append('status', status));
+    }
+    if (params?.university) query.set('university', params.university);
+    if (params?.major) query.set('major', params.major);
+    if (params?.search) query.set('search', params.search);
+    if (params?.limit != null) query.set('limit', String(params.limit));
+    if (params?.offset != null) query.set('offset', String(params.offset));
+    return this.request<Types.PaginatedResponse<Types.RegistrationAdminSchema>>(
+      `/api/events/${eventId}/admin-registrations${query.toString() ? `?${query.toString()}` : ''}`
+    );
   }
 
   async updateEvent(eventId: number, data: Types.EventUpdateSchema) {
