@@ -254,7 +254,7 @@ function AdminUsersPanel() {
                     <td className="px-3 py-2 text-right">{user.username}</td>
                     <td className="px-3 py-2 text-right">{user.email}</td>
                     <td className="px-3 py-2 text-right">
-                      {user.major || '—'} • {user.university || '—'}
+                      {user.major_name || '—'} • {user.university_name || '—'}
                     </td>
                     <td className="px-3 py-2 text-right">
                       <Badge variant={user.is_active ? 'default' : 'outline'}>
