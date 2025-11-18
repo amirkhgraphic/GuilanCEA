@@ -112,6 +112,11 @@ class Payment(BaseModel):
         self.full_clean()
         return super().save(*args, **kwargs)
 
+    @property
+    def status_label(self):
+        """Human-readable label for the payment status."""
+        return self.get_status_display()
+
     def __str__(self):
         return f"{self.user.email}:{self.event} - {self.get_status_display()}"
 

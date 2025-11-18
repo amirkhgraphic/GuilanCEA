@@ -138,6 +138,11 @@ class Registration(BaseModel):
     def __str__(self):
         return f"{self.user.username} registered for {self.event.title}"
 
+    @property
+    def status_label(self):
+        """Human-readable label for the current registration status."""
+        return self.get_status_display()
+
     def save(self, *args, **kwargs):
             # detect create vs update
             is_create = self._state.adding
