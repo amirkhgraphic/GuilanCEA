@@ -46,6 +46,16 @@
               </td>
             </tr>
 
+            {% if success_html %}
+            <tr>
+              <td style="background:#ffffff;padding:0 30px 24px;text-align:right;">
+                <div style="border:1px solid #e5e7eb;border-radius:8px;padding:18px;font-family:Tahoma,Arial,sans-serif;font-size:14px;color:#374151;line-height:1.6;">
+                  {{ success_html|safe }}
+                </div>
+              </td>
+            </tr>
+            {% endif %}
+
             <tr>
               <td align="center" style="padding:16px 20px;color:#6b7280;font-family:Tahoma,Arial,sans-serif;font-size:12px;">
                 <div>&copy; {% now 'Y' %} انجمن علمی مهندسی کامپیوتر شرق گیلان</div>
