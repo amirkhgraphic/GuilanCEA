@@ -19,8 +19,21 @@
 4. Frontend dev: `docker compose exec frontend npm run dev -- --host`.
 
 ## Screenshots
+
+### Main pages:
 ![Home Screenshot](./screenshots/home.png)
+![Home Screenshot](./screenshots/about.png)
+
+### User/Admin Dashboard:
+![Event Detail](./screenshots/profile.png)
 ![Admin Dashboard](./screenshots/admin.png)
+
+### Event Pages:
+![Events List](./screenshots/events.png)
 ![Event Detail](./screenshots/event-detail.png)
+
+### Blog Pages:
+
+Soon...
 
 See the [`backend/README.md`](backend/README.md) and [`frontend/README.md`](frontend/README.md) for detailed instructions.
