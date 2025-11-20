@@ -354,7 +354,7 @@ function EventDetailDialog({
                       size="sm"
                       variant="outline"
                       disabled={regPage >= registrationPageCount}
-                      onClick={() => setRegPage((prev) => prev + 1))}
+                      onClick={() => setRegPage((prev) => prev + 1)}
                     >
                       بعدی
                     </Button>
