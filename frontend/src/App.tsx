@@ -10,6 +10,7 @@ import AdminLayout from "@/pages/AdminLayout";
 import AdminUsers from "@/pages/AdminUsers";
 import AdminEvents from "@/pages/AdminEvents";
 import AdminEventEdit from "@/pages/AdminEventEdit";
+import AdminEventDetail from "@/pages/AdminEventDetail";
 import AboutUs from "@/pages/AboutUs";
 import Auth from "@/pages/Auth";
 import Blog from "@/pages/Blog";
@@ -54,6 +55,7 @@ const App = () => (
                 <Route index element={<Navigate to="/admin/users" replace />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="events" element={<AdminEvents />} />
+                <Route path="events/:id" element={<AdminEventDetail />} />
                 <Route path="events/:id/edit" element={<AdminEventEdit />} />
               </Route>
               </Route>

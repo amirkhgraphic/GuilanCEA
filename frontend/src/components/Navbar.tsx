@@ -103,7 +103,7 @@ export default function Navbar() {
         <div className="flex flex-row-reverse items-center justify-between gap-3">
           <Link to="/" className="order-2 flex items-center gap-2">
             <span className="sm:inline text-2xl font-bold text-primary">
-              انجمن علمی کامپیوتر شرق گیلان
+              انجمن علمی کامپیوتر گیلان
             </span>
           </Link>
 
@@ -138,7 +138,7 @@ export default function Navbar() {
                     className="flex items-center gap-2"
                   >
                     <img src="/favicon.ico" alt="لوگو" className="h-8 w-auto" height={32} width={32} />
-                    <span className="text-xl font-semibold text-primary">انجمن علمی کامپیوتر شرق گیلان</span>
+                    <span className="text-xl font-semibold text-primary">انجمن علمی کامپیوتر گیلان</span>
                   </Link>
 
                   <div className="grid gap-2">
