@@ -12,39 +12,24 @@ export function formatJalali(iso?: string, withTime: boolean = true): string {
     const d = new Date(iso);
 
     // آیا تقویم Persian در محیط کاربر پشتیبانی می‌شود؟
-    const hasPersian =
-      Intl.DateTimeFormat.supportedLocalesOf(['fa-IR-u-ca-persian']).length > 0;
+    const hasPersian = Intl.DateTimeFormat.supportedLocalesOf(['fa-IR-u-ca-persian']).length > 0;
 
-    if (hasPersian) {
-      const datePart = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      }).format(d);
+    const locale = hasPersian ? 'fa-IR-u-ca-persian' : 'fa-IR';
+    const weekday = new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(d);
+    const day = new Intl.DateTimeFormat(locale, { day: 'numeric' }).format(d);
+    const month = new Intl.DateTimeFormat(locale, { month: 'long' }).format(d);
+    const year = new Intl.DateTimeFormat(locale, { year: 'numeric' }).format(d);
+    const datePart = `${weekday}، ${day} ${month} ${year}`;
 
-      if (!withTime) return datePart;
+    if (!withTime) return datePart;
 
-      const timePart = new Intl.DateTimeFormat('fa-IR', {
-        hour: '2-digit',
-        minute: '2-digit',
-        // اگر 24ساعته می‌خوای: hourCycle: 'h23'
-      }).format(d);
+    const timePart = new Intl.DateTimeFormat('fa-IR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      // اگر 24ساعته می‌خوای: hourCycle: 'h23'
+    }).format(d);
 
-      return `${datePart}، ساعت ${timePart}`;
-    }
-
-    // fallback: اگر Persian calendar نباشه، حداقل فارسیِ میلادی
-    if (withTime) {
-      return new Intl.DateTimeFormat('fa-IR', {
-        dateStyle: 'full',
-        timeStyle: 'short',
-      }).format(d);
-    } else {
-      return new Intl.DateTimeFormat('fa-IR', {
-        dateStyle: 'full',
-      }).format(d);
-    }
+    return `${datePart}, ساعت ${timePart}`;
   } catch {
     return '—';
   }
