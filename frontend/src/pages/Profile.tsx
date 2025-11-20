@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
 import { Loader2, Upload, Trash2 } from 'lucide-react';
-import { formatJalali, resolveErrorMessage } from '@/lib/utils';
+import { formatJalali, formatNumberPersian, resolveErrorMessage, toPersianDigits } from '@/lib/utils';
 import Markdown from '@/components/Markdown';
 import { useQuery } from '@tanstack/react-query';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -44,18 +44,16 @@ export default function Profile() {
   });
 
   const confirmedRegistrations = useMemo(
-    () => myRegs?.filter((reg) => reg.status === 'confirmed') ?? [],
-    [myRegs]
+    () => myRegs?.filter((reg) => reg.status === 'confirmed' || reg.status === 'attended') ?? [],
+    [myRegs],
+  );
+  const pendingRegistrations = useMemo(
+    () => myRegs?.filter((reg) => reg.status === 'pending') ?? [],
+    [myRegs],
   );
   const canceledRegistrations = useMemo(
     () => myRegs?.filter((reg) => reg.status === 'cancelled') ?? [],
-    [myRegs]
-  );
-  const otherRegistrations = useMemo(
-    () =>
-      myRegs?.filter((reg) => !['confirmed', 'cancelled'].includes(reg.status)) ??
-      [],
-    [myRegs]
+    [myRegs],
   );
 
   const [me, setMe] = useState<Types.UserProfileSchema | null>(user ?? null);
@@ -405,10 +403,10 @@ export default function Profile() {
                     <CardContent className="px-0">
                       {kv('نام', me?.first_name || '—')}
                       {kv('نام خانوادگی', me?.last_name || '—')}
-                      {kv('شماره دانشجویی', me?.student_id || '—')}
+                      {kv('شماره دانشجویی', me?.student_id ? toPersianDigits(me.student_id) : '—')}
                       {kv('دانشگاه', universityLabel)}
                       {kv('رشته', majorLabel)}
-                      {kv('سال ورود', typeof me?.year_of_study === 'number' ? me?.year_of_study : '—')}
+                      {kv('سال ورود', typeof me?.year_of_study === 'number' ? formatNumberPersian(me?.year_of_study) : '—')}
 
                     </CardContent>
                   </Card>
@@ -577,6 +575,16 @@ export default function Profile() {
                     </div>
                   </section>
                 )}
+                {pendingRegistrations.length > 0 && (
+                  <section className="space-y-3">
+                    <div className="text-sm font-semibold text-muted-foreground">
+                      ثبت‌نام‌های در انتظار
+                    </div>
+                    <div className="space-y-3">
+                      {pendingRegistrations.map(renderRegistrationRow)}
+                    </div>
+                  </section>
+                )}
                 {canceledRegistrations.length > 0 && (
                   <section className="space-y-3">
                     <div className="text-sm font-semibold text-muted-foreground">
@@ -584,16 +592,6 @@ export default function Profile() {
                     </div>
                     <div className="space-y-3">
                       {canceledRegistrations.map(renderRegistrationRow)}
-                    </div>
-                  </section>
-                )}
-                {otherRegistrations.length > 0 && (
-                  <section className="space-y-3">
-                    <div className="text-sm font-semibold text-muted-foreground">
-                      سایر ثبت‌نام‌ها
-                    </div>
-                    <div className="space-y-3">
-                      {otherRegistrations.map(renderRegistrationRow)}
                     </div>
                   </section>
                 )}
