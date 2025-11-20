@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
 import { Loader2, Upload, Trash2 } from 'lucide-react';
-import { formatJalali, resolveErrorMessage } from '@/lib/utils';
+import { formatJalali, formatNumberPersian, resolveErrorMessage, toPersianDigits } from '@/lib/utils';
 import Markdown from '@/components/Markdown';
 import { useQuery } from '@tanstack/react-query';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -405,10 +405,10 @@ export default function Profile() {
                     <CardContent className="px-0">
                       {kv('نام', me?.first_name || '—')}
                       {kv('نام خانوادگی', me?.last_name || '—')}
-                      {kv('شماره دانشجویی', me?.student_id || '—')}
+                      {kv('شماره دانشجویی', me?.student_id ? toPersianDigits(me.student_id) : '—')}
                       {kv('دانشگاه', universityLabel)}
                       {kv('رشته', majorLabel)}
-                      {kv('سال ورود', typeof me?.year_of_study === 'number' ? me?.year_of_study : '—')}
+                      {kv('سال ورود', typeof me?.year_of_study === 'number' ? formatNumberPersian(me?.year_of_study) : '—')}
 
                     </CardContent>
                   </Card>
