@@ -1,12 +1,21 @@
+import { useMemo, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Menu, ChevronDown } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { useAuth } from '@/contexts/AuthContext';
-import { Menu } from 'lucide-react';
-import { useState } from 'react';
 import ModeToggle from '@/components/ModeToggle';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
-const NavItem = ({ 
+const NavItem = ({
   to,
   children,
   onClick,
@@ -17,7 +26,7 @@ const NavItem = ({
 }) => (
   <NavLink
     to={to}
-    onClick={onClick}   // ← جدید
+    onClick={onClick}
     className={({ isActive }) =>
       [
         'px-2 py-1 rounded-md transition-colors',
@@ -35,48 +44,89 @@ export default function Navbar() {
   const isAdminUser = isAuthenticated && ((user?.is_staff || user?.is_superuser) ?? false);
   const [open, setOpen] = useState(false);
 
+  const avatarInitials = useMemo(
+    () => (user?.first_name?.[0] || user?.last_name?.[0] || user?.username?.[0] || '?').toUpperCase(),
+    [user?.first_name, user?.last_name, user?.username],
+  );
+
+  const UserDropdown = () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          className="flex items-center gap-2 rounded-full border border-border/60 bg-muted/40 px-2 py-1 pr-2.5 transition hover:bg-muted"
+        >
+          <Avatar className="h-9 w-9">
+            <AvatarImage src={user?.profile_picture || undefined} alt={user?.username || 'profile'} />
+            <AvatarFallback>{avatarInitials}</AvatarFallback>
+          </Avatar>
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56" dir="rtl">
+        <DropdownMenuLabel className="text-xs text-muted-foreground">
+          {user?.first_name || user?.last_name ? `${user?.first_name || ''} ${user?.last_name || ''}`.trim() : user?.username}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link to="/profile">U_O�U^U?OUOU,</Link>
+        </DropdownMenuItem>
+        {isAdminUser && (
+          <DropdownMenuItem asChild>
+            <Link to="/admin">OO_U.UOU+</Link>
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem
+          onSelect={(e) => e.preventDefault()}
+          className="flex items-center justify-between gap-2"
+        >
+          <span>O�O�UOUOO� O�U.</span>
+          <ModeToggle />
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault();
+            navigate('/logout');
+          }}
+          className="text-red-600 focus:text-red-600"
+        >
+          OrO�U^O�
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   return (
     <nav className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60" dir="rtl">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-3">
-          {/* برند */}
           <Link to="/" className="flex items-center gap-2">
             <span className="sm:inline text-2xl font-bold text-primary">
-              انجمن علمی کامپیوتر گیلان
+              OU+O�U.U+ O1U,U.UO UcOU.U_UOU^O�O� U_UOU,OU+
             </span>
           </Link>
 
-
           <div className="hidden md:flex items-center gap-2">
-            <NavItem to="/">خانه</NavItem>
-            <NavItem to="/blog">بلاگ</NavItem>
-            <NavItem to="/events">رویدادها</NavItem>
-            {isAdminUser && <NavItem to="/admin">ادمین</NavItem>}
+            <NavItem to="/">OrOU+U�</NavItem>
+            <NavItem to="/blog">O"U,OU_</NavItem>
+            <NavItem to="/events">O�U^UOO_OO_U�O</NavItem>
             {isAuthenticated ? (
-              <>
-                <NavItem to="/profile">پروفایل</NavItem>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-red-600 border-red-600 hover:bg-red-50 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-950/30"
-                  onClick={() => navigate('/logout')}
-                >
-                  خروج
-                </Button>
-              </>
+              <UserDropdown />
             ) : (
-              <Link to="/auth">
-                <Button size="sm">ورود / ثبت‌نام</Button>
-              </Link>
+              <>
+                <Link to="/auth">
+                  <Button size="sm">U^O�U^O_ / O�O"O��?OU+OU.</Button>
+                </Link>
+                <ModeToggle />
+              </>
             )}
-            <ModeToggle />
           </div>
 
-          {/* همبرگر (فقط موبایل) */}
           <div className="md:hidden">
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" aria-label="منو">
+                <Button variant="outline" size="icon" aria-label="U.U+U^">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
@@ -87,44 +137,61 @@ export default function Navbar() {
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-2"
                   >
-                    <img src="/favicon.ico" alt="لوگو" className="h-8 w-auto" height={32} width={32} />
-                    <span className="text-xl font-semibold text-primary">انجمن علمی کامپیوتر گیلان</span>
+                    <img src="/favicon.ico" alt="U,U^U_U^" className="h-8 w-auto" height={32} width={32} />
+                    <span className="text-xl font-semibold text-primary">OU+O�U.U+ O1U,U.UO UcOU.U_UOU^O�O� U_UOU,OU+</span>
                   </Link>
 
                   <div className="grid gap-2">
-                    <NavItem to="/"        onClick={() => setOpen(false)}>خانه</NavItem>
-                    {isAuthenticated && <NavItem to="/profile" onClick={() => setOpen(false)}>پروفایل</NavItem>}
-                    <NavItem to="/blog"    onClick={() => setOpen(false)}>بلاگ</NavItem>
-                    <NavItem to="/events"  onClick={() => setOpen(false)}>رویدادها</NavItem>
-                    {isAdminUser &&
-                      <NavItem to="/admin" onClick={() => setOpen(false)}>ادمین</NavItem>}
+                    <NavItem to="/"        onClick={() => setOpen(false)}>OrOU+U�</NavItem>
+                    <NavItem to="/blog"    onClick={() => setOpen(false)}>O"U,OU_</NavItem>
+                    <NavItem to="/events"  onClick={() => setOpen(false)}>O�U^UOO_OO_U�O</NavItem>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-md border px-3 py-2">
-                    <span className="text-sm text-muted-foreground">تغییر تم</span>
-                    <ModeToggle />
-                  </div>
-
-                  <div className="pt-4 border-t grid gap-2">
+                  <div className="pt-4 border-t grid gap-3">
                     {isAuthenticated ? (
                       <>
-                        <div className="text-sm text-muted-foreground">
-                          {user?.username}
+                        <div className="flex items-center gap-3 rounded-md border px-3 py-2">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={user?.profile_picture || undefined} alt={user?.username || 'profile'} />
+                            <AvatarFallback>{avatarInitials}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 text-right">
+                            <div className="font-medium">{user?.username}</div>
+                            {user?.email ? <div className="text-xs text-muted-foreground">{user.email}</div> : null}
+                          </div>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-red-600 border-red-600 hover:bg-red-50 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-950/30"
-                          onClick={() => { setOpen(false); navigate('/logout'); }}
-                        >
-                          خروج
-                        </Button>
-
+                        <div className="grid gap-2">
+                          <Button variant="ghost" className="justify-between" asChild onClick={() => setOpen(false)}>
+                            <Link to="/profile">U_O�U^U?OUOU,</Link>
+                          </Button>
+                          {isAdminUser && (
+                            <Button variant="ghost" className="justify-between" asChild onClick={() => setOpen(false)}>
+                              <Link to="/admin">OO_U.UOU+</Link>
+                            </Button>
+                          )}
+                          <div className="flex items-center justify-between rounded-md border px-3 py-2">
+                            <span className="text-sm text-muted-foreground">O�O�UOUOO� O�U.</span>
+                            <ModeToggle />
+                          </div>
+                          <Button
+                            variant="outline"
+                            className="justify-between text-red-600 border-red-600 hover:bg-red-50 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-950/30"
+                            onClick={() => { setOpen(false); navigate('/logout'); }}
+                          >
+                            OrO�U^O�
+                          </Button>
+                        </div>
                       </>
                     ) : (
-                      <Link to="/auth" onClick={() => setOpen(false)}>
-                        <Button>ورود / ثبت‌نام</Button>
-                      </Link>
+                      <div className="grid gap-2">
+                        <Link to="/auth" onClick={() => setOpen(false)}>
+                          <Button className="w-full">U^O�U^O_ / O�O"O��?OU+OU.</Button>
+                        </Link>
+                        <div className="flex items-center justify-between rounded-md border px-3 py-2">
+                          <span className="text-sm text-muted-foreground">O�O�UOUOO� O�U.</span>
+                          <ModeToggle />
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>
