@@ -6,19 +6,25 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { formatJalali, formatToman, resolveErrorMessage, toPersianDigits } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 
-const registrationStatusOptions = ['confirmed', 'pending', 'cancelled'] as const;
+const registrationStatusOptions = [
+  { value: 'confirmed', label: 'تایید شده' },
+  { value: 'pending', label: 'در انتظار' },
+  { value: 'cancelled', label: 'لغو شده' },
+  { value: 'attended', label: 'حضور یافته' },
+] as const;
 const REGISTRATIONS_PAGE_SIZE = 10;
 
 export default function AdminEventDetail() {
   const { id } = useParams();
   const { toast } = useToast();
   const { user, isAuthenticated, loading } = useAuth();
-  const [statusFilter, setStatusFilter] = React.useState<typeof registrationStatusOptions[number] | 'all'>('all');
+  const [statusFilter, setStatusFilter] = React.useState<typeof registrationStatusOptions[number]['value'] | 'all'>('all');
   const [search, setSearch] = React.useState('');
   const [regPage, setRegPage] = React.useState(1);
 
@@ -34,7 +40,10 @@ export default function AdminEventDetail() {
     enabled: Number.isFinite(eventId),
     queryFn: () =>
       api.listEventRegistrationsAdmin(eventId, {
-        statuses: statusFilter === 'all' ? registrationStatusOptions : [statusFilter],
+        statuses:
+          statusFilter === 'all'
+            ? registrationStatusOptions.map((s) => s.value)
+            : [statusFilter],
         search: search || undefined,
         limit: REGISTRATIONS_PAGE_SIZE,
         offset: (regPage - 1) * REGISTRATIONS_PAGE_SIZE,
@@ -127,14 +136,14 @@ export default function AdminEventDetail() {
                   <SelectTrigger className="w-full md:w-40">
                     <SelectValue placeholder="وضعیت">وضعیت: {statusFilter === 'all' ? 'همه' : statusFilter}</SelectValue>
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">همه</SelectItem>
-                    {registrationStatusOptions.map((s) => (
-                      <SelectItem key={s} value={s}>{s}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                <SelectContent>
+                  <SelectItem value="all">همه</SelectItem>
+                  {registrationStatusOptions.map((s) => (
+                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
               <Input
                 className="md:w-64"
                 placeholder="جستجو نام/ایمیل/نام‌کاربری"
