@@ -173,7 +173,7 @@ const AdminUsersPage: React.FC = () => {
       </Card>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="pb-0 md:pb-2">
           <CardTitle>لیست کاربران</CardTitle>
           <CardDescription>نمایش کاربران مطابق فیلترهای انتخابی</CardDescription>
         </CardHeader>
@@ -183,46 +183,65 @@ const AdminUsersPage: React.FC = () => {
           ) : users.length === 0 ? (
             <p className="text-sm text-muted-foreground">کاربری یافت نشد.</p>
           ) : (
-            <ScrollArea className="rounded-md border">
-              <table dir="rtl" className="w-full min-w-[700px] text-sm">
-                <thead className="text-xs uppercase text-muted-foreground">
-                  <tr>
-                    <th className="px-3 py-2 text-right">نام کامل</th>
-                    <th className="px-3 py-2 text-right">نام کاربری</th>
-                    <th className="px-3 py-2 text-right">ایمیل</th>
-                    <th className="px-3 py-2 text-right">دانشگاه / گرایش</th>
-                    <th className="px-3 py-2 text-right">وضعیت</th>
-                    <th className="px-3 py-2 text-right">تاریخ عضویت</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map((user) => (
-                    <tr key={user.id} className="border-b last:border-0 hover:bg-muted/50">
-                      <td className="px-3 py-2 text-right">
-                        {(() => {
-                          const parts = [user.first_name, user.last_name].filter(Boolean);
-                          if (parts.length) return parts.join(' ');
-                          return user.username;
-                        })()}
-                      </td>
-                      <td className="px-3 py-2 text-right">{user.username}</td>
-                      <td className="px-3 py-2 text-right">{user.email}</td>
-                      <td className="px-3 py-2 text-right">
-                        {user.major || '—'} · {user.university || '—'}
-                      </td>
-                      <td className="px-3 py-2 text-right">
-                        <Badge variant={user.is_active ? 'default' : 'outline'}>
-                          {user.is_active ? 'فعال' : 'غیرفعال'}
-                        </Badge>
-                      </td>
-                      <td className="px-3 py-2 text-right">
-                        {formatJalali(user.date_joined)}
-                      </td>
+            <div className="space-y-3">
+              <ScrollArea className="rounded-md border hidden md:block">
+                <table dir="rtl" className="w-full min-w-[700px] text-sm">
+                  <thead className="text-xs uppercase text-muted-foreground">
+                    <tr>
+                      <th className="px-3 py-2 text-right">نام کامل</th>
+                      <th className="px-3 py-2 text-right">نام کاربری</th>
+                      <th className="px-3 py-2 text-right">ایمیل</th>
+                      <th className="px-3 py-2 text-right">دانشگاه / گرایش</th>
+                      <th className="px-3 py-2 text-right">وضعیت</th>
+                      <th className="px-3 py-2 text-right">تاریخ عضویت</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </ScrollArea>
+                  </thead>
+                  <tbody>
+                    {users.map((user) => (
+                      <tr key={user.id} className="border-b last:border-0 hover:bg-muted/50">
+                        <td className="px-3 py-2 text-right">
+                          {(() => {
+                            const parts = [user.first_name, user.last_name].filter(Boolean);
+                            if (parts.length) return parts.join(' ');
+                            return user.username;
+                          })()}
+                        </td>
+                        <td className="px-3 py-2 text-right">{user.username}</td>
+                        <td className="px-3 py-2 text-right">{user.email}</td>
+                        <td className="px-3 py-2 text-right">
+                          {user.major || '—'} · {user.university || '—'}
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          <Badge variant={user.is_active ? 'default' : 'outline'}>
+                            {user.is_active ? 'فعال' : 'غیرفعال'}
+                          </Badge>
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          {formatJalali(user.date_joined)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </ScrollArea>
+
+              <div className="grid gap-3 md:hidden">
+                {users.map((user) => (
+                  <div key={user.id} className="rounded-lg border p-3 space-y-2 bg-card">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="font-semibold text-right">{user.first_name || user.last_name ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : user.username}</div>
+                      <Badge variant={user.is_active ? 'default' : 'outline'}>{user.is_active ? 'فعال' : 'غیرفعال'}</Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground text-right space-y-1">
+                      <div>نام کاربری: {user.username}</div>
+                      <div>ایمیل: {user.email}</div>
+                      <div>دانشگاه / گرایش: {user.university || '—'} · {user.major || '—'}</div>
+                      <div>تاریخ عضویت: {formatJalali(user.date_joined)}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>صفحه {formatNumberPersian(page)}</span>
