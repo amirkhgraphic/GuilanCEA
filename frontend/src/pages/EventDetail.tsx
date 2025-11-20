@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import Markdown from '@/components/Markdown';
 import CouponDialogFa from '@/components/CouponDialogFa';
-import { formatJalali, getThumbUrl, resolveErrorMessage } from '@/lib/utils';
+import { formatJalali, formatNumberPersian, formatToman, getThumbUrl, resolveErrorMessage, toPersianDigits } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 
 const typeLabel: Record<string, string> = { online: 'آنلاین', on_site: 'حضوری', hybrid: 'آنلاین و حضوری' };
@@ -232,14 +232,9 @@ export default function EventDetail() {
     deadlineTs != null ? Math.max(0, deadlineTs - nowTs) : null
   ), [deadlineTs, nowTs]);
 
-  const nfd = useMemo(
-    () => new Intl.NumberFormat('fa-IR', { useGrouping: false }),
-    []
-  );
-  const nf2 = useMemo(
-    () => new Intl.NumberFormat('fa-IR', { minimumIntegerDigits: 2, useGrouping: false }),
-    []
-  );
+  const formatCountdownTwoDigit = (value: number) =>
+    toPersianDigits(value.toString().padStart(2, '0'));
+  const formatCountdownNumber = (value: number) => formatNumberPersian(value);
 
   const formatRemainingWords = (ms: number) => {
     const total = Math.max(0, Math.floor(ms / 1000));
@@ -247,8 +242,8 @@ export default function EventDetail() {
     const hours = Math.floor((total % 86400) / 3600);
     const minutes = Math.floor((total % 3600) / 60);
     const seconds = total % 60;
-    if (days === 0) return `${nf2.format(hours)} ساعت و ${nf2.format(minutes)} دقیقه و ${nf2.format(seconds)} ثانیه`;
-    return `${nfd.format(days)} روز و ${nf2.format(hours)} ساعت و ${nf2.format(minutes)} دقیقه و ${nf2.format(seconds)} ثانیه`;
+    if (days === 0) return `${formatCountdownTwoDigit(hours)} ساعت و ${formatCountdownTwoDigit(minutes)} دقیقه و ${formatCountdownTwoDigit(seconds)} ثانیه`;
+    return `${formatCountdownNumber(days)} روز و ${formatCountdownTwoDigit(hours)} ساعت و ${formatCountdownTwoDigit(minutes)} دقیقه و ${formatCountdownTwoDigit(seconds)} ثانیه`;
   };
 ``
   
@@ -488,17 +483,17 @@ export default function EventDetail() {
                     لینک برگزاری: <a className="underline" href={event.online_link} target="_blank" rel="noreferrer">{event.online_link}</a>
                   </div>
                 )}
-                <div>ظرفیت کل: {event.capacity == null ? 'نامحدود' : event.capacity.toLocaleString('fa-IR')}</div>
+                <div>ظرفیت کل: {event.capacity == null ? 'نامحدود' : formatNumberPersian(event.capacity)}</div>
                 {meta && (
                   <>
                     {!event.capacity ? null : (
                       <div>
-                        ظرفیت باقی‌مانده: {meta.remaining === Infinity ? 'نامحدود' : meta.remaining.toLocaleString('fa-IR')}
+                        ظرفیت باقی‌مانده: {meta.remaining === Infinity ? 'نامحدود' : formatNumberPersian(meta.remaining)}
                       </div>
                     )}
                   </>
                 )}
-                <div>هزینه حضور: {event.price ? `${(event.price / 10).toLocaleString('fa-IR')} تومان` : 'رایگان'}</div>
+                <div>هزینه حضور: {event.price ? formatToman(event.price) : 'رایگان'}</div>
 
                 {/* Ù†Ù…Ø§ÛŒØ´ Ø²Ù…Ø§Ù† Ø´Ø±ÙˆØ¹/Ù¾Ø§ÛŒØ§Ù† Ø«Ø¨Øªâ€ŒÙ†Ø§Ù… Ø¯Ø± UI Ø­Ø°Ù Ø´Ø¯Ù‡ */}
 

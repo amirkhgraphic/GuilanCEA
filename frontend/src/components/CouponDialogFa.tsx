@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn, resolveErrorMessage } from "@/lib/utils";
+import { cn, formatNumberPersian, formatToman, resolveErrorMessage } from "@/lib/utils";
 
 type RawVerifyResult = {
   discount_amount: number;
@@ -100,21 +100,21 @@ export default function CouponDialogFa({
           <div className="rounded-md border p-3 space-y-1">
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">قیمت اولیه</span>
-              <span className="font-medium">{(basePrice / 10).toLocaleString("fa-IR")} تومان</span>
+              <span className="font-medium">{formatToman(basePrice)}</span>
             </div>
 
             {res?.discount_amount ? (
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">تخفیف</span>
                 <span className="font-medium">
-                  − {res.discount_amount.toLocaleString("fa-IR")} تومان
+                  - {formatNumberPersian(res.discount_amount)} تومان
                 </span>
               </div>
             ) : null}
 
             <div className="flex items-center justify-between border-t pt-2">
               <span className="text-muted-foreground">قیمت نهایی</span>
-              <span className="font-semibold">{finalPrice.toLocaleString("fa-IR")} تومان</span>
+              <span className="font-semibold">{formatNumberPersian(finalPrice)} تومان</span>
             </div>
           </div>
         </div>

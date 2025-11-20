@@ -7,12 +7,12 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import type * as Types from '@/lib/types';
-import { formatJalali, getThumbUrl } from '@/lib/utils';
+import { formatJalali, formatNumberPersian, formatToman, getThumbUrl } from '@/lib/utils';
 
 
 function labelPrice(event: Types.EventListItemSchema) {
-  const price = Number(event?.price ?? 0) / 10;
-  return price <= 0 ? "رایگان" : `${price.toLocaleString("fa-IR")} تومان`;
+  const price = Number(event?.price ?? 0);
+  return price <= 0 ? "رایگان" : formatToman(price);
 }
 function modeFa(event_type: Types.EventListItemSchema["event_type"]) {
   return event_type === "online" ? "آنلاین" : "حضوری";
@@ -202,7 +202,7 @@ export default function Events() {
                         <div className="flex items-center justify-between">
                           <span className="text-muted-foreground">ظرفیت رویداد</span>
                           <span className="font-medium">
-                            {(Number(event?.capacity ?? 0) - Number(event?.registration_count ?? 0)).toLocaleString("fa-IR")}/{Number(event?.capacity ?? 0).toLocaleString("fa-IR")} نفر
+                            {formatNumberPersian(Number(event?.capacity ?? 0) - Number(event?.registration_count ?? 0))}/{formatNumberPersian(Number(event?.capacity ?? 0))} نفر
                           </span>
                         </div>
                         <div className="flex items-center justify-between">

@@ -7,6 +7,7 @@ import html2canvas from 'html2canvas';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { api } from '@/lib/api';
+import { formatNumberPersian, formatToman, toPersianDigits } from '@/lib/utils';
 import Markdown from '@/components/Markdown';
 
 type SavedPayment = {
@@ -27,6 +28,8 @@ export default function PaymentResult() {
   const status = params.get('status');         // success | failed
   const refId = params.get('ref_id') || '';
   const eventId = Number(params.get('event_id') || '0');
+  const humanEventId = eventId ? formatNumberPersian(eventId) : '—';
+  const refIdDisplay = refId ? toPersianDigits(refId) : '';
 
   const [fallback, setFallback] = useState<SavedPayment | null>(null);
 
@@ -56,7 +59,7 @@ export default function PaymentResult() {
   const data = fallback;
 
   const ok = status === 'success';
-  const money = (n?: number) => typeof n === 'number' ? n.toLocaleString('fa-IR') : '—';
+  const money = (n?: number) => (typeof n === 'number' && Number.isFinite(n) ? formatToman(n) : '—');
   const receiptRef = useRef<HTMLDivElement | null>(null);
   const successMarkdown = data?.success_markdown ?? '';
 
@@ -70,8 +73,8 @@ export default function PaymentResult() {
     const normalizedPath = url.startsWith('/') ? url.slice(1) : url;
     return `${normalizedSite}/${normalizedPath}`;
   };
-  const eventTitle = data?.title || (eventId ? `Event #${eventId}` : 'Event payment');
-  const referenceFragment = refId ? ` Reference: ${refId}.` : '';
+  const eventTitle = data?.title || (eventId ? `Event #${humanEventId}` : 'Event payment');
+  const referenceFragment = refId ? ` Reference: ${refIdDisplay}.` : '';
   const pageState =
     status === 'success'
       ? 'Payment successful'
@@ -204,12 +207,12 @@ export default function PaymentResult() {
               {/* Info */}
               <div className="md:col-span-1 space-y-1">
                 <div className="text-sm text-muted-foreground">رویداد</div>
-                <div className="font-semibold">{data?.title || `#${eventId || "—"}`}</div>
+                <div className="font-semibold">{data?.title || `#${humanEventId}`}</div>
 
                 {refId && (
                   <>
                     <div className="text-sm text-muted-foreground mt-3">کد پیگیری</div>
-                    <div className="font-mono break-all">{refId}</div>
+                    <div className="font-mono break-all">{refIdDisplay}</div>
                   </>
                 )}
               </div>
@@ -235,15 +238,15 @@ export default function PaymentResult() {
               <ul className="text-sm divide-y divide-border/60">
                 <li className="flex items-center justify-between py-2">
                   <span className="text-muted-foreground">مبلغ پایه</span>
-                  <span>{money(data?.base_amount / 10)} تومان</span>
+                  <span>{money(data?.base_amount)}</span>
                 </li>
                 <li className="flex items-center justify-between py-2">
                   <span className="text-muted-foreground">تخفیف</span>
-                  <span>{money(data?.discount_amount / 10)} تومان</span>
+                  <span>{money(data?.discount_amount)}</span>
                 </li>
                 <li className="flex items-center justify-between py-2 font-semibold">
                   <span>مبلغ نهایی</span>
-                  <span>{money(data?.amount / 10)} تومان</span>
+                  <span>{money(data?.amount)}</span>
                 </li>
               </ul>
             </div>
