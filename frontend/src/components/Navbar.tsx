@@ -100,14 +100,14 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60" dir="rtl">
       <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between gap-3">
-          <Link to="/" className="flex items-center gap-2">
+        <div className="flex flex-row-reverse items-center justify-between gap-3">
+          <Link to="/" className="order-2 flex items-center gap-2">
             <span className="sm:inline text-2xl font-bold text-primary">
               OU+O�U.U+ O1U,U.UO UcOU.U_UOU^O�O� U_UOU,OU+
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-2">
+          <div className="order-1 hidden md:flex items-center gap-2">
             <NavItem to="/">OrOU+U�</NavItem>
             <NavItem to="/blog">O"U,OU_</NavItem>
             <NavItem to="/events">O�U^UOO_OO_U�O</NavItem>
@@ -123,7 +123,7 @@ export default function Navbar() {
             )}
           </div>
 
-          <div className="md:hidden">
+          <div className="order-1 md:hidden">
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger asChild>
                 <Button variant="outline" size="icon" aria-label="U.U+U^">
