@@ -194,7 +194,7 @@ export default function Events() {
                         <CardTitle className="line-clamp-2">{event.title}</CardTitle>
                         <Badge variant="default">{modeFa(event.event_type)}</Badge>
                       </div>
-                      <CardDescription>{formatJalali(event.start_time)}</CardDescription>
+                      <CardDescription>{formatJalali(event.start_time, false)}</CardDescription>
                     </CardHeader>
 
                     <CardContent>
