@@ -6,7 +6,9 @@ import { HelmetProvider } from "react-helmet-async";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import { AuthProvider } from "./contexts/AuthContext";
-import Admin from "./pages/Admin";
+import AdminLayout from "./pages/AdminLayout";
+import AdminUsers from "./pages/AdminUsers";
+import AdminEvents from "./pages/AdminEvents";
 import AdminEventEdit from "./pages/AdminEventEdit";
 import AboutUs from "./pages/AboutUs";
 import Auth from "./pages/Auth";
@@ -48,8 +50,12 @@ const App = () => (
                 <Route path="reset-password" element={<ResetPasswordRequest />} />
                 <Route path="reset-password/:token" element={<ResetPasswordConfirm />} />
                 <Route path="/about" element={<AboutUs />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/events/:id/edit" element={<AdminEventEdit />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<Navigate to="/admin/users" replace />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="events" element={<AdminEvents />} />
+                <Route path="events/:id/edit" element={<AdminEventEdit />} />
+              </Route>
               </Route>
 
               <Route path="*" element={<NotFound />} />
