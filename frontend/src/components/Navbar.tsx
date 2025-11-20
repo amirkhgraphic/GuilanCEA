@@ -69,18 +69,18 @@ export default function Navbar() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link to="/profile">U_O�U^U?OUOU,</Link>
+          <Link to="/profile">پروفایل</Link>
         </DropdownMenuItem>
         {isAdminUser && (
           <DropdownMenuItem asChild>
-            <Link to="/admin">OO_U.UOU+</Link>
+            <Link to="/admin">داشبورد مدیریت</Link>
           </DropdownMenuItem>
         )}
         <DropdownMenuItem
           onSelect={(e) => e.preventDefault()}
           className="flex items-center justify-between gap-2"
         >
-          <span>O�O�UOUOO� O�U.</span>
+          <span>حالت نمایش</span>
           <ModeToggle />
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -91,7 +91,7 @@ export default function Navbar() {
           }}
           className="text-red-600 focus:text-red-600"
         >
-          OrO�U^O�
+          خروج
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -103,20 +103,20 @@ export default function Navbar() {
         <div className="flex flex-row-reverse items-center justify-between gap-3">
           <Link to="/" className="order-2 flex items-center gap-2">
             <span className="sm:inline text-2xl font-bold text-primary">
-              OU+O�U.U+ O1U,U.UO UcOU.U_UOU^O�O� U_UOU,OU+
+              انجمن علمی کامپیوتر شرق گیلان
             </span>
           </Link>
 
           <div className="order-1 hidden md:flex items-center gap-2">
-            <NavItem to="/">OrOU+U�</NavItem>
-            <NavItem to="/blog">O"U,OU_</NavItem>
-            <NavItem to="/events">O�U^UOO_OO_U�O</NavItem>
+            <NavItem to="/">خانه</NavItem>
+            <NavItem to="/blog">بلاگ</NavItem>
+            <NavItem to="/events">رویدادها</NavItem>
             {isAuthenticated ? (
               <UserDropdown />
             ) : (
               <>
                 <Link to="/auth">
-                  <Button size="sm">U^O�U^O_ / O�O"O��?OU+OU.</Button>
+                  <Button size="sm">ورود / ثبت‌نام</Button>
                 </Link>
                 <ModeToggle />
               </>
@@ -137,14 +137,14 @@ export default function Navbar() {
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-2"
                   >
-                    <img src="/favicon.ico" alt="U,U^U_U^" className="h-8 w-auto" height={32} width={32} />
-                    <span className="text-xl font-semibold text-primary">OU+O�U.U+ O1U,U.UO UcOU.U_UOU^O�O� U_UOU,OU+</span>
+                    <img src="/favicon.ico" alt="لوگو" className="h-8 w-auto" height={32} width={32} />
+                    <span className="text-xl font-semibold text-primary">انجمن علمی کامپیوتر شرق گیلان</span>
                   </Link>
 
                   <div className="grid gap-2">
-                    <NavItem to="/"        onClick={() => setOpen(false)}>OrOU+U�</NavItem>
-                    <NavItem to="/blog"    onClick={() => setOpen(false)}>O"U,OU_</NavItem>
-                    <NavItem to="/events"  onClick={() => setOpen(false)}>O�U^UOO_OO_U�O</NavItem>
+                    <NavItem to="/"        onClick={() => setOpen(false)}>خانه</NavItem>
+                    <NavItem to="/blog"    onClick={() => setOpen(false)}>بلاگ</NavItem>
+                    <NavItem to="/events"  onClick={() => setOpen(false)}>رویدادها</NavItem>
                   </div>
 
                   <div className="pt-4 border-t grid gap-3">
@@ -162,15 +162,15 @@ export default function Navbar() {
                         </div>
                         <div className="grid gap-2">
                           <Button variant="ghost" className="justify-between" asChild onClick={() => setOpen(false)}>
-                            <Link to="/profile">U_O�U^U?OUOU,</Link>
+                            <Link to="/profile">پروفایل</Link>
                           </Button>
                           {isAdminUser && (
                             <Button variant="ghost" className="justify-between" asChild onClick={() => setOpen(false)}>
-                              <Link to="/admin">OO_U.UOU+</Link>
+                              <Link to="/admin">داشبورد مدیریت</Link>
                             </Button>
                           )}
                           <div className="flex items-center justify-between rounded-md border px-3 py-2">
-                            <span className="text-sm text-muted-foreground">O�O�UOUOO� O�U.</span>
+                            <span className="text-sm text-muted-foreground">حالت نمایش</span>
                             <ModeToggle />
                           </div>
                           <Button
@@ -178,17 +178,17 @@ export default function Navbar() {
                             className="justify-between text-red-600 border-red-600 hover:bg-red-50 dark:text-red-400 dark:border-red-400 dark:hover:bg-red-950/30"
                             onClick={() => { setOpen(false); navigate('/logout'); }}
                           >
-                            OrO�U^O�
+                            خروج
                           </Button>
                         </div>
                       </>
                     ) : (
                       <div className="grid gap-2">
                         <Link to="/auth" onClick={() => setOpen(false)}>
-                          <Button className="w-full">U^O�U^O_ / O�O"O��?OU+OU.</Button>
+                          <Button className="w-full">ورود / ثبت‌نام</Button>
                         </Link>
                         <div className="flex items-center justify-between rounded-md border px-3 py-2">
-                          <span className="text-sm text-muted-foreground">O�O�UOUOO� O�U.</span>
+                          <span className="text-sm text-muted-foreground">حالت نمایش</span>
                           <ModeToggle />
                         </div>
                       </div>

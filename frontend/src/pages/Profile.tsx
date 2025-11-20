@@ -406,7 +406,7 @@ export default function Profile() {
                       {kv('شماره دانشجویی', me?.student_id ? toPersianDigits(me.student_id) : '—')}
                       {kv('دانشگاه', universityLabel)}
                       {kv('رشته', majorLabel)}
-                      {kv('سال ورود', typeof me?.year_of_study === 'number' ? formatNumberPersian(me?.year_of_study) : '—')}
+                      {kv('سال ورود', typeof me?.year_of_study === 'number' ? toPersianDigits(String(me?.year_of_study)) : '—')}
 
                     </CardContent>
                   </Card>
