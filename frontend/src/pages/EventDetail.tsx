@@ -478,11 +478,7 @@ export default function EventDetail() {
               </CardHeader>
               <CardContent className="space-y-3 text-sm">
                 {event.address && <div>آدرس: {event.address}</div>}
-                {event.online_link && (
-                  <div className="truncate">
-                    لینک برگزاری: <a className="underline" href={event.online_link} target="_blank" rel="noreferrer">{event.online_link}</a>
-                  </div>
-                )}
+
                 <div>ظرفیت کل: {event.capacity == null ? 'نامحدود' : formatNumberPersian(event.capacity)}</div>
                 {meta && (
                   <>
