@@ -173,37 +173,109 @@ def send_skyroom_credentials_individual_task(self, reg_id: int):
         raise self.retry(exc=exc, countdown=60)
 
 
-@shared_task(bind=True, autoretry_for=(Exception,), retry_backoff=True, retry_kwargs={"max_retries": 3}, soft_time_limit=60)
+@shared_task(bind=True)
 def send_event_reminder_task(self, event_id: int):
     """
     یادآوری رویداد (ارسال الان؛ برای ارسال خودکار یک روز قبل، یک beat job بسازید)
     """
     event = Event.objects.get(pk=event_id)
-    regs = _event_recipients(event, statuses=["confirmed", "attended"])
-    for r in regs:
+    regs = (
+        _event_recipients(event, statuses=["confirmed", "attended"])
+        .select_related("user", "event")
+        .distinct()
+    )
+    reg_ids = list(regs.values_list("id", flat=True))
+
+    job = group(send_event_reminder_to_user.s(event_id, rid) for rid in reg_ids)
+    res = job.apply_async()
+
+    logger.info(
+        'Queued %s event reminder emails for event "%s" (group_id=%s)',
+        len(reg_ids),
+        event.title,
+        res.id,
+    )
+    return {"event_id": event_id, "queued": len(reg_ids), "group_id": res.id}
+
+
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_jitter=True,
+    retry_kwargs={"max_retries": 3},
+    soft_time_limit=ANNOUNCEMENT_TASK_SOFT_LIMIT_SECONDS,
+    time_limit=ANNOUNCEMENT_TASK_HARD_LIMIT_SECONDS,
+)
+def send_event_reminder_to_user(self, event_id: int, registration_id: int):
+    """
+    Send reminder email to a single registration; safe to retry without duplicating emails.
+    """
+    user = None
+    log = None
+
+    try:
+        r = Registration.objects.select_related("user", "event").get(pk=registration_id)
         user = r.user
+        event = r.event
+
+        to_email = (user.email or "").strip()
+        if not to_email:
+            return {"skipped": True, "status": "no_email"}
+
+        context_key = _build_email_context(
+            "event_reminder",
+            event.slug or event.id,
+            event.start_time,
+        )
+        log, skip = EventEmailLog.claim(
+            event_id=event_id,
+            user_id=user.id,
+            kind=EventEmailLog.KIND_EVENT_REMINDER,
+            context=context_key,
+        )
+        if skip:
+            return {"skipped": True, "status": log.status}
+
         ctx = {
             "user": user,
             "event": event,
             "event_url": f"{settings.FRONTEND_ROOT}events/{event.slug}",
         }
-        try:
-            subject = f"یادآوری رویداد: {event.title}"
-            html = render_to_string("emails/event_reminder.html", ctx)
-            text_body = strip_tags(html)
-            msg = EmailMultiAlternatives(
-                subject=subject,
-                body=text_body,
-                from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
-                to=[user.email],
-            )
-            msg.attach_alternative(html, "text/html")
-            msg.send()
-            logger.info(f'Event reminder for "{event.title}" sent to {user.email}')
 
-        except Exception as exc:
-            logger.error(f"Failed to send event reminder email: {exc}")
-            raise self.retry(exc=exc, countdown=60)
+        subject = f"یادآوری رویداد: {event.title}"
+        html = render_to_string("emails/event_reminder.html", ctx)
+        text_body = strip_tags(html)
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=text_body,
+            from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
+            to=[to_email],
+        )
+        msg.attach_alternative(html, "text/html")
+        msg.send()
+
+        log.mark_sent()
+        logger.info('Event reminder for "%s" sent to %s', event.title, to_email)
+        return f"Email sent to {to_email}"
+
+    except SoftTimeLimitExceeded:
+        if log:
+            log.mark_failed("Soft time limit exceeded")
+        logger.warning(
+            "Soft time limit exceeded (event_id=%s, registration_id=%s)",
+            event_id,
+            registration_id,
+        )
+        raise
+
+    except Exception as exc:
+        if log:
+            log.mark_failed(str(exc))
+        logger.error(
+            "Failed to send event reminder email: %s", exc, exc_info=True
+        )
+        raise
 
 
 @shared_task(bind=True)
