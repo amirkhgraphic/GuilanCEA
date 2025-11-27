@@ -186,6 +186,7 @@ class EventEmailLog(BaseModel):
         EVENT_ANNOUNCEMENT = "send_event_announcement", "Event announcement"
         EVENT_ANNOUNCEMENT2 = "send_event_announcement2", "Event announcement 2"
         EVENT_ANNOUNCEMENT3 = "send_event_announcement3", "Event announcement 3"
+        EVENT_REMINDER = "send_event_reminder", "Event reminder"
 
     class StatusChoices(models.TextChoices):
         PENDING = "pending", "Pending"
@@ -197,6 +198,7 @@ class EventEmailLog(BaseModel):
     KIND_EVENT_ANNOUNCEMENT = KindChoices.EVENT_ANNOUNCEMENT
     KIND_EVENT_ANNOUNCEMENT2 = KindChoices.EVENT_ANNOUNCEMENT2
     KIND_EVENT_ANNOUNCEMENT3 = KindChoices.EVENT_ANNOUNCEMENT3
+    KIND_EVENT_REMINDER = KindChoices.EVENT_REMINDER
     KIND_CHOICES = KindChoices.choices
 
     STATUS_PENDING = StatusChoices.PENDING
