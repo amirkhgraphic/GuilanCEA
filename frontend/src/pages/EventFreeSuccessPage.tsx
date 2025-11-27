@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import PaymentResult from "@/components/PaymentResult";
-import { formatJalali, toPersianDigits } from "@/lib/utils";
+import { formatJalali } from "@/lib/utils";
 import Markdown from '@/components/Markdown';
 import { Helmet } from "react-helmet-async";
 
@@ -11,7 +11,6 @@ export default function EventFreeSuccessPage() {
   const { slug } = useParams();
   const search = new URLSearchParams(useLocation().search);
   const registrationId = search.get("registration_id") || "";
-  const registrationIdFa = registrationId ? toPersianDigits(registrationId) : "";
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["registration-verify", registrationId],
@@ -20,11 +19,16 @@ export default function EventFreeSuccessPage() {
     enabled: Boolean(registrationId),
   });
 
+  const registrationCodeFull = (data?.ticket_id || registrationId || "").trim();
+  const registrationCodeShort = registrationCodeFull
+    ? (registrationCodeFull.split("-")[0] || registrationCodeFull).slice(0, 8)
+    : "";
+
   const siteUrl = 'https://east-guilan-ce.ir';
   const siteName = 'East Guilan CE';
   const canonicalUrl = slug ? `${siteUrl}/events/${slug}/success` : `${siteUrl}/events`;
   const registrationTitle = data?.event_title || slug || 'Event registration';
-  const ticketSummary = data?.ticket_id ? ` Ticket: ${toPersianDigits(data.ticket_id)}.` : '';
+  const ticketSummary = registrationCodeShort ? ` Ticket: ${registrationCodeShort}.` : '';
   const pageState = isLoading
     ? 'Verifying registration'
     : isError || !data
@@ -82,7 +86,7 @@ export default function EventFreeSuccessPage() {
           title="اطلاعات ثبت‌نام در دسترس نیست"
           subtitle="امکان دریافت جزئیات ثبت‌نام فراهم نشد. اگر مبلغی پرداخت نشده، ثبت‌نام شما برای رویداد رایگان انجام شده است."
           details={[
-            { label: "کد ثبت‌نام", value: registrationIdFa || "—" },
+            { label: "کد ثبت‌نام", value: registrationCodeShort || "—" },
             { label: "رویداد", value: slug || "—" },
             { label: "مبلغ", value: "رایگان" },
           ]}
@@ -103,7 +107,7 @@ export default function EventFreeSuccessPage() {
     { label: "عنوان رویداد", value: data.event_title || (slug || "—") },
     { label: "شیوه برگزاری", value: data.event_type || "—" },
     { label: "کد ثبت‌نام",
-      value: <code dir="ltr" className="font-mono bg-muted px-2 py-0.5 rounded">{toPersianDigits(data.ticket_id)}</code>
+      value: <code dir="ltr" className="font-mono bg-muted px-2 py-0.5 rounded">{registrationCodeShort || "—"}</code>
     },
     { label: "وضعیت", value: faStatus(data.status) },
     ...(data.registered_at ? [{ label: "تاریخ ثبت‌نام", value: formatJalali(data.registered_at) }] : []),
