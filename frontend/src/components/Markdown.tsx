@@ -63,18 +63,37 @@ export default function Markdown({
           blockquote: (p) => (
             <blockquote className="my-3 border-r-4 pr-4 italic text-muted-foreground" {...p} />
           ),
-          code: ({ inline, className, children, ...p }) =>
-            inline ? (
-              <code className="rounded bg-muted px-1 py-0.5 text-[0.9em]" {...p}>
-                {children}
-              </code>
-            ) : (
-              <pre className="my-4 overflow-x-auto rounded-md bg-muted p-4 text-[0.9em]">
-                <code className={className} {...p}>
+          code: ({ className, children, node, ...p }) => {
+            const isInline =
+              node?.tagName === 'code' &&
+              !/language-/.test(className || '') &&
+              !String(children).includes('\n');
+
+            if (isInline) {
+              return (
+                <code className="rounded bg-muted px-1 py-0.5 text-[0.9em]" {...p}>
                   {children}
                 </code>
-              </pre>
-            ),
+              );
+            }
+
+            return (
+              <code className={className} {...p}>
+                {children}
+              </code>
+            );
+          },
+          pre: ({ className = '', children, ...p }) => (
+            <pre
+              className={[
+                "my-4 overflow-x-auto rounded-md bg-muted p-4 text-[0.9em]",
+                className,
+              ].filter(Boolean).join(" ")}
+              {...p}
+            >
+              {children}
+            </pre>
+          ),
           table: (p) => (
             <div className="my-3 overflow-x-auto">
               <table className="w-full border-collapse" {...p} />
