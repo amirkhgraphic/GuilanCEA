@@ -25,6 +25,7 @@ from events.tasks import (
     queue_skyroom_credentials,
     send_event_announcement_to_user,
     send_event_reminder_task,
+    send_event_reminder_to_user,
     send_invite_to_user,
     send_registration_cancellation_email,
     send_registration_confirmation_email,
@@ -828,15 +829,31 @@ class EventTasksCoverageTests(EventEmailLogFactoryMixin, TestCase):
 
     def test_send_event_reminder_task_sends_messages(self):
         event = SimpleNamespace(title="Ev", slug="slug")
-        recipient = SimpleNamespace(user=SimpleNamespace(email="user@example.com"))
-        with mock.patch("events.tasks.Event.objects.get", return_value=event), \
-             mock.patch("events.tasks._event_recipients", return_value=[recipient]), \
-             mock.patch("events.tasks.render_to_string", return_value="<p>ok</p>"), \
-             mock.patch("events.tasks.strip_tags", return_value="ok"), \
-             mock.patch("events.tasks.EmailMultiAlternatives") as mock_email:
-            send_event_reminder_task.run(1)
 
-        mock_email.assert_called_once()
+        class DummyRegs:
+            def __init__(self, ids):
+                self.ids = ids
+            def select_related(self, *args, **kwargs):
+                return self
+            def distinct(self):
+                return self
+            def values_list(self, *args, **kwargs):
+                return self.ids
+
+        regs = DummyRegs([1])
+        with mock.patch("events.tasks.Event.objects.get", return_value=event), \
+             mock.patch("events.tasks._event_recipients", return_value=regs), \
+             mock.patch("events.tasks.group") as mock_group:
+            mock_job = mock.MagicMock()
+            mock_group.return_value = mock_job
+            mock_job.apply_async.return_value = mock.MagicMock(id="gid")
+
+            result = send_event_reminder_task.run(1)
+
+        mock_group.assert_called_once()
+        mock_job.apply_async.assert_called_once()
+        self.assertEqual(result["queued"], 1)
+        self.assertEqual(result["group_id"], "gid")
 
     def test_queue_event_announcement_builds_group(self):
         event = self.create_event()
@@ -1055,19 +1072,47 @@ class EventTasksCoverageTests(EventEmailLogFactoryMixin, TestCase):
 
         self.assertTrue(mock_retry.called)
 
-    def test_send_event_reminder_task_retries_on_failure(self):
+    def test_send_event_reminder_task_propagates_failure(self):
         event = SimpleNamespace(title="Ev", slug="slug")
-        recipient = SimpleNamespace(user=SimpleNamespace(email="user@example.com"))
+
+        class DummyRegs:
+            def __init__(self, ids):
+                self.ids = ids
+            def select_related(self, *args, **kwargs):
+                return self
+            def distinct(self):
+                return self
+            def values_list(self, *args, **kwargs):
+                return self.ids
+
+        regs = DummyRegs([1])
         with mock.patch("events.tasks.Event.objects.get", return_value=event), \
-             mock.patch("events.tasks._event_recipients", return_value=[recipient]), \
-             mock.patch("events.tasks.render_to_string", return_value="<p>ok</p>"), \
-             mock.patch("events.tasks.strip_tags", return_value="ok"), \
-             mock.patch("events.tasks.EmailMultiAlternatives", return_value=mock.MagicMock(send=mock.Mock(side_effect=RuntimeError("boom")))), \
-             mock.patch.object(send_event_reminder_task, "retry", side_effect=RuntimeError("retry")) as mock_retry:
+             mock.patch("events.tasks._event_recipients", return_value=regs), \
+             mock.patch("events.tasks.group") as mock_group:
+            mock_job = mock.MagicMock()
+            mock_group.return_value = mock_job
+            mock_job.apply_async.side_effect = RuntimeError("boom")
+
             with self.assertRaises(RuntimeError):
                 send_event_reminder_task.run(1)
 
-        self.assertTrue(mock_retry.called)
+    def test_send_event_reminder_to_user_marks_sent(self):
+        event = self.create_event()
+        user = self.create_user()
+        registration = SimpleNamespace(user=user, event=event, id=1)
+        log = mock.MagicMock(status=EventEmailLog.STATUS_PENDING)
+        msg_instance = mock.MagicMock()
+        with mock.patch("events.tasks.Registration.objects.select_related") as mock_select, \
+             mock.patch("events.tasks.EventEmailLog.claim", return_value=(log, False)), \
+             mock.patch("events.tasks.render_to_string", return_value="<p>ok</p>"), \
+             mock.patch("events.tasks.strip_tags", return_value="ok"), \
+             mock.patch("events.tasks.EmailMultiAlternatives", return_value=msg_instance):
+            mock_select.return_value.get.return_value = registration
+            result = send_event_reminder_to_user._orig_run(event.id, 1)
+
+        msg_instance.send.assert_called_once()
+        log.mark_sent.assert_called_once()
+        self.assertEqual(result, f"Email sent to {user.email}")
 
     def test_send_event_announcement_to_user_handles_soft_time_limit(self):
         event = self.create_event()
