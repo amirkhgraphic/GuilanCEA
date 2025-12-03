@@ -222,6 +222,13 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=changeMeNow
       - GF_USERS_ALLOW_SIGN_UP=false
 
+  alertmanager:
+    image: prom/alertmanager
+    restart: unless-stopped
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    command: --config.file=/etc/alertmanager/alertmanager.yml
+
   prometheus:
     image: prom/prometheus
     volumes:
