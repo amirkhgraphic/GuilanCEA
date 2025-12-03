@@ -1,0 +1,14 @@
+route:
+  receiver: default
+  routes:
+    - matchers:
+        - severity="critical"
+      receiver: critical
+
+receivers:
+  - name: default
+    email_configs:
+      - to: you@example.com
+  - name: critical
+    email_configs:
+      - to: oncall@example.com

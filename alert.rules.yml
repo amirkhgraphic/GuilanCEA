@@ -1,0 +1,26 @@
+groups:
+  - name: storage
+    rules:
+      - alert: DiskSpaceWarning
+        expr: (node_filesystem_size_bytes{fstype!~"tmpfs|overlay"} - node_filesystem_free_bytes{fstype!~"tmpfs|overlay"}) / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"} > 0.80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk >80% on {{ $labels.instance }} {{ $labels.mountpoint }}"
+
+      - alert: DiskSpaceCritical
+        expr: (node_filesystem_size_bytes{fstype!~"tmpfs|overlay"} - node_filesystem_free_bytes{fstype!~"tmpfs|overlay"}) / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"} > 0.90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Disk >90% on {{ $labels.instance }} {{ $labels.mountpoint }}"
+
+      - alert: DiskInodesLow
+        expr: (node_filesystem_files{fstype!~"tmpfs|overlay"} - node_filesystem_files_free{fstype!~"tmpfs|overlay"}) / node_filesystem_files{fstype!~"tmpfs|overlay"} > 0.80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Inodes >80% on {{ $labels.instance }} {{ $labels.mountpoint }}"
